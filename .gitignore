@@ -1,4 +1,4 @@
-.dist
-.package-lock.json
+dist
+package-lock.json
 
-.node_modules
+node_modules
