@@ -1,11 +1,13 @@
 
 import {Schema, model} from 'mongoose';
 
-const Test = new Schema({
-    name: { type: String, default: 'hahaha' },
-    age: { type: Number },
-    bio: { type: String },
-    date: { type: Date, default: Date.now }
-  });
+const User = new Schema({
+    email: {type: String},
+    name: {type: String},
+    socialMediaName:{type: String},
+    socialMediaId:{type: String},
+    createdDate:{type: Date, default: Date.now}
+});
 
-export default model('Test', Test);
+
+export default model('User', User);

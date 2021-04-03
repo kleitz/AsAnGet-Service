@@ -1,10 +1,15 @@
 import express from 'express';
 import uploadFile from '../helper/upload';
 import {getTest, saveTest} from './controller';
+import {facebookAuth} from './facebook';
+import {requireAuth} from './helper';
 
 const router=express.Router();
 
-router.get('/test-get', async(req, res, next) => {
+
+router.post('/facebook_auth',facebookAuth);
+
+router.get('/test-get',requireAuth, async(req, res, next) => {
     try {
         const data = await getTest();
         return res.status(200).send(data);
