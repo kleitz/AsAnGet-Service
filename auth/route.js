@@ -2,6 +2,7 @@ import express from 'express';
 import uploadFile from '../helper/upload';
 import {getTest, saveTest} from './controller';
 import {facebookAuth} from './facebook';
+import {googleAuth} from './google';
 import {requireAuth} from './helper';
 
 const router=express.Router();
@@ -33,4 +34,8 @@ router.get('/test-get',requireAuth, async(req, res, next) => {
     return res.status(201).send('image save in gallery');
  });
 
+ router.get('/test3',(req, res, next)=>{
+  res.status(200).send("test3");
+ });
+ 
  export default router;

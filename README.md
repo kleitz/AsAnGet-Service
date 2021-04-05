@@ -5,5 +5,5 @@
 2. npm start
 
 #how to make build
-1. install gulp globally
+1. install gulp globally - 
 2. gulp build
