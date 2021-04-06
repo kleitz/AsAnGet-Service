@@ -9,6 +9,8 @@ const router=express.Router();
 
 
 router.post('/facebook_auth',facebookAuth);
+router.post('/google_auth',googleAuth);
+
 
 router.get('/test-get',requireAuth, async(req, res, next) => {
     try {
