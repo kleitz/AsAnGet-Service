@@ -4,13 +4,14 @@ import {getTest, saveTest} from './controller';
 import {facebookAuth} from './facebook';
 import {googleAuth} from './google';
 import {requireAuth} from './helper';
+import { instagramAuth } from './instagram';
 
 const router=express.Router();
 
 
 router.post('/facebook_auth',facebookAuth);
 router.post('/google_auth',googleAuth);
-
+router.post('/instagram_auth',instagramAuth);
 
 router.get('/test-get',requireAuth, async(req, res, next) => {
     try {
