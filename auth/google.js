@@ -1,7 +1,7 @@
 import model from './model';
 import {GOOGLE} from './constant';
 
-const {OAuth2Client} = require('google-auth-library');
+import {OAuth2Client} from 'google-auth-library';
 const CLIENT_ID = '26791416393-p3m4g25l4m26081mboqrg6e85hukl6vk.apps.googleusercontent.com';
 const client = new OAuth2Client(CLIENT_ID);
 
@@ -9,6 +9,7 @@ export const googleAuth = async (req, res, next) => {
     try {
         
         const token = req.body.token;
+        //...why use verify
         async function verify() {
             const ticket = await client.verifyIdToken({
                 idToken: token,

@@ -1,12 +1,14 @@
 import model from './model';
-import {iNSTAGRAM} from './constant';
+import {instagram} from 'instagram-node';
 
-var api = require('instagram-node').instagram();
+const api = instagram();
+
 api.use({
-    client_id: YOUR_CLIENT_ID,
-    client_secret: YOUR_CLIENT_SECRET
+    client_id: 'YOUR_CLIENT_ID',
+    client_secret: 'YOUR_CLIENT_SECRET'
 });
-var redirect_uri = process.env.INSTANGRAM_BASE_URL + '/handleauth';
+
+const redirect_uri = process.env.INSTANGRAM_BASE_URL + '/instagram_auth';
 
 export const instagramAuth = async (req, res, next) => {
     try {
