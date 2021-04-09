@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import axios from 'axios';
 import express from 'express';
 import { urlencoded, json } from "body-parser";
 import cors from 'cors';
@@ -6,6 +7,7 @@ import path from 'path';
 import { promisifyAll } from 'bluebird';
 import mongoose from 'mongoose';
 import cluster from 'cluster';
+
 
 import logger from './config/logger';
 import authRouter from './auth/route';

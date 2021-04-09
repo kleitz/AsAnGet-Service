@@ -1,8 +1,10 @@
 import model from './model';
 import {FACEBOOK} from './constant';
+import axios from 'axios';
 
 export const facebookAuth = async (req, res, next) => {
     try {
+        console.log("facebook");
         const token = req.body.token;
         const response = await axios.get(`${process.env.facebookAuthUrl}${token}`);
         if(!response) return Promise.reject("invalid token");

@@ -5,6 +5,7 @@ import {facebookAuth} from './facebook';
 import {googleAuth} from './google';
 import {requireAuth} from './helper';
 import { instagramAuth } from './instagram';
+import axios from 'axios';
 
 const router=express.Router();
 

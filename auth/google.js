@@ -8,7 +8,11 @@ const client = new OAuth2Client(CLIENT_ID);
 export const googleAuth = async (req, res, next) => {
     try {
         
-        const token = req.body.token;
+        let token = req.body.token;
+        
+        console.log(token);
+        
+
         //...why use verify
         async function verify() {
             const ticket = await client.verifyIdToken({
