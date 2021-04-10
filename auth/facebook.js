@@ -6,8 +6,10 @@ export const facebookAuth = async (req, res, next) => {
     try {
         console.log("facebook");
         const token = req.body.token;
+        
         const response = await axios.get(`${process.env.facebookAuthUrl}${token}`);
         if(!response) return Promise.reject("invalid token");
+        console.log("Token is authorized");
         const facebook_id = response.data.id;
         const name = response.data.name;
         const email = response.data.email;
