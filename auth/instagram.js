@@ -1,3 +1,4 @@
+import axios from 'axios';
 import model from './model';
 import {instagram} from 'instagram-node';
 
@@ -32,6 +33,6 @@ export const instagramAuth = async (req, res, next) => {
         }
         return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id})
     } catch (error) {
-        return Promise.reject(error);
+        next(error);
     }
 }
