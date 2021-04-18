@@ -46,7 +46,7 @@ uploadFile.deleteFile = (req, res, next) => {
 
 const deleteSingleFile = (imageName) => {
   fs.stat(path.resolve(`${process.env.imageStoragePath}/${imageName}`), (err, stats) => {
-    if (err) {
+    if (err) { 
       reject(err);
     }
     fs.unlink(path.resolve(`${process.env.imageStoragePath}/${imageName}`), (err) => {
