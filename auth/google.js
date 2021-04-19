@@ -3,9 +3,8 @@ import {GOOGLE} from './constant';
 import {tokenForUser} from './helper';
 
 import {OAuth2Client} from 'google-auth-library';
-const CLIENT_ID = `${process.env.clientIDgoogle}`;
 
-
+const CLIENT_ID = process.env.clientIDgoogle;
 const client = new OAuth2Client(CLIENT_ID);
 
 export const googleAuth = async (req, res, next) => {
