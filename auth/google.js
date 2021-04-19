@@ -1,6 +1,6 @@
 import model from './model';
 import {GOOGLE} from './constant';
-
+import {tokenForUser} from './helper';
 
 import {OAuth2Client} from 'google-auth-library';
 const CLIENT_ID = `${process.env.clientIDgoogle}`;
@@ -32,12 +32,12 @@ export const googleAuth = async (req, res, next) => {
               console.log(newUser);
               await newUser.save();
               console.log("new user saved");  
-              return res.status(200).json(newUser);
-              //return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id});
+              
+              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id});
             }
             console.log("user exist");
-            return res.status(200).json(existUser);
-            //return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id})
+            
+            return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id})
         }catch(error){
         next(error)
     }
