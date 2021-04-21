@@ -26,6 +26,7 @@ jobs:
     - run: npm install gulp-cli -g    
     - run: npm i
     - run: gulp build
+    - run: cd dist/ 
     - run: pwd
     - run: npm i
     - run: pwd
