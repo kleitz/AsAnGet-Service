@@ -28,6 +28,8 @@ jobs:
     - run: gulp build
     - run: cp -r /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist /root/minget-node-service
     - run: cd /root/minget-node-service
+    - run: pwd
     - run: npm i
+    - run: pwd
     - run: npm install pm2 -g
     - run: pwd
