@@ -83,4 +83,4 @@ gulp.task('minifyconfig', function() {
 });
 
 gulp.task('build', gulp.series('clean','copynojs','copyimage', 'minifypublicjs', 'minifyauth', 'minifyhelper',
-'minifyroot', 'minifyconfig', 'copyEnv', 'zip'));
+'minifyroot', 'minifyconfig', 'copyEnv'));
