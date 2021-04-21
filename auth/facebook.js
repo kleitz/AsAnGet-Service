@@ -14,7 +14,6 @@ export const facebookAuth = async (req, res, next) => {
         const name = response.data.name;
         const email = response.data.email;
         const url = response.data.picture.data.url;
-        console.log
         const existUser = await model.findOne({ socialMediaId: facebook_id });
         if(!existUser){
             const newUser = new model({
