@@ -36,8 +36,7 @@ export const googleAuth = async (req, res, next) => {
               return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email});
             }
             console.log("user exist");
-            
-            return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email});
+            return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email});
         }catch(error){
         next(error)
     }

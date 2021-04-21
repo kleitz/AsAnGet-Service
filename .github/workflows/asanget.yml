@@ -23,6 +23,7 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install gulp-cli -g    
+    - run: npm install pm2 -g
+    - run: pm2 save
     - run: npm i
-    - run: gulp build
+    - run: pm2 start npm -- start
