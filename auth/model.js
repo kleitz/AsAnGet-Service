@@ -6,7 +6,8 @@ const User = new Schema({
     name: {type: String},
     socialMediaName:{type: String},
     socialMediaId:{type: String},
-    createdDate:{type: Date, default: Date.now}
+    createdDate:{type: Date, default: Date.now},
+    imageUrl:{type:String}
 });
 
 

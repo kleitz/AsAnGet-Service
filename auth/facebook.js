@@ -13,18 +13,21 @@ export const facebookAuth = async (req, res, next) => {
         const facebook_id = response.data.id;
         const name = response.data.name;
         const email = response.data.email;
+        const url = response.data.picture.data.url;
+        console.log
         const existUser = await model.findOne({ socialMediaId: facebook_id });
         if(!existUser){
             const newUser = new model({
                 socialMediaId: facebook_id,
                 socialMediaName: FACEBOOK,
                 email: email,
-                name: name
+                name: name,
+                imageUrl: url
               });
               await newUser.save();
-              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id});
+              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email});
         }
-        return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id})
+        return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email});
     } catch (error) {
         next(error)
     }

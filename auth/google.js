@@ -18,7 +18,7 @@ export const googleAuth = async (req, res, next) => {
             const google_id = userid;
             const name = payload.name;
             const email = payload.email;
-            console.log(userid + name + email);
+            const imgurl = payload.picture;
             const existUser = await model.findOne({ socialMediaId: google_id });
             if(!existUser){
                 console.log("user not exist");    
@@ -26,17 +26,18 @@ export const googleAuth = async (req, res, next) => {
                 socialMediaId: google_id,
                 socialMediaName: GOOGLE,
                 email: email,
-                name: name
+                name: name,
+                imageUrl: imgurl
               });
               console.log(newUser);
               await newUser.save();
               console.log("new user saved");  
               
-              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id});
+              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email});
             }
             console.log("user exist");
             
-            return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id})
+            return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email});
         }catch(error){
         next(error)
     }
