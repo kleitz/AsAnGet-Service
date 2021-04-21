@@ -29,5 +29,6 @@ jobs:
     - run: cp -r /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist /root/minget-node-service
     - run: cd /root/minget-node-service
     - run: npm i
-    - run: pm2 stop app
-    - run: pm2 start app
+    - run: pm2 update
+    - run: pm2 stop 1
+    - run: pm2 start 1
