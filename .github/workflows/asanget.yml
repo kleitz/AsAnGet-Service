@@ -24,5 +24,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install pm2 -g
+    - run: pm2 save
     - run: npm i
     - run: pm2 start npm -- start
