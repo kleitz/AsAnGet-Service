@@ -23,4 +23,6 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm i
+    - name: Install Composer Dependencies
+      working-directory: ./dist
+      run: npm i
