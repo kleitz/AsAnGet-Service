@@ -13,13 +13,13 @@ router.post('/facebook_auth',facebookAuth);
 router.post('/google_auth',googleAuth);
 router.post('/instagram_auth',instagramAuth);
 
-// router.get('/test-get-1', async(req, res, next) => {
-//     try {
-//         return res.status(200).send("hello1234");
-//     } catch (error) {
-//         next(error);
-//     }
-//  });
+router.get('/test-get-1', async(req, res, next) => {
+    try {
+        return res.status(200).send("hello1234");
+    } catch (error) {
+        next(error);
+    }
+ });
 
 router.get('/test-get',requireAuth, async(req, res, next) => {
     try {
