@@ -27,5 +27,8 @@ jobs:
     - run: gulp build 
     - name: Install Dependencies in build
       working-directory: ./dist
-      run: npm i
+      run: | 
+        pm2 stop app 
+        npm i
+        pm2 start app.js
       
