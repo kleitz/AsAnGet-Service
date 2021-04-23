@@ -26,7 +26,8 @@ jobs:
     - run: npm i 
     - run: gulp build 
     - name: Install Dependencies in build
-      working-directory: ./dist
+      working-directory: ./dist 
       run: | 
         npm i
+    - run: cp -r /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist/* /root/asanget-service/   
       
