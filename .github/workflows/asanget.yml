@@ -28,7 +28,5 @@ jobs:
     - name: Install Dependencies in build
       working-directory: ./dist
       run: | 
-        pm2 stop app 
         npm i
-        pm2 start app.js
       
