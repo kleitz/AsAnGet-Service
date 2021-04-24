@@ -9,6 +9,9 @@ import cluster from 'cluster';
 
 import logger from './config/logger';
 import authRouter from './auth/route';
+import ridesRouter from './rides/route';
+
+
 
 const enviroment = process.argv[2] || 'development'
 dotenv.config({
@@ -43,6 +46,7 @@ app.use(json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
+app.use('/rides',ridesRouter);
 
 
 app.use((err, req, res, next) => {
