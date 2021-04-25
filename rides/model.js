@@ -35,21 +35,27 @@ const Ride = new Schema({
       required: false,
     },
     passengers: {
-      type: [String],
-      required: false,
+      type: [String]
     },
     // Do we add a max number of seats
-    seats_avail: {
+    noOfSeats: {
       type: Number,
       required: true,
     },
     notes: {
-      type: String,
-      required: false,
+      type: String
     },
     price: {
-      type: Number,
-      required: false,
+      type: Number
+    },
+    recurringRideStartDate:{
+      type: String
+    },
+    recurringRideEndDate:{
+      type: String
+    },
+    recurringRideTime:{
+      type: String
     }
     
   });

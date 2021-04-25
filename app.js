@@ -46,7 +46,7 @@ app.use(json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
-app.use('/rides',ridesRouter);
+app.use('/ride',ridesRouter);
 
 
 app.use((err, req, res, next) => {

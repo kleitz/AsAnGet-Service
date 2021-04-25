@@ -1,16 +1,8 @@
 import model from './model';
 
-export const getTestFromDb = async() => {
+export const saveRideInDB = async(newRide) => {
     try {
-        return await model.find({});
-    } catch (error) {
-        return Promise.reject(err);
-    }
-}
-
-export const saveTestFromDb = async(newAuth) => {
-    try {
-        const obj = new model(newAuth);
+        const obj = new model(newRide);
         await obj.save();
     } catch (error) {
         return Promise.reject(err);
