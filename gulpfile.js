@@ -37,7 +37,7 @@ gulp.task('copynojs', function() {
  });
 
  gulp.task('minifyauth', function() {
-    return gulp.src(build_files_paths.ride_path)
+    return gulp.src(build_files_paths.auth_path)
             .pipe(babel({
                     presets: ['@babel/preset-env']
             }))
@@ -46,7 +46,7 @@ gulp.task('copynojs', function() {
 });
 
 gulp.task('minifyride', function() {
-        return gulp.src(build_files_paths.auth_path)
+        return gulp.src(build_files_paths.ride_path)
                 .pipe(babel({
                         presets: ['@babel/preset-env']
                 }))
