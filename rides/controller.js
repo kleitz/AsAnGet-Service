@@ -1,7 +1,29 @@
 import { saveRideInDB } from './dbHelper';
+import axios from 'axios';
+import { PolyUtil} from "node-geometry-library";
+
 
 export const createRide = async (req, res, next) => {
     try {
+        const response = await axios.get(`${process.env.googleDirectionApi}`);
+        const routes = response.map(res,()=>{
+            return res.routes;
+        })
+
+        const legs = routes.map(route,()=>{
+            return route.legs;
+        })
+
+        const steps = legs.map(leg,()=>{
+            return leg.steps;
+        })
+
+        const startLoc = steps.map(step,()=>{
+            return step.start_location;
+        })
+
+       // const loc = response.map(routes[0].legs[0].steps[0].start_location);
+        // console.log(loc);
         await saveRideInDB(req.body);
         return res.status(200).send("ride save");
     }
@@ -13,6 +35,35 @@ export const createRide = async (req, res, next) => {
 export const findRide = async (req, res, next) => {
     try {
         const { startPoint, endPoint, rideDateTime, noOfPassenger } = req.body;
+        const response = await axios.get(`${process.env.googleDirectionApi}`);
+        //console.log(response.data);
+         
+        const startLoc = {'lat': 25.7, 'lng': -80.1};
+        const endLoc = {'lat': 25.771, 'lng': -80.186};
+        const locfound =  PolyUtil.isLocationOnEdge(startLoc, [ {'lat': 25.775, 'lng': -80.190},
+                                                                {'lat': 18.466, 'lng': -66.118},
+                                                                {'lat': 32.321, 'lng': -64.757}],1000)  ;
+        if(locfound){
+            const rideFound =  PolyUtil.isLocationOnEdge(endLoc, [ {'lat': 25.771, 'lng': -80.181},
+                                                                {'lat': 18.466, 'lng': -66.118},
+                                                                {'lat': 32.321, 'lng': -64.757}],1000)  ;
+        console.log(rideFound);
+        if(rideFound){
+            
+            console.log("ride Matched");
+        }
+        
+        else{
+            console.log("No Ride Found");
+        }
+        } 
+        else{
+            console.log("No Ride Found");
+        }       
+        
+
+        
+        
         const foundRides = [
             {
                 profilePhotoUrl: `${process.env.serverPath}/img/Cristinia_josef.png`,

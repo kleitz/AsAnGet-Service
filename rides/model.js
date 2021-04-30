@@ -1,15 +1,59 @@
 import {Schema, model} from 'mongoose';
 
+//offer ride schema
+// [
+//   {
+//   "from":"",
+//   "to":"" ,
+//   "togeo": "",
+//   "time":"",
+//   "date": "",
+//   "passengers": "",
+//   "noOfSeats": "",
+//   "notes": "",
+//   "price": "",
+//   "recurringRideStartDate":"",
+//   "recurringRideEndDate":"",
+//   "recurringRideTime":"",
+//   "startLatLog":[],
+//   "endLatLog":[]
+  
+//   }
+//   ]
+
+// request ride schema
+// [
+//   {
+//   "from":"",
+//   "to":"" ,
+//   "togeo": "",
+//   "time":"",
+//   "date": "",
+//   "passengers": "",
+//   "noOfSeats": "",
+//   "notes": "",
+//   "recurringRideStartDate":"",
+//   "recurringRideEndDate":"",
+//   "recurringRideTime":"",
+//   "startLoc":{}
+//   "endLoc":{}
+  
+//   }
+//   ]
 const Ride = new Schema({
+    userId:{
+      type:String,
+      required:true
+    },
+    offerRides:[],
+    requestRides:[],
+
     type: {
       type: String,
       required: false,
       enum: ['offer', 'request'],
     },
-    username: {
-      type: String,
-      required: true,
-    }, 
+     
     from: {
       type: String,
       required: true,
