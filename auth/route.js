@@ -1,6 +1,6 @@
 import express from 'express';
 import uploadFile from '../helper/upload';
-import {getTest, saveTest} from './controller';
+import {getTest, saveTest, getUser} from './controller';
 import {facebookAuth} from './facebook';
 import {googleAuth} from './google';
 import {requireAuth} from './helper';
@@ -12,6 +12,7 @@ const router=express.Router();
 router.post('/facebook_auth',facebookAuth);
 router.post('/google_auth',googleAuth);
 router.post('/instagram_auth',instagramAuth);
+router.get('/user/:id',getUser);
 
 router.get('/test-get-1', async(req, res, next) => {
     try {
