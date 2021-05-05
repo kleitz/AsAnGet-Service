@@ -12,7 +12,7 @@ const router=express.Router();
 router.post('/facebook_auth',facebookAuth);
 router.post('/google_auth',googleAuth);
 router.post('/instagram_auth',instagramAuth);
-router.get('/user/:id',getUser);
+router.post('/userid',getUser);
 
 router.get('/test-get-1', async(req, res, next) => {
     try {

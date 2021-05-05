@@ -7,7 +7,19 @@ const User = new Schema({
     socialMediaName:{type: String},
     socialMediaId:{type: String},
     createdDate:{type: Date, default: Date.now},
-    imageUrl:{type:String}
+    imageUrl:{type:String},
+    age:{type:Number},
+    phoneNum:{type:Number},
+    rating:{type:Number},
+    puntuality:{type: Number},
+    cars: [
+        { 
+            carId:{type:String}, 
+            maker:{type:String},
+            type:{type:String}
+            
+        }
+    ]
 });
 
 
