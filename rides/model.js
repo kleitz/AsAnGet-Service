@@ -1,25 +1,24 @@
 import {Schema, model} from 'mongoose';
 
 //offer ride schema
-// [
-//   {
-//   "from":"",
-//   "to":"" ,
-//   "togeo": "",
-//   "time":"",
-//   "date": "",
-//   "passengers": "",
-//   "noOfSeats": "",
-//   "notes": "",
-//   "price": "",
-//   "recurringRideStartDate":"",
-//   "recurringRideEndDate":"",
-//   "recurringRideTime":"",
-//   "startLatLog":[],
-//   "endLatLog":[]
+const offerRide = new Schema({
+  "from":"",
+  "to":"" ,
+  "togeo": "",
+  "time":"",
+  "date": "",
+  "passengers": "",
+  "noOfSeats": "",
+  "notes": "",
+  "price": "",
+  "recurringRideStartDate":"",
+  "recurringRideEndDate":"",
+  "recurringRideTime":"",
+  "startLatLog":[],
+  "endLatLog":[]
   
-//   }
-//   ]
+});
+
 
 // request ride schema
 // [
@@ -43,7 +42,7 @@ import {Schema, model} from 'mongoose';
 const Ride = new Schema({
     userId:{
       type:String,
-      required:true
+      required:false
     },
     offerRides:[],
     requestRides:[],

@@ -1,30 +1,52 @@
 import { saveRideInDB } from './dbHelper';
+import model from './model';
 import axios from 'axios';
 import { PolyUtil} from "node-geometry-library";
 
 
 export const createRide = async (req, res, next) => {
     try {
+        const { startPoint, endPoint, rideDateTime, noOfPassenger } = req.body;
+        
+        //Api call to get start place from Lat/Log
+        const getStartPlace = await axios.get(`${process.env.getPlaceName}`);
+
+        //Api call to get Destination name from Lat/Log
+        const getEndPlace = await axios.get(`${process.env.getPlaceName}`);
+
+        const startPlaceName = getStartPlace.data.results[0].formatted_address;
+        const endPlaceName = getEndPlace.data.results[0].formatted_address;
+
+        //Api call to get Distance directions and all the polyline points
         const response = await axios.get(`${process.env.googleDirectionApi}`);
-        const routes = response.map(res,()=>{
-            return res.routes;
-        })
+        const routeArr = response.data.routes[0].legs[0].steps;
+        const start_locations = routeArr.map( (task, index, array)=> {
+            return task.start_location; 
+        });
+        
+        const end_locations = routeArr.map( (task, index, array)=> {
+            return task.end_location; 
+        });
+        console.log(start_locations);
+        console.log(end_locations);
 
-        const legs = routes.map(route,()=>{
-            return route.legs;
-        })
-
-        const steps = legs.map(leg,()=>{
-            return leg.steps;
-        })
-
-        const startLoc = steps.map(step,()=>{
-            return step.start_location;
-        })
-
-       // const loc = response.map(routes[0].legs[0].steps[0].start_location);
-        // console.log(loc);
-        await saveRideInDB(req.body);
+        const newRide = new model({
+            "from":startPlaceName,
+            "to":endPlaceName ,
+            
+            "time":"10",
+            "date": "10",
+            "passengers": "3",
+            "noOfSeats": "3",
+            "notes": "3asfsfa",
+            "price": "100",
+            "recurringRideStartDate":"1w",
+            "recurringRideEndDate":"w1",
+            "recurringRideTime":"fd",
+            "startLatLog":start_locations,
+            "endLatLog":end_locations
+          });
+        await newRide.save();
         return res.status(200).send("ride save");
     }
     catch (error) {
@@ -60,10 +82,7 @@ export const findRide = async (req, res, next) => {
         else{
             console.log("No Ride Found");
         }       
-        
-
-        
-        
+       
         const foundRides = [
             {
                 profilePhotoUrl: `${process.env.serverPath}/img/Cristinia_josef.png`,
