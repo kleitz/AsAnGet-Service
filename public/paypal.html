@@ -67,7 +67,7 @@
           .render("#paypal-button-container");
       }
       document.addEventListener("message", function(data) {
-        alert(JSON.stringify(data))
+        
         var details = JSON.parse(data.data);
         document.querySelector('p').innerText = "You are about to fund your wallet with USD 500 on XYZ. Click on any of the payment options to proceed. Your account will be credited instantly after payment."
         payWithPayPal(500, 13654);
