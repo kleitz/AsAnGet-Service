@@ -1,15 +1,14 @@
 import { saveRideInDB } from './dbHelper';
 import model from './model';
 import axios from 'axios';
-var ObjectID = require('mongodb').ObjectID;
 import { PolyUtil} from "node-geometry-library";
 import { json } from 'body-parser';
 
 
 export const createRide = async (req, res, next) => {
     try {
-        const { startPoint, endPoint, rideDate, Time, noOfPassenger, noOfSeats, noBigBags, noOfPauses,
-        smokingAllowed, animalAllowed, outsideFood, costPerSeat } = req.body;
+        const { startPoint, endPoint, rideDate, Time, noOfPassenger, costPerSeat, noOfSeats, noBigBags, noOfPauses,
+        smokingAllowed, petAllowed, outsideFood, recurringRideStartDate,recurringRideEndDate,recurringRideTime  } = req.body;
         let placeUrl = process.env.getPlaceName.replace('replace_lat_lng',startPoint);
         //Api call to get start place from Lat/Log
         const getStartPlace = await axios.get(placeUrl);
@@ -32,15 +31,29 @@ export const createRide = async (req, res, next) => {
         const end_locations = routeArr.map( (task)=> {
             return task.end_location; 
         });
-        var objectId = new ObjectID();
-         console.log(objectId);
+        
         const newRide = new model({
+            offerRides: [{
+                from:startPlaceName ,
+                to:endPlaceName ,
+                time:Time ,
+                date:rideDate ,
+                passengers: noOfPassenger,
+                noOfSeats: noOfSeats,
+                pricePerSeat: costPerSeat,
+                recurringRideStartDate: recurringRideStartDate,
+                recurringRideEndDate: recurringRideEndDate,
+                recurringRideTime: recurringRideTime,
+                start_locations:start_locations,
+                end_loactions:end_locations,
+                bigBagNo:noBigBags,
+                noOfPauses: noOfPauses,
+                smoking: smokingAllowed,
+                petAllow: petAllowed,
+                foodAllow: outsideFood,
+              
+              }],
             
-            from:startPlaceName,
-            to:endPlaceName ,
-            noOfSeats:4,
-            start_locations:start_locations,
-            end_loactions:end_locations
           });
          await newRide.save();
          return res.status(200).send("ride save");
@@ -55,31 +68,56 @@ export const findRide = async (req, res, next) => {
         const { startPoint, endPoint, rideDateTime, noOfPassenger } = req.body;
         //const response = await axios.get(`${process.env.googleDirectionApi}`);
         //console.log(response.data);
-       
 
-        const startLoc = {'lat': 25.7, 'lng': -80.1};
-        const endLoc = {'lat': 25.771, 'lng': -80.186};
 
-        const locfound =  PolyUtil.isLocationOnEdge(startLoc, [ {'lat': 25.775, 'lng': -80.190},
-                                                                {'lat': 18.466, 'lng': -66.118},
-                                                                {'lat': 32.321, 'lng': -64.757}],1000)  ;
-        if(locfound){
-            const rideFound =  PolyUtil.isLocationOnEdge(endLoc, [ {'lat': 25.771, 'lng': -80.181},
-                                                                {'lat': 18.466, 'lng': -66.118},
-                                                                {'lat': 32.321, 'lng': -64.757}],1000)  ;
-        console.log(rideFound);
-        if(rideFound){
-            
-            console.log("ride Matched");
-        }
+        //to match lat log with available
         
-        else{
-            console.log("No Ride Found");
-        }
-        } 
-        else{
-            console.log("No Ride Found");
-        }       
+        // var cursor = await model.find();
+        // cursor.forEach( ()=> {
+        //     const startLoc = {'lat': 36.083595, 'lng': -95.85105039999999};
+        //     const endLoc = {'lat': 36.0899493, 'lng': -95.8510744};
+            
+        //     const locfound =  PolyUtil.isLocationOnEdge(startLoc, [cursor.offerRides[0].start_locations],1000);
+        //     if(locfound){
+        //         const rideFound =  PolyUtil.isLocationOnEdge(endLoc, [ cursor.offerRides[0].end_locations],1000)  ;
+        //     console.log(rideFound);
+        //     if(rideFound){
+                
+        //         console.log("ride Matched");
+        //     }
+            
+        //     else{
+        //         console.log("No Ride Found");
+        //     }
+        //     } 
+        //     else{
+        //         console.log("No Ride Found");
+        //     } 
+        // });
+
+        // const startLoc = {'lat': 25.7, 'lng': -80.1};
+        // const endLoc = {'lat': 25.771, 'lng': -80.186};
+        
+        // const locfound =  PolyUtil.isLocationOnEdge(startLoc, [ {'lat': 25.775, 'lng': -80.190},
+        //                                                         {'lat': 18.466, 'lng': -66.118},
+        //                                                         {'lat': 32.321, 'lng': -64.757}],1000)  ;
+        // if(locfound){
+        //     const rideFound =  PolyUtil.isLocationOnEdge(endLoc, [ {'lat': 25.771, 'lng': -80.181},
+        //                                                         {'lat': 18.466, 'lng': -66.118},
+        //                                                         {'lat': 32.321, 'lng': -64.757}],1000)  ;
+        // console.log(rideFound);
+        // if(rideFound){
+            
+        //     console.log("ride Matched");
+        // }
+        
+        // else{
+        //     console.log("No Ride Found");
+        // }
+        // } 
+        // else{
+        //     console.log("No Ride Found");
+        // }       
        
         const foundRides = [
             {

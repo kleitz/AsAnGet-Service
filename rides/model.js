@@ -39,71 +39,77 @@ import {Schema, model} from 'mongoose';
   
 //   }
 //   ]
+const OfferRideSchema = new Schema({
+  from: {
+    type: String,
+    required: true,
+  },
+  to: {
+    type: String,
+    required: true,
+  },
+  time: {
+    type: String,
+    required: false,
+  },
+  date: {
+    type: String,
+    required: false,
+  },
+  passengers: [],
+  // Do we add a max number of seats
+  noOfSeats: {
+    type: Number,
+    
+  },
+  pricePerSeat: {
+    type: Number
+  },
+  recurringRideStartDate:{
+    type: String
+  },
+  recurringRideEndDate:{
+    type: String
+  },
+  recurringRideTime:{
+    type: String
+  },
+  start_locations:[],
+  end_loactions:[],
+  bigBagNo:{
+    type: Number
+  },
+  noOfPauses:{
+    type: Number
+  },
+  smoking: {
+    type: Boolean
+  },
+  petAllow: {
+    type: Boolean
+  },
+  foodAllow:{
+    type: Boolean
+  }
+
+});
 const Ride = new Schema({
     userId:{
       type:String,
       required:false
     },
-    offerRides:[],
+    offerRides:[OfferRideSchema],
+    
     requestRides:[],
 
     type: {
       type: String,
       required: false,
       enum: ['offer', 'request'],
-    },
-     
-    from: {
-      type: String,
-      required: true,
-    },
-    fromgeo: {
-      type: Object,
-      required: false,
-    },
-    to: {
-      type: String,
-      required: true,
-    },
-    togeo: {
-      type: Object,
-      required: false,
-    },
-    time: {
-      type: String,
-      required: false,
-    },
-    date: {
-      type: String,
-      required: false,
-    },
-    passengers: {
-      type: [String]
-    },
-    // Do we add a max number of seats
-    noOfSeats: {
-      type: Number,
-      required: true,
-    },
-    notes: {
-      type: String
-    },
-    price: {
-      type: Number
-    },
-    recurringRideStartDate:{
-      type: String
-    },
-    recurringRideEndDate:{
-      type: String
-    },
-    recurringRideTime:{
-      type: String
-    },
-    start_locations:[],
-    end_loactions:[]
-    
+    }
   });
+
+  
 
 
 export default model('Ride', Ride);
