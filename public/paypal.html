@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Paypal</title>
-    <script src="https://www.paypal.com/sdk/js?client-id=AeMzE6LQE0csmC4YAgBliEGhpLcQXWiEZegytqhxUIlHQLdhxkCcs2ocWDZdetkebVzAopNh4KjF9FMO"></script>
-
+    <script src="https://www.paypal.com/sdk/js?client-id=AeMzE6LQE0csmC4YAgBliEGhpLcQXWiEZegytqhxUIlHQLdhxkCcs2ocWDZdetkebVzAopNh4KjF9FMO" data-uid-auto="f6f9598db8_mty6mtq6mze"></script>
     <style>
         html, body{
             width: 100%;
@@ -69,8 +68,8 @@
       }
       document.addEventListener("message", function(data) {
         var details = JSON.parse(data.data);
-        document.querySelector('p').innerText = "You are about to fund your wallet with USD "+details.amount+" on XYZ. Click on any of the payment options to proceed. Your account will be credited instantly after payment."
-        payWithPayPal(details.amount, details.orderID);
+        document.querySelector('p').innerText = "You are about to fund your wallet with USD 500 on XYZ. Click on any of the payment options to proceed. Your account will be credited instantly after payment."
+        payWithPayPal(500, details.orderID);
       })
 
     </script>

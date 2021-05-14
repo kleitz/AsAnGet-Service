@@ -68,11 +68,7 @@ export const findRide = async (req, res, next) => {
         const { startPoint, endPoint, rideDateTime, noOfPassenger } = req.body;
         //const response = await axios.get(`${process.env.googleDirectionApi}`);
         //console.log(response.data);
-
-
-        //to match lat log with available
-        
-        // var cursor = await model.find();
+        // var cursor = await rides.find();
         // cursor.forEach( ()=> {
         //     const startLoc = {'lat': 36.083595, 'lng': -95.85105039999999};
         //     const endLoc = {'lat': 36.0899493, 'lng': -95.8510744};
