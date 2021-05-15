@@ -8,7 +8,7 @@ import { json } from 'body-parser';
 export const createRide = async (req, res, next) => {
     try {
         const { startPoint, endPoint, rideDate, Time, noOfPassenger, costPerSeat, noOfSeats, noBigBags, noOfPauses,
-        smokingAllowed, petAllowed, outsideFood, recurringRideStartDate,recurringRideEndDate,recurringRideTime  } = req.body;
+        smokingAllow, petAllow, foodAllow, recurringRideStartDate,recurringRideEndDate,recurringRideTime  } = req.body;
         let placeUrl = process.env.getPlaceName.replace('replace_lat_lng',startPoint);
         //Api call to get start place from Lat/Log
         const getStartPlace = await axios.get(placeUrl);
@@ -48,9 +48,9 @@ export const createRide = async (req, res, next) => {
                 end_loactions:end_locations,
                 bigBagNo:noBigBags,
                 noOfPauses: noOfPauses,
-                smoking: smokingAllowed,
-                petAllow: petAllowed,
-                foodAllow: outsideFood,
+                smoking: smokingAllow,
+                petAllow: petAllow,
+                foodAllow: foodAllow,
               
               }],
             
