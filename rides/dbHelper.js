@@ -8,3 +8,11 @@ export const saveRideInDB = async(newRide) => {
         return Promise.reject(err);
     }
 }
+
+export const getRidesFromDb = async() => {
+    try {
+        return await model.find({});
+    } catch (error) {
+        return Promise.reject(err);
+    }
+}

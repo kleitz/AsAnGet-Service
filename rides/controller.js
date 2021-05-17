@@ -1,8 +1,8 @@
-import { saveRideInDB } from './dbHelper';
-import model from './model';
+import { saveRideInDB, getRidesFromDb } from './dbHelper';
 import axios from 'axios';
 import { PolyUtil} from "node-geometry-library";
 import { json } from 'body-parser';
+import model from './model';
 
 
 export const createRide = async (req, res, next) => {
@@ -67,54 +67,41 @@ export const findRide = async (req, res, next) => {
     try {
         const { startPoint, endPoint, rideDateTime, noOfPassenger } = req.body;
         //const response = await axios.get(`${process.env.googleDirectionApi}`);
-        //console.log(response.data);
-        // var cursor = await rides.find();
-        // cursor.forEach( ()=> {
-        //     const startLoc = {'lat': 36.083595, 'lng': -95.85105039999999};
-        //     const endLoc = {'lat': 36.0899493, 'lng': -95.8510744};
-            
-        //     const locfound =  PolyUtil.isLocationOnEdge(startLoc, [cursor.offerRides[0].start_locations],1000);
-        //     if(locfound){
-        //         const rideFound =  PolyUtil.isLocationOnEdge(endLoc, [ cursor.offerRides[0].end_locations],1000)  ;
-        //     console.log(rideFound);
-        //     if(rideFound){
-                
-        //         console.log("ride Matched");
-        //     }
-            
-        //     else{
-        //         console.log("No Ride Found");
-        //     }
-        //     } 
-        //     else{
-        //         console.log("No Ride Found");
-        //     } 
-        // });
+        //    const startLoc = {'lat': 36.083595, 'lng': -95.85105039999999};
+        //    const endLoc = {'lat': 36.0899493, 'lng': -95.8510744};
+        // const startLoc = startPoint;
+        // const endLoc = endPoint;
+        console.log(startPoint);
+        console.log(endPoint);
+        const startLoc = {startPoint};
+        const endLoc = {endPoint};
+        var availabeRides = [];
 
-        // const startLoc = {'lat': 25.7, 'lng': -80.1};
-        // const endLoc = {'lat': 25.771, 'lng': -80.186};
+        var cursor = await model.find();
         
-        // const locfound =  PolyUtil.isLocationOnEdge(startLoc, [ {'lat': 25.775, 'lng': -80.190},
-        //                                                         {'lat': 18.466, 'lng': -66.118},
-        //                                                         {'lat': 32.321, 'lng': -64.757}],1000)  ;
-        // if(locfound){
-        //     const rideFound =  PolyUtil.isLocationOnEdge(endLoc, [ {'lat': 25.771, 'lng': -80.181},
-        //                                                         {'lat': 18.466, 'lng': -66.118},
-        //                                                         {'lat': 32.321, 'lng': -64.757}],1000)  ;
-        // console.log(rideFound);
-        // if(rideFound){
+        cursor.forEach( ()=> {
+        
+        const locfound =  PolyUtil.isLocationOnEdge(startPoint, cursor[0].offerRides[0].start_locations,0);
+            if(locfound){
+                console.log(locfound);
             
-        //     console.log("ride Matched");
-        // }
-        
-        // else{
-        //     console.log("No Ride Found");
-        // }
-        // } 
-        // else{
-        //     console.log("No Ride Found");
-        // }       
-       
+        const rideFound = PolyUtil.isLocationOnEdge(endLoc,  cursor[0].offerRides[0].end_loactions,0);
+                console.log(rideFound);
+            if(rideFound){
+                
+                console.log("ride Matched");
+                availabeRides.push(cursor);
+            }
+            
+            else{
+                console.log("No Ride Found");
+            }
+            } 
+            else{
+                console.log("No Ride Found");
+            } 
+        });
+        //console.log(availabeRides);
         const foundRides = [
             {
                 profilePhotoUrl: `${process.env.serverPath}/img/Cristinia_josef.png`,
@@ -139,7 +126,7 @@ export const findRide = async (req, res, next) => {
                 price: "200 $"
             }
         ]
-        return res.status(200).send({ foundRides });
+        return res.status(200).send({ availabeRides });
     } catch (error) {
         next(error);
     }

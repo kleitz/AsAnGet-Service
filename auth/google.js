@@ -8,7 +8,7 @@ const CLIENT_ID = process.env.clientIDgoogle;
 const client = new OAuth2Client(CLIENT_ID);
 
 export const googleAuth = async (req, res, next) => {
-    try {
+try {
             const token = req.body.token;
             console.log(token);
             console.log("verify")
