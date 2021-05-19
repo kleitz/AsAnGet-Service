@@ -4,7 +4,6 @@ import {Schema, model} from 'mongoose';
 // [{
 //   "from":"",
 //   "to":"" ,
-//   "togeo": "",
 //   "time":"",
 //   "date": "",
 //   "passengers": "",
@@ -25,7 +24,6 @@ import {Schema, model} from 'mongoose';
 //   {
 //   "from":"",
 //   "to":"" ,
-//   "togeo": "",
 //   "time":"",
 //   "date": "",
 //   "passengers": "",
@@ -39,6 +37,8 @@ import {Schema, model} from 'mongoose';
   
 //   }
 //   ]
+
+
 const OfferRideSchema = new Schema({
   from: {
     type: String,
@@ -93,6 +93,43 @@ const OfferRideSchema = new Schema({
   }
 
 });
+
+const RequestRideSchema = new Schema({
+  from: {
+    type: String,
+    required: true,
+  },
+  to: {
+    type: String,
+    required: true,
+  },
+  time: {
+    type: String,
+    required: false,
+  },
+  date: {
+    type: String,
+    required: false,
+  },
+  passengers: [],
+  // Do we add a max number of seats
+  noOfSeats: {
+    type: Number,
+    
+  },
+
+  recurringRideStartDate:{
+    type: String
+  },
+  recurringRideEndDate:{
+    type: String
+  },
+  recurringRideTime:{
+    type: String
+  }
+
+});
+
 const Ride = new Schema({
     userId:{
       type:String,
@@ -100,7 +137,7 @@ const Ride = new Schema({
     },
     offerRides:[OfferRideSchema],
     
-    requestRides:[],
+    requestRides:[RequestRideSchema],
 
     type: {
       type: String,
