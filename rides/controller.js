@@ -7,7 +7,7 @@ import model from './model';
 
 export const createRide = async (req, res, next) => {
     try {
-        const { startPoint, endPoint, rideDate, Time, noOfPassenger, costPerSeat, noOfSeats, noBigBags, noOfPauses,
+        const { startPoint, endPoint, carType, rideDate, Time, noOfPassenger, costPerSeat, currency, noOfSeats, noBigBags, noOfPauses,
         smokingAllow, petAllow, foodAllow, recurringRideStartDate,recurringRideEndDate,recurringRideTime  } = req.body;
         let placeUrl = process.env.getPlaceName.replace('replace_lat_lng',startPoint);
         //Api call to get start place from Lat/Log
@@ -38,8 +38,10 @@ export const createRide = async (req, res, next) => {
                 to:endPlaceName ,
                 time:Time ,
                 date:rideDate ,
+                carType: carType,
                 passengers: noOfPassenger,
                 noOfSeats: noOfSeats,
+                currency: currency,
                 pricePerSeat: costPerSeat,
                 recurringRideStartDate: recurringRideStartDate,
                 recurringRideEndDate: recurringRideEndDate,

@@ -48,6 +48,9 @@ const OfferRideSchema = new Schema({
     type: String,
     required: true,
   },
+  carType: {
+    type: String,
+  },
   time: {
     type: String,
     required: false,
@@ -64,6 +67,9 @@ const OfferRideSchema = new Schema({
   },
   pricePerSeat: {
     type: Number
+  },
+  currency: {
+    type: String
   },
   recurringRideStartDate:{
     type: String
