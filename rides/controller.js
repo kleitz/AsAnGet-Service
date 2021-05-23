@@ -61,7 +61,7 @@ export const createRide = async (req, res, next) => {
             
           });
          await newRide.save();
-         return res.status(200).send(newRide._id);
+         return res.status(200).json({RideId:newRide._id});
     }
     catch (error) {
         return res.status(200).send("Unable to create your ride");
@@ -155,3 +155,5 @@ export const bookRide = async (req, res, next) => {
             next(error);
         }
 }
+
+
