@@ -68,6 +68,10 @@ const OfferRideSchema = new Schema({
   pricePerSeat: {
     type: Number
   },
+
+  pricePerBag:{
+    type: Number
+  },
   currency: {
     type: String
   },
@@ -123,7 +127,9 @@ const RequestRideSchema = new Schema({
     type: Number,
     
   },
-
+  bigBagNo:{
+    type: Number
+  },
   recurringRideStartDate:{
     type: String
   },
@@ -139,7 +145,7 @@ const RequestRideSchema = new Schema({
 const Ride = new Schema({
     userId:{
       type:String,
-      required:false
+      required:true
     },
     offerRides:[OfferRideSchema],
     

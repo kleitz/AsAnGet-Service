@@ -7,7 +7,7 @@ import model from './model';
 
 export const createRide = async (req, res, next) => {
     try {
-        const { startPoint, endPoint, carType, rideDate, Time, noOfPassenger, costPerSeat, currency, noOfSeats, noBigBags, noOfPauses,
+        const {userId, startPoint, endPoint, carType, rideDate, Time, noOfPassenger, costPerSeat,pricePerBag, currency, noOfSeats, noBigBags, noOfPauses,
         smokingAllow, petAllow, foodAllow, recurringRideStartDate,recurringRideEndDate,recurringRideTime  } = req.body;
         let placeUrl = process.env.getPlaceName.replace('replace_lat_lng',startPoint);
         //Api call to get start place from Lat/Log
@@ -33,7 +33,9 @@ export const createRide = async (req, res, next) => {
         });
         
         const newRide = new model({
+            userId:userId,
             offerRides: [{
+                
                 from:startPlaceName ,
                 to:endPlaceName ,
                 time:Time ,
@@ -43,6 +45,7 @@ export const createRide = async (req, res, next) => {
                 noOfSeats: noOfSeats,
                 currency: currency,
                 pricePerSeat: costPerSeat,
+                pricePerBag:pricePerBag,
                 recurringRideStartDate: recurringRideStartDate,
                 recurringRideEndDate: recurringRideEndDate,
                 recurringRideTime: recurringRideTime,
@@ -58,9 +61,10 @@ export const createRide = async (req, res, next) => {
             
           });
          await newRide.save();
-         return res.status(200).send("ride save");
+         return res.status(200).send(newRide._id);
     }
     catch (error) {
+        return res.status(200).send("Unable to create your ride");
         next(error);
     }
 }
@@ -125,4 +129,29 @@ export const findRide = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+}
+
+export const bookRide = async (req, res, next) => {
+        try {
+            const { _id,from, to, Time, rideDate, noOfPassenger, noOfSeats, noBigBags,
+                 recurringRideStartDate,recurringRideEndDate,recurringRideTime } = req.body;
+            const ride = await model.findOne({ _id: _id });
+            ride.requestRides.push({
+                from:from ,
+                to:to ,
+                time:Time ,
+                date:rideDate ,
+                passengers: noOfPassenger,
+                noOfSeats: noOfSeats,
+                bigBagNo:noBigBags,
+                recurringRideStartDate: recurringRideStartDate,
+                recurringRideEndDate: recurringRideEndDate,
+                recurringRideTime: recurringRideTime,
+            });
+            
+            const updated = await ride.save()
+            return res.status(200).send(updated);
+        } catch (error) {
+            next(error);
+        }
 }
