@@ -12,6 +12,7 @@ export const createRide = async (req, res, next) => {
         let placeUrl = process.env.getPlaceName.replace('replace_lat_lng',startPoint);
         //Api call to get start place from Lat/Log
         const getStartPlace = await axios.get(placeUrl);
+
         placeUrl = process.env.getPlaceName.replace('replace_lat_lng',endPoint);
         //Api call to get Destination name from Lat/Log
         const getEndPlace = await axios.get(placeUrl);
@@ -19,26 +20,30 @@ export const createRide = async (req, res, next) => {
         
         const startPlaceName = getStartPlace.data.results[0].formatted_address;
         const endPlaceName = getEndPlace.data.results[0].formatted_address;
+        
         let getPolyline = process.env.googleDirectionApi.replace('replace_start_place',startPlaceName);
-        getPolyline = process.env.googleDirectionApi.replace('replace_end_place',endPlaceName);
-
+        getPolyline = getPolyline.replace('replace_end_place',endPlaceName);
+        console.log(getPolyline);
         //Api call to get Distance directions and all the polyline points
         const response = await axios.get(getPolyline);
+       
         const routeArr = response.data.routes[0].legs[0].steps;
+       
         const start_locations = routeArr.map( (task)=> {
             return task.start_location; 
         });
         const end_locations = routeArr.map( (task)=> {
             return task.end_location; 
         });
-        
+        console.log(start_locations);
+        console.log(end_locations);
         const newRide = new model({
             userId:userId,
             offerRides: [{
                 
                 from:startPlaceName ,
                 to:endPlaceName ,
-                time:Time ,
+                time:Time,
                 date:rideDate ,
                 carType: carType,
                 passengers: noOfPassenger,
@@ -66,6 +71,7 @@ export const createRide = async (req, res, next) => {
     catch (error) {
         return res.status(200).send("Unable to create your ride");
         next(error);
+        
     }
 }
 
@@ -156,4 +162,28 @@ export const bookRide = async (req, res, next) => {
         }
 }
 
+export const currentRide = async (req, res, next) => {
+    try {
+        const { _id} = req.body;
+        const rides = await model.find({ userId: _id });
+       
+        //for each ride check the status of ride and add it to a new array
+        
+        return res.status(200).send(rides);
+    } catch (error) {
+        next(error);
+    }
+}
 
+export const completedRide = async (req, res, next) => {
+    try {
+        const { _id} = req.body;
+        const rides = await model.find({ userId: _id });
+       
+        //for each ride check the status of ride and add it to a new array
+        
+        return res.status(200).send(rides);
+    } catch (error) {
+        next(error);
+    }
+}
