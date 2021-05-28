@@ -77,20 +77,22 @@ export const createRide = async (req, res, next) => {
 
 export const findRide = async (req, res, next) => {
     try {
-        const { startPoint, endPoint, rideDateTime, noOfPassenger } = req.body;
+        const {userId, startPoint, endPoint, rideDate, rideTime, noOfPassenger,
+             recurringRideStartDate,recurringRideEndDate,recurringRideTime } = req.body;
 
-        
+        console.log(req.body);
         var availabeRides = [];
 
         var cursor = await model.find();
+       
         
-        cursor.forEach( ()=> {
-        
-        const locfound =  PolyUtil.isLocationOnEdge(startPoint, cursor[0].offerRides[0].start_locations,0);
+
+        cursor.forEach(()=> {
+        const locfound =  PolyUtil.isLocationOnEdge(startPoint, cursor[0].offerRides[0].start_locations,1000);
             if(locfound){
                 console.log(locfound);
             
-        const rideFound = PolyUtil.isLocationOnEdge(endPoint,  cursor[0].offerRides[0].end_loactions,0);
+        const rideFound = PolyUtil.isLocationOnEdge(endPoint,  cursor[0].offerRides[0].end_loactions,1000);
                 console.log(rideFound);
             if(rideFound){
                 
@@ -105,32 +107,10 @@ export const findRide = async (req, res, next) => {
             else{
                 console.log("No Ride Found");
             } 
+        
         });
         //console.log(availabeRides);
-        const foundRides = [
-            {
-                profilePhotoUrl: `${process.env.serverPath}/img/Cristinia_josef.png`,
-                name: "Cristinia josef",
-                carName: "Hatchback Tata Altroz",
-                rating: 4,
-                from: "street 14 ny city",
-                to: "street 18 los angel",
-                time: "4.20 pm",
-                seats: 2,
-                price: "100 $"
-            },
-            {
-                profilePhotoUrl: `${process.env.serverPath}/img/robert.png`,
-                name: "Robert",
-                carName: "Ford",
-                rating: 4.5,
-                from: "Springer nature street 9 landon Uk",
-                to: "wolter landon Uk",
-                time: "1.00 pm",
-                seats: 3,
-                price: "200 $"
-            }
-        ]
+        
         return res.status(200).send({ availabeRides });
     } catch (error) {
         next(error);
@@ -166,10 +146,26 @@ export const currentRide = async (req, res, next) => {
     try {
         const { _id} = req.body;
         const rides = await model.find({ userId: _id });
-       
+        var currentRides = [];
+        var today = new Date();
+        var day = today.getDate();
+        var mon = today.getMonth()+1;
+        var year = today.getFullYear();
+        today = (day+"/"+mon+"/"+year);
+        console.log(today);
+       // console.log(rides);
+        rides.forEach( ()=> {
+            const rideDate = rides[0].offerRides[0].date;
+            console.log(rideDate);
+            if(rideDate > today)
+            {
+                currentRides.push(rides);
+            }
+
+        });
         //for each ride check the status of ride and add it to a new array
         
-        return res.status(200).send(rides);
+        return res.status(200).json({currentRides});
     } catch (error) {
         next(error);
     }
@@ -178,12 +174,30 @@ export const currentRide = async (req, res, next) => {
 export const completedRide = async (req, res, next) => {
     try {
         const { _id} = req.body;
-        const rides = await model.find({ userId: _id });
-       
-        //for each ride check the status of ride and add it to a new array
         
-        return res.status(200).send(rides);
-    } catch (error) {
+        var completedRides = [];
+        var today = new Date();
+        var day = today.getDate();
+        var mon = today.getMonth()+1;
+        var year = today.getFullYear();
+        today = (day+"-"+mon+"-"+year);
+        console.log(today);
+        const allUserRides = await model.find({ userId: _id });
+        allUserRides.forEach(myFunction);
+        function myFunction(item, index) {
+            var rideDate = allUserRides[index].offerRides[0].date;
+            console.log(rideDate);
+            const date1 = new Date(rideDate);
+            const date2 = new Date(today);
+            console.log(date1);
+            console.log(date2);
+            if(date1 > date2)
+            {
+                completedRides.push(allUserRides);
+            }
+        }
+        return res.status(200).json({completedRides});
+    }  catch (error) {
         next(error);
     }
 }
