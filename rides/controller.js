@@ -7,8 +7,8 @@ import model from './model';
 
 export const createRide = async (req, res, next) => {
     try {
-        const {userId, startPoint, endPoint, carType, rideDate, Time, noOfPassenger, costPerSeat,pricePerBag, currency, noOfSeats, noBigBags, noOfPauses,
-        smokingAllow, petAllow, foodAllow, recurringRideStartDate,recurringRideEndDate,recurringRideTime  } = req.body;
+        const {userId, startPoint, endPoint, carType, rideDate, Time, noOfPassenger, costPerSeat,pricePerBag, currency, noOfSeats, noBigBags,
+        noOfPauses, smokingAllow, petAllow, foodAllow, recurringRideStartDate,recurringRideEndDate,recurringRideTime  } = req.body;
         let placeUrl = process.env.getPlaceName.replace('replace_lat_lng',startPoint);
         //Api call to get start place from Lat/Log
         const getStartPlace = await axios.get(placeUrl);
@@ -21,6 +21,8 @@ export const createRide = async (req, res, next) => {
         const startPlaceName = getStartPlace.data.results[0].formatted_address;
         const endPlaceName = getEndPlace.data.results[0].formatted_address;
         
+        console.log(startPlaceName);
+        console.log(endPlaceName);
         let getPolyline = process.env.googleDirectionApi.replace('replace_start_place',startPlaceName);
         getPolyline = getPolyline.replace('replace_end_place',endPlaceName);
         console.log(getPolyline);
@@ -69,8 +71,9 @@ export const createRide = async (req, res, next) => {
          return res.status(200).json({RideId:newRide._id});
     }
     catch (error) {
-        return res.status(200).send("Unable to create your ride");
         next(error);
+        return res.status(200).send("Unable to create your ride");
+        
         
     }
 }
@@ -85,19 +88,30 @@ export const findRide = async (req, res, next) => {
 
         var cursor = await model.find();
        
-        
+        cursor.forEach(myFunction);
 
-        cursor.forEach(()=> {
-        const locfound =  PolyUtil.isLocationOnEdge(startPoint, cursor[0].offerRides[0].start_locations,1000);
+        //cursor.forEach(()=>
+        function myFunction(item, index) {
+
+            // var availableRIdeDate = cursor[index].offerRides[0].date;
+            // var date1 = new Date(rideDate);
+            // var date2 = new Date(availabeRides);
+
+        //if(date2>date1)
+        console.log(cursor[index].offerRides[0].noOfSeats)
+        if(noOfPassenger <= cursor[index].offerRides[0].noOfSeats)
+        {
+
+            const locfound =  PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations,1000);
             if(locfound){
                 console.log(locfound);
             
-        const rideFound = PolyUtil.isLocationOnEdge(endPoint,  cursor[0].offerRides[0].end_loactions,1000);
+            const rideFound = PolyUtil.isLocationOnEdge(endPoint,  cursor[index].offerRides[0].end_loactions,1000);
                 console.log(rideFound);
             if(rideFound){
                 
                 console.log("ride Matched");
-                availabeRides.push(cursor);
+                availabeRides.push(cursor[index]);
             }
             
             else{
@@ -108,7 +122,8 @@ export const findRide = async (req, res, next) => {
                 console.log("No Ride Found");
             } 
         
-        });
+        }
+    }
         //console.log(availabeRides);
         
         return res.status(200).send({ availabeRides });
@@ -145,25 +160,28 @@ export const bookRide = async (req, res, next) => {
 export const currentRide = async (req, res, next) => {
     try {
         const { _id} = req.body;
-        const rides = await model.find({ userId: _id });
         var currentRides = [];
         var today = new Date();
         var day = today.getDate();
         var mon = today.getMonth()+1;
         var year = today.getFullYear();
-        today = (day+"/"+mon+"/"+year);
+        today = (mon+"-"+day+"-"+year);
         console.log(today);
-       // console.log(rides);
-        rides.forEach( ()=> {
-            const rideDate = rides[0].offerRides[0].date;
+        const allUserRides = await model.find({ userId: _id });
+        allUserRides.forEach(myFunction);
+        function myFunction(item, index) {
+            var rideDate = allUserRides[index].offerRides[0].date;
             console.log(rideDate);
-            if(rideDate > today)
+            var date1 = new Date(rideDate);
+            var date2 = new Date(today);
+            console.log(date1);
+            console.log(date2);
+            if(date1 > date2)
             {
-                currentRides.push(rides);
+                currentRides.push(allUserRides[index]);
             }
 
-        });
-        //for each ride check the status of ride and add it to a new array
+        }
         
         return res.status(200).json({currentRides});
     } catch (error) {
@@ -180,20 +198,20 @@ export const completedRide = async (req, res, next) => {
         var day = today.getDate();
         var mon = today.getMonth()+1;
         var year = today.getFullYear();
-        today = (day+"-"+mon+"-"+year);
+        today = (mon+"-"+day+"-"+year);
         console.log(today);
         const allUserRides = await model.find({ userId: _id });
         allUserRides.forEach(myFunction);
         function myFunction(item, index) {
             var rideDate = allUserRides[index].offerRides[0].date;
             console.log(rideDate);
-            const date1 = new Date(rideDate);
-            const date2 = new Date(today);
+            var date1 = new Date(rideDate);
+            var date2 = new Date(today);
             console.log(date1);
             console.log(date2);
-            if(date1 > date2)
+            if(date1 < date2)
             {
-                completedRides.push(allUserRides);
+                completedRides.push(allUserRides[index]);
             }
         }
         return res.status(200).json({completedRides});
