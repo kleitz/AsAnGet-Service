@@ -1,17 +1,11 @@
 import model from './model';
 
-export const getTestFromDb = async() => {
-    try {
-        return await model.find({});
-    } catch (error) {
-        return Promise.reject(err);
-    }
-}
 
-export const saveTestFromDb = async(newAuth) => {
+
+export const getbyId = async(user_id) => {
     try {
-        const obj = new model(newAuth);
-        await obj.save();
+        const existUser = await model.findOne({ _id  : user_id });
+        return {name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email};
     } catch (error) {
         return Promise.reject(err);
     }

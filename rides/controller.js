@@ -1,8 +1,10 @@
-import { saveRideInDB, getRidesFromDb } from './dbHelper';
+import { saveRideInDB, getRidesFromDb,getAllRides,getRideDetails } from './dbHelper';
+import {getbyId} from '../auth/dbHelper';
 import axios from 'axios';
 import { PolyUtil} from "node-geometry-library";
 import { json } from 'body-parser';
 import model from './model';
+
 
 
 export const createRide = async (req, res, next) => {
@@ -12,12 +14,9 @@ export const createRide = async (req, res, next) => {
         let placeUrl = process.env.getPlaceName.replace('replace_lat_lng',startPoint);
         //Api call to get start place from Lat/Log
         const getStartPlace = await axios.get(placeUrl);
-
         placeUrl = process.env.getPlaceName.replace('replace_lat_lng',endPoint);
         //Api call to get Destination name from Lat/Log
         const getEndPlace = await axios.get(placeUrl);
-        
-        
         const startPlaceName = getStartPlace.data.results[0].formatted_address;
         const endPlaceName = getEndPlace.data.results[0].formatted_address;
         
@@ -37,9 +36,8 @@ export const createRide = async (req, res, next) => {
         const end_locations = routeArr.map( (task)=> {
             return task.end_location; 
         });
-        console.log(start_locations);
-        console.log(end_locations);
-        const newRide = new model({
+        
+        const viewModel = {
             userId:userId,
             offerRides: [{
                 
@@ -64,11 +62,10 @@ export const createRide = async (req, res, next) => {
                 petAllow: petAllow,
                 foodAllow: foodAllow,
               
-              }],
-            
-          });
-         await newRide.save();
-         return res.status(200).json({RideId:newRide._id});
+              }], 
+        }
+        const RideId = await saveRideInDB(viewModel);
+        return res.status(200).json(RideId);
     }
     catch (error) {
         next(error);
@@ -83,22 +80,16 @@ export const findRide = async (req, res, next) => {
         const {userId, startPoint, endPoint, rideDate, rideTime, noOfPassenger,
              recurringRideStartDate,recurringRideEndDate,recurringRideTime } = req.body;
 
-        console.log(req.body);
+        
         var availabeRides = [];
 
-        var cursor = await model.find();
-       
+        const cursor = await getAllRides();
+        console.log(cursor);
         cursor.forEach(myFunction);
+        
+        function myFunction(item, index){     
+        console.log(cursor[0].offerRides[0].noOfSeats)
 
-        //cursor.forEach(()=>
-        function myFunction(item, index) {
-
-            // var availableRIdeDate = cursor[index].offerRides[0].date;
-            // var date1 = new Date(rideDate);
-            // var date2 = new Date(availabeRides);
-
-        //if(date2>date1)
-        console.log(cursor[index].offerRides[0].noOfSeats)
         if(noOfPassenger <= cursor[index].offerRides[0].noOfSeats)
         {
 
@@ -109,8 +100,10 @@ export const findRide = async (req, res, next) => {
             const rideFound = PolyUtil.isLocationOnEdge(endPoint,  cursor[index].offerRides[0].end_loactions,1000);
                 console.log(rideFound);
             if(rideFound){
-                
-                console.log("ride Matched");
+                const userId = cursor[index].userId;
+               // const userData = await getbyId(userId);
+                console.log(userData);
+                console.log(userId);
                 availabeRides.push(cursor[index]);
             }
             
@@ -131,6 +124,21 @@ export const findRide = async (req, res, next) => {
         next(error);
     }
 }
+
+export const rideDetails = async (req, res, next) => {
+    try {
+        console.log("new api");
+        const { ride_id } = req.body;
+        const rideDetails = await getRideDetails(ride_id);
+        console.log(rideDetails);
+        
+        
+        return res.status(200).send(rideDetails);
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 export const bookRide = async (req, res, next) => {
         try {

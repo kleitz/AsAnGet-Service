@@ -1,42 +1,6 @@
 import {Schema, model} from 'mongoose';
 
-//offer ride schema
-// [{
-//   "from":"",
-//   "to":"" ,
-//   "time":"",
-//   "date": "",
-//   "passengers": "",
-//   "noOfSeats": "",
-//   "notes": "",
-//   "price": "",
-//   "recurringRideStartDate":"",
-//   "recurringRideEndDate":"",
-//   "recurringRideTime":"",
-//   "startLatLog":[],
-//   "endLatLog":[]
-  
-// }]
 
-
-// request ride schema
-// [
-//   {
-//   "from":"",
-//   "to":"" ,
-//   "time":"",
-//   "date": "",
-//   "passengers": "",
-//   "noOfSeats": "",
-//   "notes": "",
-//   "recurringRideStartDate":"",
-//   "recurringRideEndDate":"",
-//   "recurringRideTime":"",
-//   "startLoc":{}
-//   "endLoc":{}
-  
-//   }
-//   ]
 
 
 const OfferRideSchema = new Schema({
