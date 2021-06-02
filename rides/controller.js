@@ -1,4 +1,5 @@
 import { saveRideInDB, getRidesFromDb,getAllRides,getRideDetails,bookRideSaveinDb } from './dbHelper';
+import {getbyId} from '../auth/dbHelper';
 import axios from 'axios';
 import { PolyUtil} from "node-geometry-library";
 import { json } from 'body-parser';
@@ -88,10 +89,11 @@ export const findRide = async (req, res, next) => {
         
         function myFunction(item, index){     
         console.log(cursor[0].offerRides[0].noOfSeats)
-
+        
+        console.log(userData);
         if(noOfPassenger <= cursor[index].offerRides[0].noOfSeats)
         {
-
+            
             const locfound =  PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations,1000);
             if(locfound){
                 console.log(locfound);
@@ -99,8 +101,7 @@ export const findRide = async (req, res, next) => {
             const rideFound = PolyUtil.isLocationOnEdge(endPoint,  cursor[index].offerRides[0].end_loactions,1000);
                 console.log(rideFound);
             if(rideFound){
-                const userId = cursor[index].userId;
-                //const userData = await saveRideInDB();
+                
                 
                 console.log(userId);
                 availabeRides.push(cursor[index]);

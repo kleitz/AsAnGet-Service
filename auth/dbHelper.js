@@ -7,6 +7,6 @@ export const getbyId = async(user_id) => {
         const existUser = await model.findOne({ _id  : user_id });
         return {name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email};
     } catch (error) {
-        return Promise.reject(err);
+        return Promise.reject(error);
     }
 }
