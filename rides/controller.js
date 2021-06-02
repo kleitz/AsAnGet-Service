@@ -1,5 +1,4 @@
-import { saveRideInDB, getRidesFromDb,getAllRides,getRideDetails } from './dbHelper';
-import {getbyId} from '../auth/dbHelper';
+import { saveRideInDB, getRidesFromDb,getAllRides,getRideDetails,bookRideSaveinDb } from './dbHelper';
 import axios from 'axios';
 import { PolyUtil} from "node-geometry-library";
 import { json } from 'body-parser';
@@ -101,8 +100,8 @@ export const findRide = async (req, res, next) => {
                 console.log(rideFound);
             if(rideFound){
                 const userId = cursor[index].userId;
-               // const userData = await getbyId(userId);
-                console.log(userData);
+                //const userData = await saveRideInDB();
+                
                 console.log(userId);
                 availabeRides.push(cursor[index]);
             }
@@ -144,8 +143,9 @@ export const bookRide = async (req, res, next) => {
         try {
             const { _id,from, to, Time, rideDate, noOfPassenger, noOfSeats, noBigBags,
                  recurringRideStartDate,recurringRideEndDate,recurringRideTime } = req.body;
-            const ride = await model.findOne({ _id: _id });
-            ride.requestRides.push({
+         
+            const modelView = {
+                id:_id,
                 from:from ,
                 to:to ,
                 time:Time ,
@@ -156,10 +156,11 @@ export const bookRide = async (req, res, next) => {
                 recurringRideStartDate: recurringRideStartDate,
                 recurringRideEndDate: recurringRideEndDate,
                 recurringRideTime: recurringRideTime,
-            });
-            
-            const updated = await ride.save()
-            return res.status(200).send(updated);
+            };
+            await bookRideSaveinDb(modelView);
+           
+          
+            return res.status(200).send();
         } catch (error) {
             next(error);
         }

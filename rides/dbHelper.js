@@ -13,7 +13,7 @@ export const saveRideInDB = async(newRide) => {
 export const getAllRides = async(user_id) => {
     try {
         const rides = await model.find();
-        console.log(rides[0].offerRides[0].noOfSeats);
+        
         return rides;
     } catch (error) {
         return Promise.reject(error);
@@ -29,10 +29,16 @@ export const getRideDetails = async(ride_id) => {
             noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow
             
         };
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
 
-
-
-
+export const bookRideSaveinDb = async(newRide) => {
+    try {
+        const ride = await model.findOne({ _id: newRide.id });
+        ride.requestRides.push(newRide);
+        await ride.save();
     } catch (error) {
         return Promise.reject(error);
     }
