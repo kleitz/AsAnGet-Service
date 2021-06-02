@@ -85,12 +85,12 @@ export const findRide = async (req, res, next) => {
 
         const cursor = await getAllRides();
         console.log(cursor);
-        cursor.forEach(myFunction);
+        cursor.forEach((element, index) =>{
         
-        function myFunction(item, index){     
+        //function myFunction(item, index){     
         console.log(cursor[0].offerRides[0].noOfSeats)
         
-        console.log(userData);
+        
         if(noOfPassenger <= cursor[index].offerRides[0].noOfSeats)
         {
             
@@ -116,7 +116,7 @@ export const findRide = async (req, res, next) => {
             } 
         
         }
-    }
+    });
         //console.log(availabeRides);
         
         return res.status(200).send({ availabeRides });
