@@ -1,16 +1,17 @@
 import express from 'express';
 
 
-import {createRide,findRide,bookRide,currentRide,completedRide,rideDetails} from './controller';
+import {createRide,findRide,bookRide,rideDetails} from './controller';
+import{currentRide} from './updatesrides';
 
 const router=express.Router();
 
 router.post('/create_ride',createRide);
 router.post('/find_ride',findRide);
 router.post('/book_ride',bookRide);
-router.post('/current_ride',currentRide);
-router.post('/completed_ride',completedRide);
+
 router.post('/ride_details',rideDetails);
+router.post('/current_rides',currentRide);
 
 
 

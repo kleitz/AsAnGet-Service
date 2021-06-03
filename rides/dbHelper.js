@@ -14,7 +14,6 @@ export const saveRideInDB = async(newRide) => {
 export const getAllRides = async(user_id) => {
     try {
         const rides = await model.find();
-        
         return rides;
     } catch (error) {
         return Promise.reject(error);
@@ -33,7 +32,7 @@ export const getRideDetails = async(ride_id) => {
             const passengerId = requestRides[index].userId;
             const passengerDetails = await getbyId(passengerId);
             console.log(passengerDetails);
-            passengers.push({ride:requestRides[index],Details:passengerDetails})
+            passengers.push({date:requestRides[index].date,time:requestRides[index].time,name:passengerDetails.name,imageUrl:passengerDetails.url})
         }
         return {Name: driverDetails.name, ProfileUrl:driverDetails.url ,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
             NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
@@ -54,3 +53,4 @@ export const bookRideSaveinDb = async(newRide) => {
         return Promise.reject(error);
     }
 }
+

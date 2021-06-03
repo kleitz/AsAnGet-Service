@@ -3,8 +3,8 @@ import {getbyId} from '../auth/dbHelper';
 import axios from 'axios';
 import { PolyUtil} from "node-geometry-library";
 import { json } from 'body-parser';
-import model from './model';
-import { Console } from 'winston/lib/winston/transports';
+
+
 
 
 
@@ -104,7 +104,8 @@ export const findRide = async (req, res, next) => {
                     // console.log(UserDetails);
                     // console.log(userId);
                     availabeRides.push({id:cursor[index]._id,from:cursor[index].offerRides[0].from,to:cursor[index].offerRides[0].to,
-                        time:cursor[index].offerRides[0].time,carType:cursor[index].offerRides[0].carType,
+                        time:cursor[index].offerRides[0].time,Date:cursor[index].offerRides[0].date,
+                        carType:cursor[index].offerRides[0].carType,
                         noOfSeats:cursor[index].offerRides[0].noOfSeats,currency:cursor[index].offerRides[0].currency,
                         pricePerSeat:cursor[index].offerRides[0].pricePerSeat,pricePerBag:cursor[index].offerRides[0].pricePerBag,
                         recurringRideStartDate:cursor[index].offerRides[0].recurringRideStartDate,
@@ -141,9 +142,6 @@ export const rideDetails = async (req, res, next) => {
         console.log("new api");
         const { ride_id } = req.body;
         const rideDetails = await getRideDetails(ride_id);
-        //console.log(rideDetails);
-        
-        
         return res.status(200).send(rideDetails);
     } catch (error) {
         next(error);
@@ -173,71 +171,10 @@ export const bookRide = async (req, res, next) => {
             await bookRideSaveinDb(modelView);
            
           
-            return res.status(200).send("Success");
+            return res.status(200).send({"Success":"Saved"});
         } catch (error) {
             next(error);
         }
 }
 
-export const currentRide = async (req, res, next) => {
-    try {
-        const { _id} = req.body;
-        var currentRides = [];
-        var today = new Date();
-        var day = today.getDate();
-        var mon = today.getMonth()+1;
-        var year = today.getFullYear();
-        today = (mon+"-"+day+"-"+year);
-        console.log(today);
-        const allUserRides = await model.find({ userId: _id });
-        allUserRides.forEach(myFunction);
-        function myFunction(item, index) {
-            var rideDate = allUserRides[index].offerRides[0].date;
-            console.log(rideDate);
-            var date1 = new Date(rideDate);
-            var date2 = new Date(today);
-            console.log(date1);
-            console.log(date2);
-            if(date1 > date2)
-            {
-                currentRides.push(allUserRides[index]);
-            }
 
-        }
-        
-        return res.status(200).json({currentRides});
-    } catch (error) {
-        next(error);
-    }
-}
-
-export const completedRide = async (req, res, next) => {
-    try {
-        const { _id} = req.body;
-        
-        var completedRides = [];
-        var today = new Date();
-        var day = today.getDate();
-        var mon = today.getMonth()+1;
-        var year = today.getFullYear();
-        today = (mon+"-"+day+"-"+year);
-        console.log(today);
-        const allUserRides = await model.find({ userId: _id });
-        allUserRides.forEach(myFunction);
-        function myFunction(item, index) {
-            var rideDate = allUserRides[index].offerRides[0].date;
-            console.log(rideDate);
-            var date1 = new Date(rideDate);
-            var date2 = new Date(today);
-            console.log(date1);
-            console.log(date2);
-            if(date1 < date2)
-            {
-                completedRides.push(allUserRides[index]);
-            }
-        }
-        return res.status(200).json({completedRides});
-    }  catch (error) {
-        next(error);
-    }
-}
