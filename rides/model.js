@@ -77,6 +77,10 @@ const RequestRideSchema = new Schema({
     type: String,
     required: true,
   },
+  userId:{
+    type: String,
+    required: true,
+  },
   time: {
     type: String,
     required: false,

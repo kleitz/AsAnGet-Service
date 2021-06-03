@@ -1,4 +1,5 @@
 import model from './model';
+import {getbyId} from '../auth/dbHelper';
 
 export const saveRideInDB = async(newRide) => {
     try {
@@ -23,10 +24,20 @@ export const getAllRides = async(user_id) => {
 export const getRideDetails = async(ride_id) => {
     try {
         const ridesDetails = await model.findOne({ _id: ride_id });
-        
-        return {Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
+        const driverId = ridesDetails.userId;
+        const driverDetails = await getbyId(driverId);
+        const requestRides = ridesDetails.requestRides;
+        var passengers = [];
+        //console.log(requestRides);
+        for(let index = 0 ; index< requestRides.length ; index++){
+            const passengerId = requestRides[index].userId;
+            const passengerDetails = await getbyId(passengerId);
+            console.log(passengerDetails);
+            passengers.push({ride:requestRides[index],Details:passengerDetails})
+        }
+        return {Name: driverDetails.name, ProfileUrl:driverDetails.url ,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
             NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
-            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow, Passengers:ridesDetails.requestRides
+            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow, Passengers:passengers
             
         };
     } catch (error) {

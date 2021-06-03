@@ -4,6 +4,7 @@ import axios from 'axios';
 import { PolyUtil} from "node-geometry-library";
 import { json } from 'body-parser';
 import model from './model';
+import { Console } from 'winston/lib/winston/transports';
 
 
 
@@ -85,42 +86,44 @@ export const findRide = async (req, res, next) => {
 
         const cursor = await getAllRides();
         console.log(cursor);
-        cursor.forEach((element, index) =>{
-        
-        //function myFunction(item, index){     
-        console.log(cursor[0].offerRides[0].noOfSeats)
-        
-        
-        if(noOfPassenger <= cursor[index].offerRides[0].noOfSeats)
-        {
-            
-            const locfound =  PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations,1000);
-            if(locfound){
-                console.log(locfound);
-            
-            const rideFound = PolyUtil.isLocationOnEdge(endPoint,  cursor[index].offerRides[0].end_loactions,1000);
-                console.log(rideFound);
-            if(rideFound){
+        for(let index = 0 ; index< cursor.length ; index++){
+            const element = cursor[index];
+            if(noOfPassenger <= cursor[index].offerRides[0].noOfSeats)
+            {
                 
+                const locfound =  PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations,1000);
+                if(locfound){
+                    console.log(locfound);
                 
-                console.log(userId);
-                availabeRides.push(cursor[index]);
-            }
+                const rideFound = PolyUtil.isLocationOnEdge(endPoint,  cursor[index].offerRides[0].end_loactions,1000);
+                    console.log(rideFound);
+                if(rideFound){
+                    
+                    const userId = cursor[index].userId;
+                    const UserDetails = await getbyId(userId);
+                    // console.log(UserDetails);
+                    // console.log(userId);
+                    availabeRides.push({ride:cursor[index],user:UserDetails});
+                    
+                }
+                
+                else{
+                    console.log("No Ride Found");
+                }
+                } 
+                else{
+                    console.log("No Ride Found");
+                } 
             
-            else{
-                console.log("No Ride Found");
             }
-            } 
-            else{
-                console.log("No Ride Found");
-            } 
-        
         }
-    });
-        //console.log(availabeRides);
-        
         return res.status(200).send({ availabeRides });
-    } catch (error) {
+        }
+       
+       
+        
+        
+    catch (error) {
         next(error);
     }
 }
@@ -130,7 +133,7 @@ export const rideDetails = async (req, res, next) => {
         console.log("new api");
         const { ride_id } = req.body;
         const rideDetails = await getRideDetails(ride_id);
-        console.log(rideDetails);
+        //console.log(rideDetails);
         
         
         return res.status(200).send(rideDetails);
@@ -142,11 +145,12 @@ export const rideDetails = async (req, res, next) => {
 
 export const bookRide = async (req, res, next) => {
         try {
-            const { _id,from, to, Time, rideDate, noOfPassenger, noOfSeats, noBigBags,
+            const { _id,userId, from, to, Time, rideDate, noOfPassenger, noOfSeats, noBigBags,
                  recurringRideStartDate,recurringRideEndDate,recurringRideTime } = req.body;
          
             const modelView = {
                 id:_id,
+                userId:userId,
                 from:from ,
                 to:to ,
                 time:Time ,
@@ -161,7 +165,7 @@ export const bookRide = async (req, res, next) => {
             await bookRideSaveinDb(modelView);
            
           
-            return res.status(200).send();
+            return res.status(200).send("Success");
         } catch (error) {
             next(error);
         }
