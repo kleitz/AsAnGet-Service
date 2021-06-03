@@ -103,7 +103,15 @@ export const findRide = async (req, res, next) => {
                     const UserDetails = await getbyId(userId);
                     // console.log(UserDetails);
                     // console.log(userId);
-                    availabeRides.push({ride:cursor[index],user:UserDetails});
+                    availabeRides.push({id:cursor[index]._id,from:cursor[index].offerRides[0].from,to:cursor[index].offerRides[0].to,
+                        time:cursor[index].offerRides[0].time,carType:cursor[index].offerRides[0].carType,
+                        noOfSeats:cursor[index].offerRides[0].noOfSeats,currency:cursor[index].offerRides[0].currency,
+                        pricePerSeat:cursor[index].offerRides[0].pricePerSeat,pricePerBag:cursor[index].offerRides[0].pricePerBag,
+                        recurringRideStartDate:cursor[index].offerRides[0].recurringRideStartDate,
+                        recurringRideEndDate:cursor[index].offerRides[0].recurringRideEndDate,
+                        recurringRideTime:cursor[index].offerRides[0].recurringRideTime,
+                        noOfPauses:cursor[index].offerRides[0].noOfPauses,smoking:cursor[index].offerRides[0].smoking,petAllow:cursor[index].offerRides[0].petAllow,
+                        foodAllow:cursor[index].offerRides[0].foodAllow,user:UserDetails});
                     
                 }
                 
