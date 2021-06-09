@@ -1,71 +1,173 @@
-import { getAllRides } from './dbHelper';
+import { getUserOfferRides, getUserBookRides, getRideDetails, getBookRideDetails,
+         getRideotp, changeRideStatus } from './dbHelper';
 import axios from 'axios';
 import { json } from 'body-parser';
-import model from './model';
+
 
 export const currentRide = async (req, res, next) => {
     try {
         const { _id} = req.body;
-        const rides = await getAllRides();
-        
- 
-
-        var currentRides = [];
+        var Bookrides = [];
+        var Offeredrides = [];
         var today = new Date();
         var day = today.getDate();
         var mon = today.getMonth()+1;
         var year = today.getFullYear();
         today = (mon+"-"+day+"-"+year);
-        console.log(today);
+        var todayDate = new Date(today);
+        const bookrides = await getUserBookRides(_id);
         
-        // allUserRides.forEach(myFunction);
-        // function myFunction(item, index) {
-        //     var rideDate = allUserRides[index].offerRides[0].date;
-        //     console.log(rideDate);
-        //     var date1 = new Date(rideDate);
-        //     var date2 = new Date(today);
-        //     console.log(date1);
-        //     console.log(date2);
-        //     if(date1 > date2)
-        //     {
-        //         currentRides.push(allUserRides[index]);
-        //     }
+        for(let index = 0 ; index< bookrides.length ; index++)
+        {
 
-        // }
+            const date = bookrides[index].offerRides[0].date;
+            const [day, month, year] = date.split('-');
+            const dateObj = {month, day, year};
+            const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
+            const RideDate = new Date(rideDate);
+            const rideId = bookrides[index]._id;
+            const Details = await getBookRideDetails(rideId);
+            const passanger = [Details.Passengers[0]];
+            
+            
+            console.log(passanger);
+            for(let index = 0; index < passanger.length; index++)
+            {
+                
+                if(passanger[index].userId == _id){
+                    const Status = passanger[index].Status;
+                }
+               
+            }
+           
+            if((todayDate < RideDate) || ((todayDate == RideDate)&& (Status == "Cancelled")) 
+            || ((todayDate == RideDate)&& (Status == "Upcoming")) || ((todayDate == RideDate)&& (Status == "Ongoing"))){  
+                Bookrides.push(Details);
+            }
+
+        }
+        const getOfferRides = await getUserOfferRides(_id);
         
-        return res.status(200).json({currentRides});
+        for(let index = 0 ; index< getOfferRides.length ; index++)
+        {
+            const date = getOfferRides[index].offerRides[0].date;
+            const status = getOfferRides[index].offerRides[0].Status;
+            const [day, month, year] = date.split('-');
+            const dateObj = {month, day, year};
+            
+            const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
+            const RideDate = new Date(rideDate);
+            if((todayDate < RideDate) || ((todayDate == RideDate)&& (Status == "Cancelled")) 
+            || ((todayDate == RideDate)&& (Status == "Upcoming")) || ((todayDate == RideDate)&& (Status == "Ongoing"))){
+                const rideId = getOfferRides[index]._id;
+                const Details = await getBookRideDetails(rideId);
+                Offeredrides.push(Details);
+            }
+
+        }
+        return res.status(200).json({Bookrides,Offeredrides});
     } catch (error) {
         next(error);
     }
 }
 
-export const completedRide = async (req, res, next) => {
+export const completedRides = async (req, res, next) => {
     try {
         const { _id} = req.body;
-        
-        var completedRides = [];
+        var Bookrides = [];
+        var Offeredrides = [];
         var today = new Date();
         var day = today.getDate();
         var mon = today.getMonth()+1;
         var year = today.getFullYear();
         today = (mon+"-"+day+"-"+year);
-        console.log(today);
-        const allUserRides = await model.find({ userId: _id });
-        allUserRides.forEach(myFunction);
-        function myFunction(item, index) {
-            var rideDate = allUserRides[index].offerRides[0].date;
-            console.log(rideDate);
-            var date1 = new Date(rideDate);
-            var date2 = new Date(today);
-            console.log(date1);
-            console.log(date2);
-            if(date1 < date2)
+        var todayDate = new Date(today);
+        const bookrides = await getUserBookRides(_id);
+        
+        for(let index = 0 ; index< bookrides.length ; index++)
+        {
+
+            const date = bookrides[index].offerRides[0].date;
+            const [day, month, year] = date.split('-');
+            const dateObj = {month, day, year};
+            const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
+            const RideDate = new Date(rideDate);
+            const rideId = bookrides[index]._id;
+            const Details = await getBookRideDetails(rideId);
+            const passanger = [Details.Passengers[0]];
+            
+            
+            console.log(passanger);
+            for(let index = 0; index < passanger.length; index++)
             {
-                completedRides.push(allUserRides[index]);
+                
+                if(passanger[index].userId == _id){
+                    const Status = passanger[index].Status;
+                }
+               
             }
+           
+            if((todayDate < RideDate) || ((todayDate == RideDate)&& (Status == "Cancelled")) 
+            || ((todayDate == RideDate)&& (Status == "Upcoming")) || ((todayDate == RideDate)&& (Status == "Ongoing"))){  
+                Bookrides.push(Details);
+            }
+
         }
-        return res.status(200).json({completedRides});
-    }  catch (error) {
+        const getOfferRides = await getUserOfferRides(_id);
+        
+        for(let index = 0 ; index< getOfferRides.length ; index++)
+        {
+            const date = getOfferRides[index].offerRides[0].date;
+            const status = getOfferRides[index].offerRides[0].Status;
+            const [day, month, year] = date.split('-');
+            const dateObj = {month, day, year};
+            
+            const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
+            const RideDate = new Date(rideDate);
+            if((todayDate > RideDate) || ((todayDate == RideDate)&& (Status == "Upcoming")) || ((todayDate == RideDate)&& (Status == "Ongoing"))){
+                const rideId = getOfferRides[index]._id;
+                const Details = await getBookRideDetails(rideId);
+                Offeredrides.push(Details);
+            }
+
+        }
+        return res.status(200).json({Bookrides,Offeredrides});
+    } catch (error) {
         next(error);
     }
 }
+
+
+export const getRideOTP = async (req, res, next) => {
+    try {
+        console.log("new api");
+        const { userId, ride_id } = req.body;
+        const otp = await getRideotp(ride_id, userId);
+        return res.status(200).send(otp);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const verifyRideOTP = async (req, res, next) => {
+    try {
+        console.log("new api");
+        const { userId, ride_id, otp } = req.body;
+        const rideotp = await getRideotp(ride_id, userId);
+        const rideStatus = await changeRideStatus(ride_id, userId); 
+        if(rideotp == otp)
+        {
+             
+            return res.status(200).send(otp);
+        }
+        else{
+            return res.status(200).send({"Success":"Ride Started"});
+       }
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+

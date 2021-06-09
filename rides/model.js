@@ -8,6 +8,7 @@ const OfferRideSchema = new Schema({
     type: String,
     required: true,
   },
+
   to: {
     type: String,
     required: true,
@@ -64,6 +65,10 @@ const OfferRideSchema = new Schema({
   },
   foodAllow:{
     type: Boolean
+  }, 
+  status: {
+    type: String, // Number type
+    default:'Upcoming',
   }
 
 });
@@ -106,6 +111,14 @@ const RequestRideSchema = new Schema({
   },
   recurringRideTime:{
     type: String
+  }, 
+  status: {
+    type: String, // Number type
+    default:'Upcoming',
+  },
+  OTP: {
+    type: Number,
+    required: true,
   }
 
 });

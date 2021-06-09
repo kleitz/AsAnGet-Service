@@ -101,8 +101,7 @@ export const findRide = async (req, res, next) => {
                     
                     const userId = cursor[index].userId;
                     const UserDetails = await getbyId(userId);
-                    // console.log(UserDetails);
-                    // console.log(userId);
+                    
                     availabeRides.push({id:cursor[index]._id,from:cursor[index].offerRides[0].from,to:cursor[index].offerRides[0].to,
                         time:cursor[index].offerRides[0].time,Date:cursor[index].offerRides[0].date,
                         carType:cursor[index].offerRides[0].carType,
@@ -153,7 +152,8 @@ export const bookRide = async (req, res, next) => {
         try {
             const { _id,userId, from, to, Time, rideDate, noOfPassenger, noOfSeats, noBigBags,
                  recurringRideStartDate,recurringRideEndDate,recurringRideTime } = req.body;
-         
+                 const otp = Math.floor(1000 + Math.random() * 9000);
+                 
             const modelView = {
                 id:_id,
                 userId:userId,
@@ -167,6 +167,7 @@ export const bookRide = async (req, res, next) => {
                 recurringRideStartDate: recurringRideStartDate,
                 recurringRideEndDate: recurringRideEndDate,
                 recurringRideTime: recurringRideTime,
+                OTP:otp,
             };
             await bookRideSaveinDb(modelView);
            
