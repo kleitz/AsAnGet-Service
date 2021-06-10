@@ -153,16 +153,24 @@ export const verifyRideOTP = async (req, res, next) => {
     try {
         console.log("new api");
         const { userId, ride_id, otp } = req.body;
+        const c = await changeRideStatus(ride_id, userId); 
+        console.log(c);
+        return res.status(200).send(c);
+
         const rideotp = await getRideotp(ride_id, userId);
-        const rideStatus = await changeRideStatus(ride_id, userId); 
+        
         if(rideotp == otp)
         {
-             
-            return res.status(200).send(otp);
+            const rideStatus = await changeRideStatus(ride_id, userId); 
+            
         }
-        else{
-            return res.status(200).send({"Success":"Ride Started"});
-       }
+        else
+        {
+            return res.status(200).send({"Failed":"Otp not correct"}); 
+        }
+        
+       return res.status(200).send({"Success":"Ride Started"});
+
 
     } catch (error) {
         next(error);

@@ -1,6 +1,6 @@
 import model from './model';
 import {getbyId} from '../auth/dbHelper';
-import { rideDetails } from './controller';
+
 
 export const saveRideInDB = async(newRide) => {
     try {
@@ -121,30 +121,15 @@ export const getRideotp = async(ride_id,userId) => {
     }
 }
 
-export const changeRideStatus = async(ride_id,userId) => {
+export const changeRideStatus = async(ride_id,user_Id) => {
     try {
-        const update = {status : "Ongoing" };
-        const filter = { "_id" : ride_id, "requestRides.userId" : userId };
-       
-        model.findOneAndUpdate(
-
-            { "_id" : ride_id, "requestRides.userId" : userId },
-        
-            { 
-        
-                "$set": {
-        
-                    "status.$": "Started"
-        
-                }
-        
-            },
-        
-            function(err,doc) {
-        
-            }
-        
-        );
+     
+       await model.updateOne(
+           {"_id":ride_id,"requestRides.userId" : user_Id , "requestRides.status" : "Upcoming"
+        },
+        { $set: { "requestRides.$.status" : "Ongoing"} 
+         
+    })
         
         return ;
     } catch (error) {
