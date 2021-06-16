@@ -10,7 +10,7 @@ import cluster from 'cluster';
 import logger from './config/logger';
 import authRouter from './auth/route';
 import ridesRouter from './rides/route';
-
+import ratingsRouter from './ratings/route';
 
 
 const enviroment = process.argv[2] || 'development'
@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/auth', authRouter);
 app.use('/ride',ridesRouter);
-
+app.use('/ratings',ratingsRouter);
 
 app.use((err, req, res, next) => {
   logger.saveError(err.stack);
