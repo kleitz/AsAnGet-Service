@@ -8,6 +8,7 @@ var build_files_paths = {
    root_path:['*.js','!gulpfile.js'],
    auth_path:['./auth/*.js'],
    ride_path:['./rides/*.js'],
+   rating_path:['./ratings/*.js'],
    helper_path:['./helper/*.js'],
    public_js_path:['./public/**/*.js'],
    public_image_path:['./public/img/*'],
@@ -60,6 +61,15 @@ gulp.task('minifyride', function() {
              .pipe(gulp.dest('dist/rides'));
     });
 
+gulp.task('minifyrating', function() {
+return gulp.src(build_files_paths.rating_path)
+        .pipe(babel({
+                presets: ['@babel/preset-env']
+        }))
+        .pipe(uglify())
+        .pipe(gulp.dest('dist/ratings'));
+});
+
 gulp.task('minifyhelper', function() {
     return gulp.src(build_files_paths.helper_path)
             .pipe(babel({
@@ -100,4 +110,5 @@ gulp.task('minifyconfig', function() {
 
 gulp.task('build', gulp.series('clean','copynojs','copyimage', 'minifypublicjs', 'minifyauth',
 'minifyride', 'minifyhelper',
-'minifyroot', 'minifyconfig', 'copyEnv','copypublic'));
+'minifyroot', 'minifyconfig', 'copyEnv','copypublic',
+'minifyrating'));
