@@ -1,6 +1,7 @@
 import { getUserOfferRides, getUserBookRides, getRideDetails, getBookRideDetails,
-         getRideotp, changeRideStatus } from './dbHelper';
-import axios from 'axios';
+         getRideotp, changeRideStatus, getRideDateTime, changeRideStatusToCompleted,
+        getCurrentRideDetails, changeRideStatusToCancel } from './dbHelper';
+
 import { json } from 'body-parser';
 
 
@@ -71,6 +72,18 @@ export const currentRide = async (req, res, next) => {
     }
 }
 
+export const currentrideDetails = async (req, res, next) => {
+    try {
+        console.log("new api");
+        const { ride_id } = req.body;
+        const rideDetails = await getCurrentRideDetails(ride_id);
+        return res.status(200).send(rideDetails);
+    } catch (error) {
+        next(error);
+    }
+}
+
+
 export const completedRides = async (req, res, next) => {
     try {
         const { _id} = req.body;
@@ -137,6 +150,16 @@ export const completedRides = async (req, res, next) => {
     }
 }
 
+export const historyrideDetails = async (req, res, next) => {
+    try {
+        console.log("new api");
+        const { ride_id } = req.body;
+        const rideDetails = await getCurrentRideDetails(ride_id);
+        return res.status(200).send(rideDetails);
+    } catch (error) {
+        next(error);
+    }
+}
 
 export const getRideOTP = async (req, res, next) => {
     try {
@@ -153,9 +176,7 @@ export const verifyRideOTP = async (req, res, next) => {
     try {
         console.log("new api");
         const { userId, ride_id, otp } = req.body;
-        const c = await changeRideStatus(ride_id, userId); 
-        console.log(c);
-        return res.status(200).send(c);
+        
 
         const rideotp = await getRideotp(ride_id, userId);
         
@@ -170,6 +191,62 @@ export const verifyRideOTP = async (req, res, next) => {
         }
         
        return res.status(200).send({"Success":"Ride Started"});
+
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const statusCompleted = async (req, res, next) => {
+    try {
+        console.log("new api");
+        const { userId, ride_id} = req.body;
+        await changeRideStatusToCompleted(ride_id, userId); 
+        return res.status(200).send({"Ride":"Completed"}); 
+    } catch (error) {
+        next(error);
+    }
+}
+export const cancelRide = async (req, res, next) => {
+    try {
+        const { userId, ride_id } = req.body;
+        const datetime = await getRideDateTime(ride_id, userId);
+        
+        var today = new Date();
+        var day = today.getDate();
+        var mon = today.getMonth()+1;
+        var year = today.getFullYear();
+        today = (mon +" "+day+","+year);
+        console.log(today);
+        //var todayDate = new Date(today)
+        var time = new Date();
+        var currentTime = time.getHours() + ":" + time.getMinutes();
+        console.log(currentTime);
+        const date = datetime.Date;
+        const [rday, rmonth, ryear] = date.split('-');
+            const dateObj = {rmonth, rday, ryear};
+            const rideDate = dateObj.rmonth + ' ' + dateObj.rday + ',' + dateObj.ryear;
+            const str = datetime.Time; 
+            const rtime =  str.substring(0,str.length-2)
+        console.log(rtime);
+        
+           
+         var dt1 = new Date(today + " " + currentTime);
+         var dt2 = new Date(rideDate + " " + "4:00");
+         
+
+         var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+         diff /= (60 * 60);
+         const hrDiff = Math.abs(Math.round(diff));
+         console.log(hrDiff);
+         if(hrDiff > 1){
+            await changeRideStatusToCancel(ride_id, userId); 
+         }
+         console.log(Math.abs(Math.round(diff)));
+        // const diffInMilliseconds = Math.abs(new Date(datetime) - new Date(datetime));
+        // console.log(diffInMilliseconds);
+       return res.status(200).send({datetime});
 
 
     } catch (error) {

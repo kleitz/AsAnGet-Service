@@ -1,4 +1,3 @@
-
 import {Schema, model} from 'mongoose';
 
 const User = new Schema({
@@ -11,12 +10,16 @@ const User = new Schema({
     age:{type:Number},
     phoneNum:{type:Number},
     rating:{type:Number},
-    puntuality:{type: Number},
+    homeaddress:{type: String},
+    officeaddress:{type: String},
+
     cars: [
         { 
-            carId:{type:String}, 
-            maker:{type:String},
-            type:{type:String}
+            category:{type:String}, 
+            model:{type:String},
+            seats:{type:Number},
+            carNo:{type:Number},
+            ridescompletedbycar:{type:Number, default:0}
             
         }
     ]

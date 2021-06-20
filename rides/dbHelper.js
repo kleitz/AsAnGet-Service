@@ -136,3 +136,73 @@ export const changeRideStatus = async(ride_id,user_Id) => {
         return Promise.reject(error);
     }
 }
+
+export const changeRideStatusToCompleted = async(ride_id,user_Id) => {
+    try {
+     
+       await model.updateOne(
+           {"_id":ride_id,"requestRides.userId" : user_Id , "requestRides.status" : "Ongoing"
+        },
+        { $set: { "requestRides.$.status" : "Completed"} 
+         
+    })
+        
+        return ;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+
+export const getRideDateTime = async(ride_id,user_Id) => {
+    try {
+     
+        
+       const Details = await model.findOne({"_id":ride_id,"requestRides.userId" : user_Id },{ requestRides: 1});
+       const a = Details.requestRides.filter(req=>(req.userId === user_Id))
+       //console.log(a);
+        return {Date : a[0].date , Time : a[0].time};
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+
+export const getCurrentRideDetails = async(ride_id) => {
+    try {
+        const ridesDetails = await model.findOne({ _id: ride_id });
+        const driverId = ridesDetails.userId;
+        const driverDetails = await getbyId(driverId);
+        const requestRides = ridesDetails.requestRides;
+        var passengers = [];
+        
+        for(let index = 0 ; index< requestRides.length ; index++){
+            const passengerId = requestRides[index].userId;
+            const passengerDetails = await getbyId(passengerId);
+            console.log(passengerDetails);
+            passengers.push({date:requestRides[index].date,time:requestRides[index].time,name:passengerDetails.name,imageUrl:passengerDetails.url})
+        }
+        return {Name: driverDetails.name, ProfileUrl:driverDetails.url ,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
+            NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
+            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow, Passengers:passengers
+            
+        };
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+export const changeRideStatusToCancel = async(ride_id,user_Id) => {
+    try {
+     
+       await model.updateOne(
+           {"_id":ride_id,"requestRides.userId" : user_Id , "requestRides.status" : "Upcoming"
+        },
+        { $set: { "requestRides.$.status" : "Cancelled"} 
+         
+    })
+        
+        return ;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
