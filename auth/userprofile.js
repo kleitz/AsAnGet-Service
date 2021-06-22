@@ -6,10 +6,7 @@ export const editprofile = async (req, res, next) => {
         
         const userdata = await edituserbyId(user_id);
         console.log(userdata);
-        return res.status(200).send({name:userdata.name?? 'null', url:userdata.url?? 'null', email:userdata.email?? 'null',
-            phoneNum:userdata.phoneNum?? 'null', homeaddress:userdata.homeaddress?? 'null',
-            officeaddress:userdata.officeaddressuserdata?? 'null', 
-            age : userdata.age?? 'null'});
+        return res.status(200).send({userdata});
     } catch (error) {
         next(error);
     }
@@ -19,7 +16,7 @@ export const updateprofile = async (req, res, next) => {
         const {user_id,name ,age,phoneNum,email,homeaddress,officeaddress,imageUrl } = req.body;     
         
         const userdata = await updateuserprofile(user_id, name, age,phoneNum,email,homeaddress,officeaddress,imageUrl);
-        return res.status(200).send({userdata});
+        return res.status(200).send({"ProfileUpdated":"Success"});
     } catch (error) {
         next(error);
     }
