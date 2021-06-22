@@ -86,11 +86,12 @@ export const getBookRideDetails = async(ride_id) => {
         for(let index = 0 ; index< requestRides.length ; index++){
             const passengerId = requestRides[index].userId;
             const passengerDetails = await getbyId(passengerId);
-            passengers.push({userId:requestRides[index].userId, From:requestRides[index].from, To:requestRides[index].to,date:requestRides[index].date,
+            passengers.push({userId:requestRides[index].userId, From:requestRides[index].from,
+                             To:requestRides[index].to,date:requestRides[index].date,
                             time:requestRides[index].time,Status:requestRides[index].status,
-                            name:passengerDetails.name,imageUrl:passengerDetails.url})
+                            name:passengerDetails.name?? '',imageUrl:passengerDetails.url?? ''})
         }
-        return {Name: driverDetails.name, ProfileUrl:driverDetails.url ,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
+        return {Name: driverDetails.name?? '', ProfileUrl:driverDetails.url?? '' ,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
             NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
             noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow,status:ridesDetails.offerRides[0].status,
              Passengers:passengers
