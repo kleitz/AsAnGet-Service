@@ -6,9 +6,10 @@ export const editprofile = async (req, res, next) => {
         
         const userdata = await edituserbyId(user_id);
         console.log(userdata);
-        return res.status(200).send({name:userdata.name, url:userdata.url, email:userdata.email?? '',
-            phoneNum:userdata.phoneNum?? '', homeaddress:userdata.homeaddress?? '',officeaddress:userdata.officeaddressuserdata?? '', 
-            age : userdata.age?? ''});
+        return res.status(200).send({name:userdata.name?? 'null', url:userdata.url?? 'null', email:userdata.email?? 'null',
+            phoneNum:userdata.phoneNum?? 'null', homeaddress:userdata.homeaddress?? 'null',
+            officeaddress:userdata.officeaddressuserdata?? 'null', 
+            age : userdata.age?? 'null'});
     } catch (error) {
         next(error);
     }

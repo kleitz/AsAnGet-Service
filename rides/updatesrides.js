@@ -244,8 +244,7 @@ export const cancelRide = async (req, res, next) => {
             await changeRideStatusToCancel(ride_id, userId); 
          }
          console.log(Math.abs(Math.round(diff)));
-        // const diffInMilliseconds = Math.abs(new Date(datetime) - new Date(datetime));
-        // console.log(diffInMilliseconds);
+        
        return res.status(200).send({datetime});
 
 
