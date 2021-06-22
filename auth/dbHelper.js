@@ -5,7 +5,7 @@ import model from './model';
 export const getbyId = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
-        return {name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email};
+        return {existUser};
     } catch (error) {
         return Promise.reject(error);
     }
@@ -16,7 +16,7 @@ export const edituserbyId = async(user_id) => {
         const existUser = await model.findOne({ _id  : user_id });
         return {name:existUser.name, url:existUser.imageUrl, email:existUser.email,
             phoneNum:existUser.phoneNum, homeaddress:existUser.homeaddress,officeaddress:existUser.officeaddress, 
-            age : existUser.phoneNum
+            age : existUser.age
          };
     } catch (error) {
         return Promise.reject(error);

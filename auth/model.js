@@ -15,10 +15,10 @@ const User = new Schema({
 
     cars: [
         { 
-            category:{type:String}, 
-            model:{type:String},
-            seats:{type:Number},
-            carNo:{type:Number},
+            category:{type:String, required: true}, 
+            model:{type:String, required: true},
+            seats:{type:Number, required: true},
+            carNo:{type:Number, required: true},
             ridescompletedbycar:{type:Number, default:0}
             
         }

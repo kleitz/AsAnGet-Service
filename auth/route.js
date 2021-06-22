@@ -6,7 +6,7 @@ import {googleAuth} from './google';
 import {requireAuth} from './helper';
 import { instagramAuth } from './instagram';
 import {addCar,myCar} from './cars';
-import {editprofile, updateprofile,getprofile} from './userprofile';
+import {editprofile, updateprofile,getdriverprofile, getpassengerprofile} from './userprofile';
 const router=express.Router();
 
 
@@ -18,47 +18,8 @@ router.post('/add_car',addCar);
 router.post('/my_car',myCar);
 router.post('/edit_profile',editprofile);
 router.post('/update_profile',updateprofile);
-router.post('/get_profile',getprofile);
+router.post('/get_driverprofile',getdriverprofile);
+router.post('/get_passengerprofile',getpassengerprofile);
 
-
-
-
-
-
-router.get('/test-get-1', async(req, res, next) => {
-    try {
-        return res.status(200).send("hello1234");
-    } catch (error) {
-        next(error);
-    }
- });
-
-router.get('/test-get',requireAuth, async(req, res, next) => {
-    try {
-        const data = await getTest();
-        return res.status(200).send(data);
-    } catch (error) {
-        next(error);
-    }
- });
-
-
- router.post('/test-save', async(req, res, next) => {
-    try {
-        await saveTest(req.body);
-        return res.status(200).send('success');
-    } catch (error) {
-        next(error);
-    }
-    
- });
-
- router.post('/test-file-upload', uploadFile.saveImage ,(req, res, next) => {
-    return res.status(201).send('image save in gallery');
- });
-
- router.get('/test3',(req, res, next)=>{
-  res.status(200).send("test3");
- });
  
  export default router;
