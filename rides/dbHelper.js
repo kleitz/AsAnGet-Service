@@ -87,18 +87,13 @@ export const getBookRideDetails = async(ride_id) => {
             const passengerId = requestRides[index].userId;
             const passengerDetails = await getbyId(passengerId);
             
-            passengers.push({userId:requestRides[index].userId, From:requestRides[index].from,
-                             To:requestRides[index].to,date:requestRides[index].date,
-                            time:requestRides[index].time,Status:requestRides[index].status,
-                            name:passengerDetails.existUser.name?? '',imageUrl:passengerDetails.existUser.imageUrl?? ''})
+            passengers.push({name:passengerDetails.existUser.name?? '',imageUrl:passengerDetails.existUser.imageUrl?? ''})
 
         }
-        return {Name: driverDetails.existUser.name?? '', ProfileUrl:driverDetails.existUser.imageUrl?? '', From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
-            NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
-            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow,status:ridesDetails.offerRides[0].status,
-             Passengers:passengers
-            
-        };
+        return {From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,
+            Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date,
+            status:ridesDetails.offerRides[0].status,
+             Passengers:passengers};
     } catch (error) {
         return Promise.reject(error);
     }

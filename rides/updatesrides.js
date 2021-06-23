@@ -42,7 +42,8 @@ export const currentRide = async (req, res, next) => {
            
             if((todayDate < RideDate) || ((todayDate == RideDate)&& (Status == "Cancelled")) 
             || ((todayDate == RideDate)&& (Status == "Upcoming")) || ((todayDate == RideDate)&& (Status == "Ongoing"))){  
-                Bookrides.push(Details);
+                var myJson = { "Type":"BookRide" , Details }
+                Bookrides.push(myJson);
             }
 
         }
@@ -61,11 +62,13 @@ export const currentRide = async (req, res, next) => {
             || ((todayDate == RideDate)&& (Status == "Upcoming")) || ((todayDate == RideDate)&& (Status == "Ongoing"))){
                 const rideId = getOfferRides[index]._id;
                 const Details = await getBookRideDetails(rideId);
-                Offeredrides.push(Details);
+                console.log(Details);
+                var myJson = { "Type":"OfferRide" , Details }
+                Offeredrides.push(myJson);
             }
 
         }
-        return res.status(200).json({Bookrides,Offeredrides});
+        return res.status(200).json([...Bookrides,...Offeredrides]);
     } catch (error) {
         next(error);
     }
