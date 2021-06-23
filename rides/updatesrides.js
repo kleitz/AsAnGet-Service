@@ -31,7 +31,6 @@ export const currentRide = async (req, res, next) => {
             const passanger = [Details.Passengers[0]];
             
             
-            console.log(passanger);
             for(let index = 0; index < passanger.length; index++)
             {
                 
