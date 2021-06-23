@@ -90,9 +90,9 @@ export const getBookRideDetails = async(ride_id) => {
             passengers.push({name:passengerDetails.existUser.name?? '',imageUrl:passengerDetails.existUser.imageUrl?? ''})
 
         }
-        return {From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,
+        return {RideId:ridesDetails.offerRides[0]._id,From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,
             Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date,
-            status:ridesDetails.offerRides[0].status,
+            carType:ridesDetails.offerRides[0].carType,status:ridesDetails.offerRides[0].status,
              Passengers:passengers};
     } catch (error) {
         return Promise.reject(error);
