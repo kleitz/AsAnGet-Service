@@ -151,7 +151,7 @@ export const completedRides = async (req, res, next) => {
 
 export const historyrideDetails = async (req, res, next) => {
     try {
-        console.log("new api");
+        
         const { ride_id } = req.body;
         const rideDetails = await getCurrentRideDetails(ride_id);
         return res.status(200).send(rideDetails);
@@ -162,7 +162,7 @@ export const historyrideDetails = async (req, res, next) => {
 
 export const getRideOTP = async (req, res, next) => {
     try {
-        console.log("new api");
+        
         const { userId, ride_id } = req.body;
         const otp = await getRideotp(ride_id, userId);
         return res.status(200).send(otp);
@@ -173,13 +173,13 @@ export const getRideOTP = async (req, res, next) => {
 
 export const verifyRideOTP = async (req, res, next) => {
     try {
-        console.log("new api");
+        
         const { userId, ride_id, otp } = req.body;
         
 
         const rideotp = await getRideotp(ride_id, userId);
-        
-        if(rideotp == otp)
+        console.log(rideotp);
+        if(rideotp.OTP == otp)
         {
             const rideStatus = await changeRideStatus(ride_id, userId); 
             
@@ -201,8 +201,9 @@ export const statusCompleted = async (req, res, next) => {
     try {
         console.log("new api");
         const { userId, ride_id} = req.body;
-        await changeRideStatusToCompleted(ride_id, userId); 
-        return res.status(200).send({"Ride":"Completed"}); 
+        const amount = await changeRideStatusToCompleted(ride_id, userId); 
+        console.log(amount);
+        return res.status(200).send({"Ride":"Completed", "Amount":amount}); 
     } catch (error) {
         next(error);
     }

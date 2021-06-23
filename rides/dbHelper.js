@@ -149,8 +149,16 @@ export const changeRideStatusToCompleted = async(ride_id,user_Id) => {
         { $set: { "requestRides.$.status" : "Completed"} 
          
     })
-        
-        return ;
+    const seats = await model.findOne({"_id":ride_id,"requestRides.userId" : user_Id});
+    const cost = await model.findOne({"_id":ride_id});
+    const perseatcost = cost.offerRides[0].pricePerSeat;
+    const perbagcost = cost.offerRides[0].pricePerBag;
+    const passangerseats =  cost.requestRides[0].noOfSeats;
+    const passangerbags =  cost.requestRides[0].bigBagNo;
+    console.log(passangerseats);
+    console.log(passangerbags);
+    const total = ((perseatcost * passangerseats) + (perbagcost * passangerbags));
+    return total;
     } catch (error) {
         return Promise.reject(error);
     }
