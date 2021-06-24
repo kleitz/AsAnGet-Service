@@ -138,10 +138,10 @@ export const findRide = async (req, res, next) => {
 
 export const rideDetails = async (req, res, next) => {
     try {
-        console.log("new api");
+        
         const { ride_id } = req.body;
-        const rideDetails = await getRideDetails(ride_id);
-        return res.status(200).send(rideDetails);
+        const rideDetail = await getRideDetails(ride_id);
+        return res.status(200).send(rideDetail);
     } catch (error) {
         next(error);
     }

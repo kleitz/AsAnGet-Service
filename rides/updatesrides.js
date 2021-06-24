@@ -1,4 +1,4 @@
-import { getUserOfferRides, getUserBookRides, getRideDetails, getBookRideDetails,
+import { getUserOfferRides, getUserBookRides, getBookRideDetails,
          getRideotp, changeRideStatus, getRideDateTime, changeRideStatusToCompleted,
         getCurrentRideDetails, changeRideStatusToCancel, driverstarthisride } from './dbHelper';
 
