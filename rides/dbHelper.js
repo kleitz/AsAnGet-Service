@@ -216,3 +216,16 @@ export const changeRideStatusToCancel = async(ride_id,user_Id) => {
         return Promise.reject(error);
     }
 }
+
+
+export const driverstarthisride = async(ride_id) => {
+    try {
+     
+       await model.updateOne(
+           {_id:ride_id,"offerRides.status": "Upcoming"},
+        { $set: { "offerRides.$.status" : "Ongoing"} })
+    return;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}

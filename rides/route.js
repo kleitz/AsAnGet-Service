@@ -3,7 +3,7 @@ import express from 'express';
 
 import {createRide,findRide,bookRide,rideDetails} from './controller';
 import{currentRide, completedRides, getRideOTP, verifyRideOTP, cancelRide, statusCompleted
-       ,currentrideDetails,historyrideDetails} from './updatesrides';
+       ,currentrideDetails,historyrideDetails,driverstartride} from './updatesrides';
 
 const router=express.Router();
 
@@ -19,6 +19,7 @@ router.post('/cancel_ride',cancelRide);
 router.post('/status_completed',statusCompleted);
 router.post('/currentride_details',currentrideDetails);
 router.post('/historyride_details',historyrideDetails);
+router.post('/driverstart_ride',driverstartride);
 
 
 

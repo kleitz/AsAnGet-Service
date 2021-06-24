@@ -1,4 +1,6 @@
 import { myCars, edituserbyId, updateuserprofile, getprofilebyId} from './dbHelper';
+import {getuserratings} from '../ratings/dbHelper';
+
 
 export const editprofile = async (req, res, next) => {
     try {
@@ -27,7 +29,8 @@ export const getdriverprofile = async (req, res, next) => {
         const {user_id,role } = req.body;     
         
         const data = await getprofilebyId(user_id);
-        return res.status(200).send({data});
+        const rating = await getuserratings(user_id, role);
+        return res.status(200).send({data,rating});
     } catch (error) {
         next(error);
     }
@@ -36,7 +39,9 @@ export const getpassengerprofile = async (req, res, next) => {
     try {
         const {user_id,role } = req.body;     
         const data = await getprofilebyId(user_id);
-        return res.status(200).send({data});
+        const rating = await getuserratings(user_id, role);
+        return res.status(200).send({data,rating});
+        
     } catch (error) {
         next(error);
     }

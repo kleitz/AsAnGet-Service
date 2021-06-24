@@ -1,6 +1,6 @@
 import { getUserOfferRides, getUserBookRides, getRideDetails, getBookRideDetails,
          getRideotp, changeRideStatus, getRideDateTime, changeRideStatusToCompleted,
-        getCurrentRideDetails, changeRideStatusToCancel } from './dbHelper';
+        getCurrentRideDetails, changeRideStatusToCancel, driverstarthisride } from './dbHelper';
 
 import { json } from 'body-parser';
 
@@ -211,6 +211,19 @@ export const statusCompleted = async (req, res, next) => {
         next(error);
     }
 }
+
+export const driverstartride = async (req, res, next) => {
+    try {
+        
+        const {ride_id} = req.body;
+        await driverstarthisride(ride_id); 
+        
+        return res.status(200).send({"Ride":"Started"}); 
+    } catch (error) {
+        next(error);
+    }
+}
+
 export const cancelRide = async (req, res, next) => {
     try {
         const { userId, ride_id } = req.body;
