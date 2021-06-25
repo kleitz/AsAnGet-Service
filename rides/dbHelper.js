@@ -88,7 +88,7 @@ export const getBookRideDetails = async(ride_id) => {
             const passengerId = requestRides[index].userId;
             const passengerDetails = await getbyId(passengerId);
             
-            passengers.push({name:passengerDetails.existUser.name?? '',imageUrl:passengerDetails.existUser.imageUrl?? ''})
+            passengers.push({name:passengerDetails.existUser.name?? '',imageUrl:passengerDetails.existUser.imageUrl?? '', userId:requestRides[index].userId,status:requestRides[index].status})
 
         }
         return {RideId:ridesDetails.offerRides[0]._id,From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,

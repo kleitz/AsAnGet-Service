@@ -17,7 +17,7 @@ export const currentRide = async (req, res, next) => {
         today = (mon+"-"+day+"-"+year);
         var todayDate = new Date(today);
         const bookrides = await getUserBookRides(_id);
-        
+        console.log(bookrides)
         for(let index = 0 ; index< bookrides.length ; index++)
         {
 
@@ -28,23 +28,27 @@ export const currentRide = async (req, res, next) => {
             const RideDate = new Date(rideDate);
             const rideId = bookrides[index]._id;
             const Details = await getBookRideDetails(rideId);
-            const passanger = [Details.Passengers[0]];
-            
+            const passanger = Details.Passengers;
+            console.log(passanger)
             
             for(let index = 0; index < passanger.length; index++)
             {
+            console.log(index)
                 
                 if(passanger[index].userId == _id){
+                    console.log(passanger[index].userId );
+                    console.log(_id );
                     const status = passanger[index].status;
+                    if((todayDate < RideDate) || ((todayDate == RideDate)&& (status == "Cancelled")) 
+                    || ((todayDate >= RideDate)&& (status == "Upcoming")) || ((todayDate >= RideDate)&& (status == "Ongoing"))){  
+                        var myJson = { "Type":"BookRide" , Details }
+                        Bookrides.push(myJson);
+                    }
                 }
                
             }
            
-            if((todayDate < RideDate) || ((todayDate == RideDate)&& (status == "Cancelled")) 
-            || ((todayDate >= RideDate)&& (status == "Upcoming")) || ((todayDate >= RideDate)&& (status == "Ongoing"))){  
-                var myJson = { "Type":"BookRide" , Details }
-                Bookrides.push(myJson);
-            }
+           
 
         }
         const getOfferRides = await getUserOfferRides(_id);
@@ -62,7 +66,7 @@ export const currentRide = async (req, res, next) => {
             || ((todayDate >= RideDate)&& (status == "Upcoming")) || ((todayDate >= RideDate)&& (status == "Ongoing"))){
                 const rideId = getOfferRides[index]._id;
                 const Details = await getBookRideDetails(rideId);
-                console.log(Details);
+                
                 var myJson = { "Type":"OfferRide" , Details }
                 Offeredrides.push(myJson);
             }
