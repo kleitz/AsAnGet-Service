@@ -91,7 +91,7 @@ export const getBookRideDetails = async(ride_id) => {
             passengers.push({name:passengerDetails.existUser.name?? '',imageUrl:passengerDetails.existUser.imageUrl?? '', userId:requestRides[index].userId,status:requestRides[index].status})
 
         }
-        return {RideId:ridesDetails.offerRides[0]._id,From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,
+        return {RideId:ridesDetails._id,From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,
             Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date,
             carType:ridesDetails.offerRides[0].carType,status:ridesDetails.offerRides[0].status,
              Passengers:passengers};
@@ -178,6 +178,7 @@ export const getRideDateTime = async(ride_id,user_Id) => {
 export const getCurrentRideDetails = async(ride_id) => {
     try {
         const ridesDetails = await model.findOne({ _id: ride_id });
+        console.log(ridesDetails);
         const driverId = ridesDetails.userId;
         const driverDetails = await getbyId(driverId);
         const requestRides = ridesDetails.requestRides;
@@ -186,7 +187,7 @@ export const getCurrentRideDetails = async(ride_id) => {
         for(let index = 0 ; index< requestRides.length ; index++){
             const passengerId = requestRides[index].userId;
             const passengerDetails = await getbyId(passengerId);
-            console.log(passengerDetails);
+            //console.log(passengerDetails);
             passengers.push({userId:requestRides[index].userId, From:requestRides[index].from,
                 To:requestRides[index].to,date:requestRides[index].date,
                time:requestRides[index].time,Status:requestRides[index].status,
