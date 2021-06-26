@@ -15,7 +15,8 @@ var build_files_paths = {
    public_path:['./public/*.html','./public/*.png'],
    nonJs: ['package.json'],
    config:['./config/*'],
-   envCopy:['./config/.env.production','./config/.env.development', './config/.env.test']
+   envCopy:['./config/.env.production','./config/.env.development', './config/.env.test'],
+   lastlocation_path:['./lastlocation/*.js'],
 };
 
 gulp.task('clean', function() {
@@ -108,7 +109,16 @@ gulp.task('minifyconfig', function() {
                 .pipe(gulp.dest('dist'));
 });
 
+gulp.task('minifylastlocation', function() {
+        return gulp.src(build_files_paths.lastlocation_path)
+                .pipe(babel({
+                        presets: ['@babel/preset-env']
+                }))
+                .pipe(uglify())
+                .pipe(gulp.dest('dist/lastlocation'));
+        });
+
 gulp.task('build', gulp.series('clean','copynojs','copyimage', 'minifypublicjs', 'minifyauth',
 'minifyride', 'minifyhelper',
 'minifyroot', 'minifyconfig', 'copyEnv','copypublic',
-'minifyrating'));
+'minifyrating','minifylastlocation'));
