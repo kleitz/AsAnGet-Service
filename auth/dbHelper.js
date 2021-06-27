@@ -61,9 +61,9 @@ export const myCars = async(user_id) => {
 export const getprofilebyId = async(user_id,role) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
-
-        return {name:existUser.name, url:existUser.imageUrl, homeaddress : existUser.homeaddress , 
-               officeaddress : existUser.officeaddress, cars: existUser.cars };
+        console.log(existUser);
+        return {name:existUser.name, url:existUser.imageUrl?? '', homeaddress : existUser.homeaddress?? '' , 
+               officeaddress : existUser.officeaddress?? '', cars: existUser.cars?? '' };
     } catch (error) {
         return Promise.reject(error);
     }
