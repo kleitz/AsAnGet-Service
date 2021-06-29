@@ -41,8 +41,8 @@ export const getalllocation = async(userId)=>{
         return loc;
         }
         else {
-            const data=null;
-            return data;
+         
+            return ;
         }
 
     }

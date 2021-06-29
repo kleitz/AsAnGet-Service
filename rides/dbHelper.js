@@ -154,6 +154,7 @@ export const changeRideStatusToCompleted = async(ride_id,user_Id) => {
     console.log(passangerseats);
     console.log(passangerbags);
     const total = ((perseatcost * passangerseats) + (perbagcost * passangerbags));
+   
     return total;
     } catch (error) {
         return Promise.reject(error);

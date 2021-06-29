@@ -13,7 +13,14 @@ export const addlocation = async (req, res, next) => {
 export const getlocation = async (req, res, next) => {  
     try {  
        const data = await getalllocation(req.body.userId);
+       if(data){
        return res.status(200).json({Locations : data});
+        
+       }
+       else{
+       return res.status(200).json({Locations : []});
+
+       }
     } catch (err) {
         return next(err);
     }
