@@ -196,7 +196,8 @@ export const getCurrentRideDetails = async(ride_id) => {
         }
         return {Name: driverDetails.existUser.name?? '', ProfileUrl:driverDetails.existUser.imageUrl?? '',
         phoneNum:driverDetails.existUser.phoneNum?? '', From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
-            NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
+        pricePerSeat:ridesDetails.offerRides[0].pricePerSeat,  pricePerBag:ridesDetails.offerRides[0].pricePerBag,noOfSeats:ridesDetails.offerRides[0].noOfSeats
+        ,NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
             noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow,status:ridesDetails.offerRides[0].status,
              Passengers:passengers
             
@@ -221,6 +222,22 @@ export const changeRideStatusToCancel = async(ride_id,user_Id) => {
     }
 }
 
+export const changecompleteride = async(ride_id,user_Id) => {
+    try {
+     
+       await model.updateOne(
+           {"_id":ride_id,"userId" : user_Id 
+        },
+        { $set: { "requestRides.$.status" : "Cancelled"} 
+         
+    })
+        
+        return ;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
 
 export const driverstarthisride = async(ride_id) => {
     try {
@@ -233,3 +250,31 @@ export const driverstarthisride = async(ride_id) => {
         return Promise.reject(error);
     }
 }
+
+export const driverridestatus = async(ride_id) => {
+    try {
+     
+       const data = await model.findOne({_id: ride_id});
+       return data.offerRides[0].status;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+export const passengerridestatus = async(ride_id, user_id) => {
+    try {
+     
+       const data = await model.findOne({"_id":ride_id,"requestRides.userId" : user_id});
+       const requestRides = data.requestRides;
+       var newdata = requestRides.filter(task =>{
+         if(task.userId == user_id){
+             return task.status;
+         }
+       });
+      
+       return newdata[0].status;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
