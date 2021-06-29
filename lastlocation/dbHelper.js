@@ -35,8 +35,15 @@ export const getalllocation = async(userId)=>{
 
     try{
         const userdata = await model.findOne({"userId":userId});
+        if(userdata)
+        {
         const loc = userdata.locations;
         return loc;
+        }
+        else {
+            const data=null;
+            return data;
+        }
 
     }
 
