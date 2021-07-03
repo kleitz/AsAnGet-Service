@@ -1,8 +1,5 @@
 import model from './model';
 
-
-
-
 export const getbyId = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
@@ -24,12 +21,14 @@ export const edituserbyId = async(user_id) => {
     }
 }
 
-export const updateuserprofile = async(user_id,name, age, phoneNum, email, homeaddress, officeaddress, imageUrl) => {
+export const updateuserprofile = async(body ,files) => {
     try {
-     
-       await model.updateOne({"_id":user_id},
-        { $set: { "name" : name, "age" : age , "phoneNum" : phoneNum , "email" : email
-        , "homeaddress" : homeaddress , "officeaddress" : officeaddress , "imageUrl" : imageUrl} 
+        
+       console.log(files);
+       await model.updateOne({"_id": body.user_id},
+        { $set: { "name" : body.name , "age" : body.age , "phoneNum" : body.phoneNum , "email" : body.email
+        , "homeaddress" : body.homeaddress , "officeaddress" : body.officeaddress , 
+        "imageUrl" : `http://${process.env.serverIPAddress}:${process.env.PORT}/img/${files[0].originalname}`} 
     })
     return ;
     } catch (error) {

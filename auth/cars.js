@@ -28,3 +28,21 @@ export const myCar = async (req, res, next) => {
         next(error);
     }
 }
+
+export const userCars = async (req, res, next) => {
+    try {
+        const {user_id } = req.body;     
+        
+        const cars = await myCars(user_id);
+        console.log(cars);
+        const data = cars.map( (task)=> {
+            const category = task.category;
+            const carNo = task.carNo; 
+            const seats = task.seats; 
+            return {category, carNo, seats};
+        });
+        return res.status(200).send({data});
+    } catch (error) {
+        next(error);
+    }
+}

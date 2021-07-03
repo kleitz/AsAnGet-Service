@@ -93,6 +93,7 @@ export const currentrideDetails = async (req, res, next) => {
 
 export const completedRides = async (req, res, next) => {
     try {
+        console.log(req.body);
         const { _id} = req.body;
         var Bookrides = [];
         var Offeredrides = [];
@@ -103,7 +104,7 @@ export const completedRides = async (req, res, next) => {
         today = (mon+"-"+day+"-"+year);
         var todayDate = new Date(today);
         const bookrides = await getUserBookRides(_id);
-        
+        console.log(bookrides);
         for(let index = 0 ; index< bookrides.length ; index++)
         {
 
@@ -129,7 +130,8 @@ export const completedRides = async (req, res, next) => {
            
             if((todayDate < RideDate) || ((todayDate == RideDate)&& (status == "Cancelled")) 
             || ((todayDate == RideDate)&& (status == "Upcoming")) || ((todayDate == RideDate)&& (status == "Ongoing"))){  
-                Bookrides.push(Details);
+                var myJson = { "Type":"Bookride" , Details }
+                Bookrides.push(myJson);
             }
 
         }
@@ -147,11 +149,13 @@ export const completedRides = async (req, res, next) => {
             if((todayDate > RideDate) || ((todayDate == RideDate)&& (status == "Upcoming")) || ((todayDate == RideDate)&& (status == "Ongoing"))){
                 const rideId = getOfferRides[index]._id;
                 const Details = await getBookRideDetails(rideId);
-                Offeredrides.push(Details);
+                var myJson = { "Type":"OfferRide" , Details }
+                
+                Offeredrides.push(myJson);
             }
 
         }
-        return res.status(200).json({Bookrides,Offeredrides});
+        return res.status(200).json(...Bookrides,...Offeredrides);
     } catch (error) {
         next(error);
     }
