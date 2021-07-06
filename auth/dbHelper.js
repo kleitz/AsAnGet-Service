@@ -49,9 +49,12 @@ export const addUserCar = async(newCar) => {
 export const myCars = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id: user_id });
-        const cars = existUser.cars;
+        if(existUser){
+            const cars = existUser.cars;
+            return cars;
+        }
+        return null;
         
-        return cars;
     } catch (error) {
         return Promise.reject(error);
     }

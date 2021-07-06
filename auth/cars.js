@@ -35,13 +35,19 @@ export const userCars = async (req, res, next) => {
         
         const cars = await myCars(user_id);
         console.log(cars);
-        const data = cars.map( (task)=> {
+        
+        if(cars){
+            const data = cars.map( (task)=> {
             const category = task.category;
             const carNo = task.carNo; 
-            const seats = task.seats; 
-            return {category, carNo, seats};
+            const seats = task.seats -1; 
+            const model = task.model;
+            return {category, carNo, seats, model};
         });
         return res.status(200).send({data});
+
+    }
+        return res.status(200).send({"data":[]});
     } catch (error) {
         next(error);
     }
