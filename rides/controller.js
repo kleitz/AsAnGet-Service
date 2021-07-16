@@ -2,7 +2,6 @@ import { saveRideInDB, getRidesFromDb,getAllRides,getRideDetails,bookRideSaveinD
 import {getbyId} from '../auth/dbHelper';
 import axios from 'axios';
 import { PolyUtil} from "node-geometry-library";
-import { json } from 'body-parser';
 
 
 
