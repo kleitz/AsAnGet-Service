@@ -12,6 +12,7 @@ import authRouter from './auth/route';
 import ridesRouter from './rides/route';
 import ratingsRouter from './ratings/route';
 import locationRouter from './lastlocation/route';
+import adminRouter from './admin/route';
 
 
 
@@ -51,6 +52,7 @@ app.use('/auth', authRouter);
 app.use('/ride',ridesRouter);
 app.use('/ratings',ratingsRouter);
 app.use('/lastlocation',locationRouter);
+app.use('/admin',adminRouter);
 
 app.use((err, req, res, next) => {
   logger.saveError(err.stack);

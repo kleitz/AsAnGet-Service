@@ -1,7 +1,7 @@
 import express from 'express';
 
 
-import {createRide,findRide,bookRide,rideDetails} from './controller';
+import {createRide,findRide,bookRide,rideDetails, rideDistance} from './controller';
 import{currentRide, completedRides, getRideOTP, verifyRideOTP, cancelRide, statusCompleted
        ,currentrideDetails,historyrideDetails,driverstartride, getdriverridestatus,
        getpassengerridestatus} from './updatesrides';
@@ -23,7 +23,7 @@ router.post('/historyride_details',historyrideDetails);
 router.post('/driverstart_ride',driverstartride);
 router.post('/getdriverride_status',getdriverridestatus);
 router.post('/getpassengerride_status',getpassengerridestatus);
-
+router.post('/getRide_distance',rideDistance);
 
 
 router.get('/test3',(req, res, next)=>{
