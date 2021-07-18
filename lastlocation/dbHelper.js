@@ -6,7 +6,13 @@ export const addlastlocation = async(data)=>{
 
     try{
         const userdata = await model.findOne({"userId":data.userId});
+        
         if(userdata){
+            for(var i=0; i<userdata.locations.length; i++){
+                if(userdata.locations[i] == data.loc){
+                    return;
+                }
+               }
             userdata.locations.push(data.loc);
             if(userdata.locations.length > 5)
             {
