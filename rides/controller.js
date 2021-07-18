@@ -179,27 +179,16 @@ export const bookRide = async (req, res, next) => {
 
 export const rideDistance = async (req, res, next) => {
     try {
-        const {startPoint, endPoint  } = req.body;
+        const {pickupText, destText  } = req.body;
 
-        if((startPoint == "" && startPoint == "") || (startPoint == "" || startPoint == "")){
+        if((pickupText == "" && destText == "") || (pickupText == "" || destText == "")){
         return res.status(200).json("RideId: 0KM");
 
         }
         else{
-            let placeUrl = process.env.getPlaceName.replace('replace_lat_lng',startPoint);
-            //Api call to get start place from Lat/Log
-            const getStartPlace = await axios.get(placeUrl);
-            placeUrl = process.env.getPlaceName.replace('replace_lat_lng',endPoint);
-            //Api call to get Destination name from Lat/Log
-            const getEndPlace = await axios.get(placeUrl);
-            console.log(getEndPlace);
-            const startPlaceName = getStartPlace.data.results[0].formatted_address;
-            const endPlaceName = getEndPlace.data.results[0].formatted_address;
             
-            console.log(startPlaceName);
-            console.log(endPlaceName);
-            let getPolyline = process.env.googleDirectionApi.replace('replace_start_place',startPlaceName);
-            getPolyline = getPolyline.replace('replace_end_place',endPlaceName);
+            let getPolyline = process.env.googleDirectionApi.replace('replace_start_place',pickupText);
+            getPolyline = getPolyline.replace('replace_end_place',destText);
             console.log(getPolyline);
             //Api call to get Distance directions and all the polyline points
             const response = await axios.get(getPolyline);
