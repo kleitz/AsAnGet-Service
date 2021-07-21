@@ -155,7 +155,7 @@ export const completedRides = async (req, res, next) => {
             }
 
         }
-        return res.status(200).json(...Bookrides,...Offeredrides);
+        return res.status(200).send([...Bookrides,...Offeredrides]);
     } catch (error) {
         next(error);
     }
