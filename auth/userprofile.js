@@ -7,7 +7,7 @@ export const editprofile = async (req, res, next) => {
         const {user_id } = req.body;     
         
         const userdata = await edituserbyId(user_id);
-        console.log(userdata);
+        
         return res.status(200).send({userdata});
     } catch (error) {
         next(error);
