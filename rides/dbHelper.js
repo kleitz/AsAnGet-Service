@@ -38,7 +38,10 @@ export const getRideDetails = async(ride_id) => {
         return {Name: driverDetails.existUser.name, ProfileUrl:driverDetails.existUser.imageUrl,carType:ridesDetails.offerRides[0].carType,
             from:ridesDetails.offerRides[0].from , to:ridesDetails.offerRides[0].to  ,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
             NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
-            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow, Passengers:passengers
+            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow, recurringRideStartDate:ridesDetails.offerRides[0].recurringRideStartDate,
+            recurringRideEndDate:ridesDetails.offerRides[0].recurringRideEndDate,recurringRideTime:ridesDetails.offerRides[0].recurringRideTime,
+            user_id:ridesDetails.userId,Ride_id:ridesDetails._id,Currency:ridesDetails.offerRides[0].currency,
+            pricePerSeat:ridesDetails.offerRides[0].pricePerSeat,priceperBag:ridesDetails.offerRides[0].pricePerBag, Passengers:passengers
             
         };
     } catch (error) {

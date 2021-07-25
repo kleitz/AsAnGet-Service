@@ -3,7 +3,7 @@ import model from './model';
 export const getbyId = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
-        console.log(existUser.createdDate);
+       
 
         return {existUser};
     } catch (error) {
@@ -15,12 +15,10 @@ export const getuserjoineddays = async(user_id) => {
         const existUser = await model.findOne({ _id  : user_id });
         const createDate = existUser.createdDate;
         const tdate = new Date();
-        console.log(createDate);
-        console.log(tdate);
         const diff = (tdate - createDate)/(86400000);
         const str = String(diff);
         const days = str.slice(0,2);
-        console.log(days);
+        
         return days;
     } catch (error) {
         return Promise.reject(error);
