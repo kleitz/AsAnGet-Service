@@ -38,7 +38,10 @@ export const getRideDetails = async(ride_id) => {
         return {Name: driverDetails.existUser.name, ProfileUrl:driverDetails.existUser.imageUrl,carType:ridesDetails.offerRides[0].carType,
             from:ridesDetails.offerRides[0].from , to:ridesDetails.offerRides[0].to  ,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
             NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
-            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow, Passengers:passengers
+            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow, recurringRideStartDate:ridesDetails.offerRides[0].recurringRideStartDate,
+            recurringRideEndDate:ridesDetails.offerRides[0].recurringRideEndDate,recurringRideTime:ridesDetails.offerRides[0].recurringRideTime,
+            user_id:ridesDetails.userId,Ride_id:ridesDetails._id,Currency:ridesDetails.offerRides[0].currency,
+            pricePerSeat:ridesDetails.offerRides[0].pricePerSeat,priceperBag:ridesDetails.offerRides[0].pricePerBag, Passengers:passengers
             
         };
     } catch (error) {
@@ -156,7 +159,8 @@ export const changeRideStatusToCompleted = async(ride_id,user_Id) => {
     console.log(passangerseats);
     console.log(passangerbags);
     const total = ((perseatcost * passangerseats) + (perbagcost * passangerbags));
-   
+    console.log(passangerbags);
+
     return total;
     } catch (error) {
         return Promise.reject(error);
@@ -249,6 +253,39 @@ export const driverstarthisride = async(ride_id) => {
            {_id:ride_id,"offerRides.status": "Upcoming"},
         { $set: { "offerRides.$.status" : "Ongoing"} })
     return;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+export const drivercompletehisride = async(ride_id) => {
+    try {
+     
+       await model.updateOne(
+           {_id:ride_id,"offerRides.status": "Ongoing"},
+        { $set: { "offerRides.$.status" : "Completed"} })
+
+        const passenger = await model.find({_id: ride_id});
+        const price = passenger[0].offerRides[0].pricePerSeat;
+        const bagprice = passenger[0].offerRides[0].pricePerBag;
+        const details = passenger[0].requestRides;
+        console.log(price);
+        console.log(bagprice);
+        
+        
+        var total = 0;
+        for(var i=0; i<details.length; i++){
+            if(details[i].status == 'Completed'){
+                const seats = details[i].noOfSeats;
+                const bags = details[i].bigBagNo;
+                console.log(seats);
+                console.log(bags);
+
+
+                total = total + ((price*seats) + (bagprice*bags));
+            }
+        }
+    return total;
     } catch (error) {
         return Promise.reject(error);
     }

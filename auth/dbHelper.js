@@ -3,15 +3,32 @@ import model from './model';
 export const getbyId = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
+       
+
         return {existUser};
     } catch (error) {
         return Promise.reject(error);
     }
 }
-
+export const getuserjoineddays = async(user_id) => {
+    try {
+        const existUser = await model.findOne({ _id  : user_id });
+        const createDate = existUser.createdDate;
+        const tdate = new Date();
+        const diff = (tdate - createDate)/(86400000);
+        const str = String(diff);
+        const days = str.slice(0,2);
+        
+        return days;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
 export const edituserbyId = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
+       
+        
         return {name:existUser.name, url:existUser.imageUrl, email:existUser.email,
             phoneNum:existUser.phoneNum, homeaddress:existUser.homeaddress,officeaddress:existUser.officeaddress, 
             age : existUser.age
@@ -70,3 +87,4 @@ export const getprofilebyId = async(user_id,role) => {
         return Promise.reject(error);
     }
 }
+
