@@ -61,6 +61,7 @@ export const createRide = async (req, res, next) => {
                 smoking: smokingAllow,
                 petAllow: petAllow,
                 foodAllow: foodAllow,
+                firebaseTopic: `${userId}${Date.now()}`
               
               }], 
         }
