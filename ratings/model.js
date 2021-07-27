@@ -1,13 +1,15 @@
 import {Schema, model} from 'mongoose';
 
-const rating = new Schema({
+const ratings = new Schema({
     
            ratingUserId:{type:String },
            ratedUserId:{type:String},
            review:{type:String},
             role:{type: String},
-            rate:{type:Number}
+            rate:{type:Number},
+            remark:[{type:String}],
+
     
 });
 
-export default model('rating', rating);
+export default model('ratings', ratings);

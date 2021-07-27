@@ -1,7 +1,7 @@
 import { myCars, edituserbyId, updateuserprofile, getprofilebyId} from './dbHelper';
 import {getuserratings} from '../ratings/dbHelper';
 
-
+/*editprofile() is used to edit profile  of the user by id*/
 export const editprofile = async (req, res, next) => {
     try {
         const {user_id } = req.body;     
@@ -13,7 +13,7 @@ export const editprofile = async (req, res, next) => {
         next(error);
     }
 }
-
+/*updateprofile() is used to update profile  of the user*/
 export const updateprofile = async (req, res, next) => {
     try {
         console.log(req.body);
@@ -26,7 +26,7 @@ export const updateprofile = async (req, res, next) => {
         next(error);
     }
 }
-
+/*getdriverprofile() is used to get driver profile */
 export const getdriverprofile = async (req, res, next) => {
     try {
         const {user_id,role } = req.body;     
@@ -38,6 +38,8 @@ export const getdriverprofile = async (req, res, next) => {
         next(error);
     }
 }
+
+/*getpassengerprofile() is used to get passenger profile */
 export const getpassengerprofile = async (req, res, next) => {
     try {
         const {user_id,role } = req.body;     

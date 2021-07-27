@@ -1,5 +1,5 @@
 import model from './model';
-
+/*getbyId() used to get existing user by userId*/
 export const getbyId = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
@@ -8,7 +8,7 @@ export const getbyId = async(user_id) => {
         return Promise.reject(error);
     }
 }
-
+/*edituserbyId() is used to edit user by using userId  */
 export const edituserbyId = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
@@ -20,7 +20,7 @@ export const edituserbyId = async(user_id) => {
         return Promise.reject(error);
     }
 }
-
+/*updateuserprofile() is used to update user profile */
 export const updateuserprofile = async(body ,files) => {
     try {
         
@@ -35,6 +35,7 @@ export const updateuserprofile = async(body ,files) => {
         return Promise.reject(error);
     }
 }
+/* addUserCar() is used to add a new car to user profile  */
 export const addUserCar = async(newCar) => {
     try {
         const existUser = await model.findOne({ _id  : newCar.user_id });
@@ -45,7 +46,7 @@ export const addUserCar = async(newCar) => {
         return Promise.reject(error);
     }
 }
-
+/*myCars() is used to let the user see his cars */
 export const myCars = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id: user_id });
@@ -59,7 +60,7 @@ export const myCars = async(user_id) => {
         return Promise.reject(error);
     }
 }
-
+/* getprofilebyId() is used to get user's profile*/
 export const getprofilebyId = async(user_id,role) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });

@@ -1,6 +1,6 @@
 import {addUserCar, myCars} from './dbHelper';
 
-
+/*addCar() adds car according to modelView*/
 export const addCar = async (req, res, next) => {
     try {
         const {user_id,  category,model_type, seat, car_no  } = req.body;     
@@ -17,7 +17,7 @@ export const addCar = async (req, res, next) => {
         next(error);
     }
 }
-
+/*myCar() used to add user car*/ 
 export const myCar = async (req, res, next) => {
     try {
         const {user_id } = req.body;     
@@ -28,7 +28,7 @@ export const myCar = async (req, res, next) => {
         next(error);
     }
 }
-
+/*userCars() is used to add other deatails about cars*/
 export const userCars = async (req, res, next) => {
     try {
         const {user_id } = req.body;     
