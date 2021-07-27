@@ -1,7 +1,7 @@
 import { getUserOfferRides, getUserBookRides, getBookRideDetails,
          getRideotp, changeRideStatus, getRideDateTime, changeRideStatusToCompleted,
         getCurrentRideDetails, changeRideStatusToCancel, driverstarthisride,driverridestatus,
-        passengerridestatus } from './dbHelper';
+        passengerridestatus, drivercompletehisride } from './dbHelper';
 
 import { json } from 'body-parser';
 
@@ -155,7 +155,7 @@ export const completedRides = async (req, res, next) => {
             }
 
         }
-        return res.status(200).json(...Bookrides,...Offeredrides);
+        return res.status(200).send([...Bookrides,...Offeredrides]);
     } catch (error) {
         next(error);
     }
@@ -228,6 +228,17 @@ export const driverstartride = async (req, res, next) => {
         await driverstarthisride(ride_id); 
         
         return res.status(200).send({"Ride":"Started"}); 
+    } catch (error) {
+        next(error);
+    }
+}
+export const driverstatusCompleted = async (req, res, next) => {
+    try {
+        
+        const {ride_id} = req.body;
+        const total = await drivercompletehisride(ride_id); 
+        
+        return res.status(200).send({"Ride":"Completed" , total}); 
     } catch (error) {
         next(error);
     }
