@@ -1,5 +1,5 @@
 import dbHelper from './dbHelper';
-import {getuserratings} from './dbHelper';
+import {getuserratings,getRatingsReview} from './dbHelper';
 
 
 const ratings= {};
@@ -22,7 +22,24 @@ export const userratings = async (req, res, next) => {
         next(error);
     }
 }
+/*
+export const ratingsReview = async (req, res, next) =>{
+    try{
+        await getRatingsReview(req.body).then(results);
+        return res.status(200).json({ data: results });
 
+    }catch (err){
+        return next (err);
+    }
+}
+*/
+ratings.getRatingsReview = async (rate,review) => {
+    try {
+        return await dbHelper.getRatingsReview(rate,review);
+    } catch (err) {
+        return Promise.reject(err);
+    }
+}
 
 
 

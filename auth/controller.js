@@ -1,7 +1,10 @@
 import {getbyId} from './dbHelper';
 
 
-
+/*getUser() 
+ gets user id and from that user id gets userData 
+ return userData
+*/
 
 export const getUser = async (req, res, next) => {
      
