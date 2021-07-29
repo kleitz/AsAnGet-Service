@@ -84,7 +84,8 @@ export const currentrideDetails = async (req, res, next) => {
         console.log("new api");
         const { ride_id } = req.body;
         const rideDetails = await getCurrentRideDetails(ride_id);
-        return res.status(200).send(rideDetails);
+        const total = await drivercompletehisride(ride_id); 
+        return res.status(200).send({rideDetails, total});
     } catch (error) {
         next(error);
     }

@@ -150,6 +150,7 @@ export const changeRideStatusToCompleted = async(ride_id,user_Id) => {
     })
     const seats = await model.findOne({"_id":ride_id,"requestRides.userId" : user_Id});
     const cost = await model.findOne({"_id":ride_id});
+    console.log(cost);
     const perseatcost = cost.offerRides[0].pricePerSeat;
     const perbagcost = cost.offerRides[0].pricePerBag;
     const passangerseats =  cost.requestRides[0].noOfSeats;
@@ -200,12 +201,25 @@ export const getCurrentRideDetails = async(ride_id) => {
                imageUrl:passengerDetails.existUser.imageUrl?? '',phoneNo :passengerDetails.existUser.phoneNum?? ''})
         }
         return {Name: driverDetails.existUser.name?? '', ProfileUrl:driverDetails.existUser.imageUrl?? '',
-        phoneNum:driverDetails.existUser.phoneNum?? '', From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
-        pricePerSeat:ridesDetails.offerRides[0].pricePerSeat,  pricePerBag:ridesDetails.offerRides[0].pricePerBag,noOfSeats:ridesDetails.offerRides[0].noOfSeats
-        ,NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,petAllow:ridesDetails.offerRides[0].petAllow,
-            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow,status:ridesDetails.offerRides[0].status,
-             Passengers:passengers
+        phoneNum:driverDetails.existUser.phoneNum?? '', From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,
+        Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date, NoOfSeats:ridesDetails.offerRides[0].noOfSeats,
+        pricePerSeat:ridesDetails.offerRides[0].pricePerSeat,  pricePerBag:ridesDetails.offerRides[0].pricePerBag,
+        noOfSeats:ridesDetails.offerRides[0].noOfSeats
+        ,NoOfBags:ridesDetails.offerRides[0].bigBagNo,smoking:ridesDetails.offerRides[0].smoking,
+        petAllow:ridesDetails.offerRides[0].petAllow,
+            noOfPauses:ridesDetails.offerRides[0].noOfPauses, foodAllow:ridesDetails.offerRides[0].foodAllow,
+            status:ridesDetails.offerRides[0].status,
+            CarType:ridesDetails.offerRides[0].carType,recurringRideStartDate:ridesDetails.offerRides[0].recurringRideStartDate,
+            recurringRideEndDate:ridesDetails.offerRides[0].recurringRideEndDate,recurringRideTime:ridesDetails.offerRides[0].recurringRideTime,
+            user_id:ridesDetails.userId,Ride_id:ridesDetails._id,Currency:ridesDetails.offerRides[0].currency,
+            pricePerSeat:ridesDetails.offerRides[0].pricePerSeat,priceperBag:ridesDetails.offerRides[0].pricePerBag, Passengers:passengers,
+
             
+              
+            
+            
+            
+
         };
     } catch (error) {
         return Promise.reject(error);
