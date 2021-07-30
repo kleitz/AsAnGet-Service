@@ -1,4 +1,4 @@
-import {getrequestrides} from './dbHelper';
+import {getrequestrides,getrequestridesdetails} from './dbHelper';
 
 
 export const adminlogin = async (req, res, next) => {  
@@ -32,3 +32,17 @@ export const getRides = async (req, res, next) => {
         return next(err);
     }
 }
+/*
+export const getRidesDetails = async (req, res, next) => {  
+    try {  
+
+        const {username, password  } = req.body;
+        const data = await getrequestrides();
+      
+        return res.status(200).json({ data});
+
+    } catch (err) {
+        return next(err);
+    }
+}
+*/
