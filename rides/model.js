@@ -69,6 +69,9 @@ const OfferRideSchema = new Schema({
   status: {
     type: String, // Number type
     default:'Upcoming',
+  },
+  firebaseTopic:{
+    type: String
   }
 
 });
@@ -119,6 +122,9 @@ const RequestRideSchema = new Schema({
   OTP: {
     type: Number,
     required: true,
+  },
+  firebaseTopic:{
+    type: String
   }
 
 });

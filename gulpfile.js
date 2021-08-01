@@ -17,7 +17,8 @@ var build_files_paths = {
         config: ['./config/*'],
         envCopy: ['./config/.env.production', './config/.env.development', './config/.env.test'],
         lastlocation_path: ['./lastlocation/*.js'],
-        admin_path: ['./admin/*.js']
+        admin_path: ['./admin/*.js'],
+        firebase_path: ['./firebase/*.*']
 };
 
 gulp.task('clean', function () {
@@ -128,7 +129,12 @@ gulp.task('minifyAdmin', function () {
                 .pipe(gulp.dest('dist/admin'));
 });
 
+gulp.task('copyFirebase', function () {
+        return gulp.src(build_files_paths.firebase_path)
+                .pipe(gulp.dest('dist/firebase'));
+});
+
 gulp.task('build', gulp.series('clean', 'copynojs', 'copyimage', 'minifypublicjs', 'minifyauth',
         'minifyride', 'minifyhelper',
         'minifyroot', 'minifyconfig', 'copyEnv', 'copypublic',
-        'minifyrating', 'minifylastlocation', 'minifyAdmin'));
+        'minifyrating', 'minifylastlocation', 'minifyAdmin', 'copyFirebase'));

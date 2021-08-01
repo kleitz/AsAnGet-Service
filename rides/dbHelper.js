@@ -1,5 +1,6 @@
 import model from './model';
 import {getbyId} from '../auth/dbHelper';
+import {sendFireBaseMessage} from '../firebase/firebase'
 
 
 export const saveRideInDB = async(newRide) => {
@@ -52,8 +53,20 @@ export const getRideDetails = async(ride_id) => {
 export const bookRideSaveinDb = async(newRide) => {
     try {
         const ride = await model.findOne({ _id: newRide.id });
-        ride.requestRides.push(newRide);
+        let updatedNewRide = newRide;
+        updatedNewRide.firebaseTopic = ride.firebaseTopic;
+        ride.requestRides.push(updatedNewRide);
         await ride.save();
+
+        const offerRide = ride.offerRides[0];
+        
+        const text = `${newRide.userName} booked ride from ${offerRide.from} to ${offerRide.to}`;
+        const objForDb = {text}
+        const topic = ride.userId.toString();
+        const title = 'Booked Ride';
+
+        sendFireBaseMessage(objForDb, topic, title);
+
     } catch (error) {
         return Promise.reject(error);
     }

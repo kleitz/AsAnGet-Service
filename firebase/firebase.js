@@ -2,7 +2,7 @@ const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://<firebasenotification>.firebaseio.com"
+  databaseURL: "https://asanget-b7de3-default-rtdb.firebaseio.com/"
 });
 
 const firebase = {};
@@ -12,7 +12,7 @@ firebase.sendFireBaseMessage = (jsonObject, topic, title) => {
       "notification": {
         "title": title,
         "body": jsonObject.text,
-        "image": "http://<domainname>/favicon.ico"
+        "image": "http://asanget.com/assets/Asanget%20Logo.jpg"
       },
       topic: topic
     };
