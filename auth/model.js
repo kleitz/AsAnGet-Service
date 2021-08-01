@@ -18,7 +18,7 @@ const User = new Schema({
             category:{type:String, required: true}, 
             model:{type:String, required: true},
             seats:{type:Number, required: true},
-            carNo:{type:Number, required: true},
+            carNo:{type:String, required: true},
             ridescompletedbycar:{type:Number, default:0}
             
         }

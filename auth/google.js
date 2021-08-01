@@ -33,10 +33,11 @@ try {
               await newUser.save();
               console.log("new user saved");  
               
-              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email});
+              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email, cars:"0"});
             }
             console.log("user exist");
-            return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email});
+            const noOfCars = existUser.cars[0].length();
+            return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email, cars:noOfCars});
         }catch(error){
         next(error)
     }

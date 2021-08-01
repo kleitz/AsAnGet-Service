@@ -9,11 +9,12 @@ export const addlastlocation = async(data)=>{
         
         if(userdata){
             for(var i=0; i<userdata.locations.length; i++){
-                if(userdata.locations[i] == data.loc){
+                if(userdata.locations[i].loc == data.loc){
                     return;
                 }
                }
-            userdata.locations.push(data.loc);
+            const newdata = {"loc":data.loc, "latlog":data.latlog};
+            userdata.locations.push(newdata);
             if(userdata.locations.length > 5)
             {
                 userdata.locations.shift();
