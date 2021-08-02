@@ -1,4 +1,4 @@
-import { myCars, edituserbyId, updateuserprofile, getprofilebyId, getuserjoineddays} from './dbHelper';
+import { myCars, edituserbyId, updateuserprofile, getprofilebyId, getuserjoineddays, getbyId} from './dbHelper';
 import {getuserratings} from '../ratings/dbHelper';
 
 /*editprofile() is used to edit profile  of the user by id*/
@@ -64,3 +64,14 @@ export const getNoOfjoindays = async (req, res, next) => {
     }
 }
 
+export const userdata = async (req, res, next) => {
+    try {
+        const {user_id} = req.body;     
+        const existUser = await getbyId(user_id);
+        
+        return res.status(200).json({name:existUser.existUser.name,id:existUser.existUser._id,url:existUser.existUser.imageUrl,email:existUser.existUser.email, car:existUser.existUser.cars.length});
+        
+    } catch (error) {
+        next(error);
+    }
+}

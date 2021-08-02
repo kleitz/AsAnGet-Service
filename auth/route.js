@@ -6,7 +6,7 @@ import {googleAuth} from './google';
 import {requireAuth} from './helper';
 import { instagramAuth } from './instagram';
 import {addCar, myCar, userCars} from './cars';
-import {editprofile, updateprofile,getdriverprofile, getpassengerprofile, getNoOfjoindays} from './userprofile';
+import {editprofile, updateprofile,getdriverprofile, getpassengerprofile, getNoOfjoindays,userdata} from './userprofile';
 const router=express.Router();
 import upload from '../helper/upload';
 
@@ -23,6 +23,8 @@ router.post('/update_profile', upload.saveImage, updateprofile);
 router.post('/get_driverprofile',getdriverprofile);
 router.post('/get_passengerprofile',getpassengerprofile);
 router.post('/get_joineddays',getNoOfjoindays);
+router.post('/get_userdata',userdata);
+
 
  
  export default router;
