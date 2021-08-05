@@ -82,7 +82,7 @@ export const findRide = async (req, res, next) => {
             recurringRideStartDate, recurringRideEndDate, recurringRideTime, fcmToken } = req.body;
 
             console.log('fcmToken', fcmToken.toString());
-        // sendFireBaseMessage({ text: 'Find ride Test' }, [fcmToken.toString()], 'Find Ride');
+        sendFireBaseMessage({ text: 'Find ride Test' }, fcmToken, 'Find Ride');
         var availabeRides = [];
 
         const cursor = await getAllRides();

@@ -14,9 +14,8 @@ firebase.sendFireBaseMessage = (jsonObject, topic, title) => {
         "body": jsonObject.text,
         "image": "http://asanget.com/assets/Asanget%20Logo.jpg"
       },
-      topic: topic
+      "token": topic
     };
-  
     // Send a message to devices subscribed to the provided topic.
     admin.messaging().send(message)
       .then((response) => {
