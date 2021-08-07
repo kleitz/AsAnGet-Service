@@ -34,10 +34,10 @@ export const instagramAuth = async (req, res, next) => {
                 
               });
               await newUser.save();
-              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email});
+              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email, loginFrom: "Instagram"});
         }
         
-        return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email,cars:existUser.cars.length});
+        return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email,cars:existUser.cars.length, loginFrom: "Instagram"});
     } catch (error) {
         next(error);
     }
