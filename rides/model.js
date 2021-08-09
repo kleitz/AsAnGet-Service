@@ -72,7 +72,20 @@ const OfferRideSchema = new Schema({
   },
   firebaseTopic:{
     type: String
-  }
+  },
+  active: {
+    type: Boolean,
+    default: true
+},
+createdDate: {
+    type: Date,
+    default: Date.now
+},
+
+modifiedDate: {
+    type: Date,
+    default: Date.now
+},
 
 });
 
@@ -125,7 +138,20 @@ const RequestRideSchema = new Schema({
   },
   firebaseTopic:{
     type: String
-  }
+  },
+  active: {
+    type: Boolean,
+    default: true
+},
+createdDate: {
+    type: Date,
+    default: Date.now
+},
+
+modifiedDate: {
+    type: Date,
+    default: Date.now
+},
 
 });
 
@@ -142,7 +168,20 @@ const Ride = new Schema({
       type: String,
       required: false,
       enum: ['offer', 'request'],
-    }
+    },
+    active: {
+      type: Boolean,
+      default: true
+  },
+  createdDate: {
+      type: Date,
+      default: Date.now
+  },
+
+  modifiedDate: {
+      type: Date,
+      default: Date.now
+  },
   });
 
   
