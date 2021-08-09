@@ -53,6 +53,8 @@ export const getRideDetails = async(ride_id) => {
 export const bookRideSaveinDb = async(newRide) => {
     try {
         const ride = await model.findOne({ _id: newRide.id });
+        console.log(ride);
+        return;
         let updatedNewRide = newRide;
         updatedNewRide.firebaseTopic = ride.firebaseTopic;
         ride.requestRides.push(updatedNewRide);
