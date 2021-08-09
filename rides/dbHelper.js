@@ -53,13 +53,22 @@ export const getRideDetails = async(ride_id) => {
 export const bookRideSaveinDb = async(newRide) => {
     try {
         const ride = await model.findOne({ _id: newRide.id });
-        console.log(ride);
-        return;
+        const passanger = ride.requestRides;
+        
+  
+        for(var i=0;i<passanger.length;i++){
+            console.log(passanger[i].userId);
+            console.log(newRide.userId);
+            if(passanger[i].userId == newRide.userId){
+                return false;
+            }
+        }
+        
         let updatedNewRide = newRide;
         updatedNewRide.firebaseTopic = ride.firebaseTopic;
         ride.requestRides.push(updatedNewRide);
         await ride.save();
-
+        
         const offerRide = ride.offerRides[0];
         
         const text = `${newRide.userName} booked ride from ${offerRide.from} to ${offerRide.to}`;
@@ -68,6 +77,7 @@ export const bookRideSaveinDb = async(newRide) => {
         const title = 'Booked Ride';
 
         sendFireBaseMessage(objForDb, topic, title);
+        return true;
 
     } catch (error) {
         return Promise.reject(error);

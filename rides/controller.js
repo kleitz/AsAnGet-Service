@@ -156,6 +156,8 @@ export const bookRide = async (req, res, next) => {
             recurringRideStartDate, recurringRideEndDate, recurringRideTime } = req.body;
         const otp = Math.floor(1000 + Math.random() * 9000);
 
+
+
         const modelView = {
             id: _id,
             userId: userId,
@@ -171,10 +173,16 @@ export const bookRide = async (req, res, next) => {
             recurringRideTime: recurringRideTime,
             OTP: otp,
         };
-        await bookRideSaveinDb(modelView);
+        const saved = await bookRideSaveinDb(modelView);
+        console.log(saved);
+        if(!saved){
+            return res.status(200).send({ "Status": "Already booked this ride" });
 
+        }
+        
+            return res.status(200).send({ "Success": "Saved" });
 
-        return res.status(200).send({ "Success": "Saved" });
+        
     } catch (error) {
         next(error);
     }
