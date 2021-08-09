@@ -69,7 +69,7 @@ export const userdata = async (req, res, next) => {
         const {user_id} = req.body;     
         const existUser = await getbyId(user_id);
         
-        return res.status(200).json({name:existUser.existUser.name,id:existUser.existUser._id,url:existUser.existUser.imageUrl,email:existUser.existUser.email, car:existUser.existUser.cars.length});
+        return res.status(200).json({name:existUser.existUser.name,id:existUser.existUser._id,url:existUser.existUser.imageUrl,email:existUser.existUser.email, cars:existUser.existUser.cars.length});
         
     } catch (error) {
         next(error);

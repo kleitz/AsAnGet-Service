@@ -125,19 +125,19 @@ export const completedRides = async (req, res, next) => {
                 
                 if(passanger[index].userId == _id){
                     const status = passanger[index].status;
+                    if((todayDate > RideDate) || ((todayDate == RideDate)&& (status == "Completed"))){  
+                        var myJson = { "Type":"Bookride" , Details }
+                        Bookrides.push(myJson);
+                    }
                 }
                
             }
            
-            if((todayDate < RideDate) || ((todayDate == RideDate)&& (status == "Cancelled")) 
-            || ((todayDate == RideDate)&& (status == "Upcoming")) || ((todayDate == RideDate)&& (status == "Ongoing"))){  
-                var myJson = { "Type":"Bookride" , Details }
-                Bookrides.push(myJson);
-            }
+            
 
         }
         const getOfferRides = await getUserOfferRides(_id);
-        
+        console.log(getOfferRides);
         for(let index = 0 ; index< getOfferRides.length ; index++)
         {
             const date = getOfferRides[index].offerRides[0].date;
@@ -147,7 +147,7 @@ export const completedRides = async (req, res, next) => {
             
             const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
             const RideDate = new Date(rideDate);
-            if((todayDate > RideDate) || ((todayDate == RideDate)&& (status == "Upcoming")) || ((todayDate == RideDate)&& (status == "Ongoing"))){
+            if((todayDate > RideDate) || ((todayDate == RideDate)&& (status == "Completed")) ){
                 const rideId = getOfferRides[index]._id;
                 const Details = await getBookRideDetails(rideId);
                 var myJson = { "Type":"OfferRide" , Details }
