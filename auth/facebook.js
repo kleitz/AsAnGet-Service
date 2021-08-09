@@ -24,10 +24,10 @@ export const facebookAuth = async (req, res, next) => {
                 imageUrl: url
               });
               await newUser.save();
-              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email,cars:"0"});
+              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email,cars:"0", loginFrom: "Facebook"});
         }
         
-        return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email, cars:existUser.cars.length});
+        return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email, cars:existUser.cars.length, loginFrom: "Facebook"});
     } catch (error) {
         next(error)
     }

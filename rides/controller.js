@@ -81,15 +81,15 @@ export const findRide = async (req, res, next) => {
         const { userId, startPoint, endPoint, rideDate, rideTime, noOfPassenger,
             recurringRideStartDate, recurringRideEndDate, recurringRideTime, fcmToken } = req.body;
 
-            console.log('fcmToken', fcmToken.toString());
-        // sendFireBaseMessage({ text: 'Find ride Test' }, [fcmToken.toString()], 'Find Ride');
+        console.log('fcmToken', fcmToken.toString());
+        sendFireBaseMessage({ text: 'Find ride Test' }, fcmToken, 'Find Ride');
         var availabeRides = [];
 
         const cursor = await getAllRides();
         console.log(cursor);
         for (let index = 0; index < cursor.length; index++) {
             const element = cursor[index];
-            if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats) {
+            if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats && userId != cursor[index].userId) {
 
                 const locfound = PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations, 1000);
                 if (locfound) {
