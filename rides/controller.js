@@ -213,7 +213,8 @@ export const rideDistance = async (req, res, next) => {
             //Api call to get Distance directions and all the polyline points
             const response = await axios.get(getPolyline);
 
-            const distance = response.data.routes[0].legs[0].distance.text;
+            const distance = response.data.routes[0] ? 
+                    response.data.routes[0].legs[0].distance.text : 'To Far';
             return res.status(200).send({ "Distance": distance });
 
 

@@ -1,5 +1,6 @@
 import model from './model';
 import {getbyId} from '../auth/dbHelper';
+import {getuserratingOutOf5} from '../ratings/dbHelper';
 import {sendFireBaseMessage} from '../firebase/firebase'
 
 
@@ -109,6 +110,9 @@ export const getBookRideDetails = async(ride_id) => {
         const ridesDetails = await model.findOne({ _id: ride_id });
         const driverId = ridesDetails.userId;
         const driverDetails = await getbyId(driverId);
+        const rating = await getuserratingOutOf5(driverId);
+        console.log('444444',rating);
+        driverDetails.rating = rating;
         const requestRides = ridesDetails.requestRides;
         var passengers = [];
         
@@ -122,7 +126,7 @@ export const getBookRideDetails = async(ride_id) => {
         return {RideId:ridesDetails._id,From:ridesDetails.offerRides[0].from,To:ridesDetails.offerRides[0].to,
             Time:ridesDetails.offerRides[0].time, Date:ridesDetails.offerRides[0].date,
             carType:ridesDetails.offerRides[0].carType,status:ridesDetails.offerRides[0].status,
-             Passengers:passengers};
+             Passengers:passengers,driverDetails};
     } catch (error) {
         return Promise.reject(error);
     }

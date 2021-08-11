@@ -18,7 +18,7 @@ export const currentRide = async (req, res, next) => {
         today = (mon+"-"+day+"-"+year);
         var todayDate = new Date(today);
         const bookrides = await getUserBookRides(_id);
-        console.log(bookrides)
+        console.log('++++++++',bookrides)
         for(let index = 0 ; index< bookrides.length ; index++)
         {
 
@@ -29,8 +29,9 @@ export const currentRide = async (req, res, next) => {
             const RideDate = new Date(rideDate);
             const rideId = bookrides[index]._id;
             const Details = await getBookRideDetails(rideId);
+            console.log('------Details', Details);
             const passanger = Details.Passengers;
-            console.log(passanger)
+            console.log('========passanger', passanger)
             
             for(let index = 0; index < passanger.length; index++)
             {
@@ -73,6 +74,8 @@ export const currentRide = async (req, res, next) => {
             }
 
         }
+
+        console.log('--------...Bookrides,...Offeredrides',JSON.stringify([...Bookrides,...Offeredrides]));
         return res.status(200).json([...Bookrides,...Offeredrides]);
     } catch (error) {
         next(error);
@@ -94,7 +97,7 @@ export const currentrideDetails = async (req, res, next) => {
 
 export const completedRides = async (req, res, next) => {
     try {
-        console.log(req.body);
+        console.log('0000000', req.body);
         const { _id} = req.body;
         var Bookrides = [];
         var Offeredrides = [];
@@ -105,7 +108,7 @@ export const completedRides = async (req, res, next) => {
         today = (mon+"-"+day+"-"+year);
         var todayDate = new Date(today);
         const bookrides = await getUserBookRides(_id);
-        console.log(bookrides);
+        console.log('1111',bookrides);
         for(let index = 0 ; index< bookrides.length ; index++)
         {
 
@@ -119,7 +122,7 @@ export const completedRides = async (req, res, next) => {
             const passanger = [Details.Passengers[0]];
             
             
-            console.log(passanger);
+            console.log('8888888---',passanger);
             for(let index = 0; index < passanger.length; index++)
             {
                 
