@@ -3,8 +3,6 @@ import model from './model';
 export const getbyId = async(user_id) => {
     try {
         const existUser = await model.findOne({ _id  : user_id });
-       
-
         return {existUser};
     } catch (error) {
         return Promise.reject(error);

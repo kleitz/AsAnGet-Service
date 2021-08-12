@@ -1,94 +1,40 @@
-import { getUserOfferRides, getUserBookRides, getBookRideDetails,
-         getRideotp, changeRideStatus, getRideDateTime, changeRideStatusToCompleted,
-        getCurrentRideDetails, changeRideStatusToCancel, driverstarthisride,driverridestatus,
-        passengerridestatus, drivercompletehisride } from './dbHelper';
+import {
+    getUserOfferRides, getUserBookRides, getBookRideDetails,
+    getRideotp, changeRideStatus, getRideDateTime, changeRideStatusToCompleted,
+    getCurrentRideDetails, changeRideStatusToCancel, driverstarthisride, driverridestatus,
+    passengerridestatus, drivercompletehisride
+} from './dbHelper';
 
-import { json } from 'body-parser';
+import {makeCurrentRideArray} from './helper';
 
 
 export const currentRide = async (req, res, next) => {
     try {
-        const { _id} = req.body;
-        var Bookrides = [];
-        var Offeredrides = [];
-        var today = new Date();
-        var day = today.getDate();
-        var mon = today.getMonth()+1;
-        var year = today.getFullYear();
-        today = (mon+"-"+day+"-"+year);
-        var todayDate = new Date(today);
-        const bookrides = await getUserBookRides(_id);
-        console.log('++++++++',bookrides)
-        for(let index = 0 ; index< bookrides.length ; index++)
-        {
-
-            const date = bookrides[index].offerRides[0].date;
-            const [day, month, year] = date.split('-');
-            const dateObj = {month, day, year};
-            const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
-            const RideDate = new Date(rideDate);
-            const rideId = bookrides[index]._id;
-            const Details = await getBookRideDetails(rideId);
-            console.log('------Details', Details);
-            const passanger = Details.Passengers;
-            console.log('========passanger', passanger)
-            
-            for(let index = 0; index < passanger.length; index++)
-            {
-            console.log(index)
-                
-                if(passanger[index].userId == _id){
-                    console.log(passanger[index].userId );
-                    console.log(_id );
-                    const status = passanger[index].status;
-                    if((todayDate < RideDate) || ((todayDate == RideDate)&& (status == "Cancelled")) 
-                    || ((todayDate >= RideDate)&& (status == "Upcoming")) || ((todayDate >= RideDate)&& (status == "Ongoing"))){  
-                        var myJson = { "Type":"BookRide" , Details }
-                        Bookrides.push(myJson);
-                    }
-                }
-               
-            }
-           
-           
-
-        }
-        const getOfferRides = await getUserOfferRides(_id);
+        const { _id } = req.body;
         
-        for(let index = 0 ; index< getOfferRides.length ; index++)
-        {
-            const date = getOfferRides[index].offerRides[0].date;
-            const status = getOfferRides[index].offerRides[0].status;
-            const [day, month, year] = date.split('-');
-            const dateObj = {month, day, year};
-            
-            const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
-            const RideDate = new Date(rideDate);
-            if((todayDate < RideDate) || ((todayDate == RideDate)&& (status == "Cancelled")) 
-            || ((todayDate >= RideDate)&& (status == "Upcoming")) || ((todayDate >= RideDate)&& (status == "Ongoing"))){
-                const rideId = getOfferRides[index]._id;
-                const Details = await getBookRideDetails(rideId);
-                
-                var myJson = { "Type":"OfferRide" , Details }
-                Offeredrides.push(myJson);
-            }
+        const bookRidesForUser = await getUserBookRides(_id);
+        const bookedRides = await makeCurrentRideArray(bookRidesForUser,'BookRide');
 
-        }
+        const offerRidesForuser = await getUserOfferRides(_id);
+        const offeredRides = await makeCurrentRideArray(offerRidesForuser,'OfferRide');
 
-        console.log('--------...Bookrides,...Offeredrides',JSON.stringify([...Bookrides,...Offeredrides]));
-        return res.status(200).json([...Bookrides,...Offeredrides]);
+
+        console.log('--------...Bookrides,...Offeredrides', JSON.stringify([...bookedRides, ...offeredRides]));
+        return res.status(200).json([...bookedRides, ...offeredRides]);
     } catch (error) {
         next(error);
     }
 }
+
+
 
 export const currentrideDetails = async (req, res, next) => {
     try {
         console.log("new api");
         const { ride_id } = req.body;
         const rideDetails = await getCurrentRideDetails(ride_id);
-        const total = await drivercompletehisride(ride_id); 
-        return res.status(200).send({rideDetails, total});
+        const total = await drivercompletehisride(ride_id);
+        return res.status(200).send({ rideDetails, total });
     } catch (error) {
         next(error);
     }
@@ -98,68 +44,65 @@ export const currentrideDetails = async (req, res, next) => {
 export const completedRides = async (req, res, next) => {
     try {
         console.log('0000000', req.body);
-        const { _id} = req.body;
+        const { _id } = req.body;
         var Bookrides = [];
         var Offeredrides = [];
         var today = new Date();
         var day = today.getDate();
-        var mon = today.getMonth()+1;
+        var mon = today.getMonth() + 1;
         var year = today.getFullYear();
-        today = (mon+"-"+day+"-"+year);
+        today = (mon + "-" + day + "-" + year);
         var todayDate = new Date(today);
         const bookrides = await getUserBookRides(_id);
-        console.log('1111',bookrides);
-        for(let index = 0 ; index< bookrides.length ; index++)
-        {
+        console.log('1111', bookrides);
+        for (let index = 0; index < bookrides.length; index++) {
 
             const date = bookrides[index].offerRides[0].date;
             const [day, month, year] = date.split('-');
-            const dateObj = {month, day, year};
+            const dateObj = { month, day, year };
             const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
             const RideDate = new Date(rideDate);
             const rideId = bookrides[index]._id;
             const Details = await getBookRideDetails(rideId);
             const passanger = [Details.Passengers[0]];
-            
-            
-            console.log('8888888---',passanger);
-            for(let index = 0; index < passanger.length; index++)
-            {
-                
-                if(passanger[index].userId == _id){
+
+
+            console.log('8888888---', passanger);
+            for (let index = 0; index < passanger.length; index++) {
+
+                if (passanger[index].userId == _id) {
                     const status = passanger[index].status;
-                    if((todayDate > RideDate) || ((todayDate == RideDate)&& (status == "Completed"))){  
-                        var myJson = { "Type":"Bookride" , Details }
+                    if ((todayDate > RideDate) || ((todayDate == RideDate) && (status == "Completed"))) {
+                        var myJson = { "Type": "Bookride", Details }
                         Bookrides.push(myJson);
                     }
                 }
-               
+
             }
-           
-            
+
+
 
         }
         const getOfferRides = await getUserOfferRides(_id);
         console.log(getOfferRides);
-        for(let index = 0 ; index< getOfferRides.length ; index++)
-        {
+        for (let index = 0; index < getOfferRides.length; index++) {
             const date = getOfferRides[index].offerRides[0].date;
             const status = getOfferRides[index].offerRides[0].status;
             const [day, month, year] = date.split('-');
-            const dateObj = {month, day, year};
-            
+            const dateObj = { month, day, year };
+
             const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
             const RideDate = new Date(rideDate);
-            if((todayDate > RideDate) || ((todayDate == RideDate)&& (status == "Completed")) ){
+            if ((todayDate > RideDate) || ((todayDate == RideDate) && (status == "Completed"))) {
                 const rideId = getOfferRides[index]._id;
                 const Details = await getBookRideDetails(rideId);
-                var myJson = { "Type":"OfferRide" , Details }
-                
+                var myJson = { "Type": "OfferRide", Details }
+
                 Offeredrides.push(myJson);
             }
 
         }
-        return res.status(200).send([...Bookrides,...Offeredrides]);
+        return res.status(200).send([...Bookrides, ...Offeredrides]);
     } catch (error) {
         next(error);
     }
@@ -167,7 +110,7 @@ export const completedRides = async (req, res, next) => {
 
 export const historyrideDetails = async (req, res, next) => {
     try {
-        
+
         const { ride_id } = req.body;
         const rideDetails = await getCurrentRideDetails(ride_id);
         return res.status(200).send(rideDetails);
@@ -178,7 +121,7 @@ export const historyrideDetails = async (req, res, next) => {
 
 export const getRideOTP = async (req, res, next) => {
     try {
-        
+
         const { userId, ride_id } = req.body;
         const otp = await getRideotp(ride_id, userId);
         return res.status(200).send(otp);
@@ -189,23 +132,21 @@ export const getRideOTP = async (req, res, next) => {
 
 export const verifyRideOTP = async (req, res, next) => {
     try {
-        
+
         const { userId, ride_id, otp } = req.body;
-        
+
 
         const rideotp = await getRideotp(ride_id, userId);
         console.log(rideotp);
-        if(rideotp.OTP == otp)
-        {
-            const rideStatus = await changeRideStatus(ride_id, userId); 
-            
+        if (rideotp.OTP == otp) {
+            const rideStatus = await changeRideStatus(ride_id, userId);
+
         }
-        else
-        {
-            return res.status(200).send({"Failed":"Otp not correct"}); 
+        else {
+            return res.status(200).send({ "Failed": "Otp not correct" });
         }
-        
-       return res.status(200).send({"Success":"Ride Started"});
+
+        return res.status(200).send({ "Success": "Ride Started" });
 
 
     } catch (error) {
@@ -216,10 +157,10 @@ export const verifyRideOTP = async (req, res, next) => {
 export const statusCompleted = async (req, res, next) => {
     try {
         console.log("new api");
-        const { userId, ride_id} = req.body;
-        const amount = await changeRideStatusToCompleted(ride_id, userId); 
+        const { userId, ride_id } = req.body;
+        const amount = await changeRideStatusToCompleted(ride_id, userId);
         console.log(amount);
-        return res.status(200).send({"Ride":"Completed", "Amount":amount}); 
+        return res.status(200).send({ "Ride": "Completed", "Amount": amount });
     } catch (error) {
         next(error);
     }
@@ -227,22 +168,22 @@ export const statusCompleted = async (req, res, next) => {
 
 export const driverstartride = async (req, res, next) => {
     try {
-        
-        const {ride_id} = req.body;
-        await driverstarthisride(ride_id); 
-        
-        return res.status(200).send({"Ride":"Started"}); 
+
+        const { ride_id } = req.body;
+        await driverstarthisride(ride_id);
+
+        return res.status(200).send({ "Ride": "Started" });
     } catch (error) {
         next(error);
     }
 }
 export const driverstatusCompleted = async (req, res, next) => {
     try {
-        
-        const {ride_id} = req.body;
-        const total = await drivercompletehisride(ride_id); 
-        
-        return res.status(200).send({"Ride":"Completed" , total}); 
+
+        const { ride_id } = req.body;
+        const total = await drivercompletehisride(ride_id);
+
+        return res.status(200).send({ "Ride": "Completed", total });
     } catch (error) {
         next(error);
     }
@@ -252,12 +193,12 @@ export const cancelRide = async (req, res, next) => {
     try {
         const { userId, ride_id } = req.body;
         const datetime = await getRideDateTime(ride_id, userId);
-        
+
         var today = new Date();
         var day = today.getDate();
-        var mon = today.getMonth()+1;
+        var mon = today.getMonth() + 1;
         var year = today.getFullYear();
-        today = (mon +" "+day+","+year);
+        today = (mon + " " + day + "," + year);
         console.log(today);
         //var todayDate = new Date(today)
         var time = new Date();
@@ -265,27 +206,27 @@ export const cancelRide = async (req, res, next) => {
         console.log(currentTime);
         const date = datetime.Date;
         const [rday, rmonth, ryear] = date.split('-');
-            const dateObj = {rmonth, rday, ryear};
-            const rideDate = dateObj.rmonth + ' ' + dateObj.rday + ',' + dateObj.ryear;
-            const str = datetime.Time; 
-            const rtime =  str.substring(0,str.length-2)
+        const dateObj = { rmonth, rday, ryear };
+        const rideDate = dateObj.rmonth + ' ' + dateObj.rday + ',' + dateObj.ryear;
+        const str = datetime.Time;
+        const rtime = str.substring(0, str.length - 2)
         console.log(rtime);
-        
-           
-         var dt1 = new Date(today + " " + currentTime);
-         var dt2 = new Date(rideDate + " " + "4:00");
-         
 
-         var diff =(dt2.getTime() - dt1.getTime()) / 1000;
-         diff /= (60 * 60);
-         const hrDiff = Math.abs(Math.round(diff));
-         console.log(hrDiff);
-         if(hrDiff > 1){
-            await changeRideStatusToCancel(ride_id, userId); 
-         }
-         console.log(Math.abs(Math.round(diff)));
-        
-       return res.status(200).send({datetime});
+
+        var dt1 = new Date(today + " " + currentTime);
+        var dt2 = new Date(rideDate + " " + "4:00");
+
+
+        var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+        diff /= (60 * 60);
+        const hrDiff = Math.abs(Math.round(diff));
+        console.log(hrDiff);
+        if (hrDiff > 1) {
+            await changeRideStatusToCancel(ride_id, userId);
+        }
+        console.log(Math.abs(Math.round(diff)));
+
+        return res.status(200).send({ datetime });
 
 
     } catch (error) {
@@ -297,12 +238,12 @@ export const drivercancelRide = async (req, res, next) => {
     try {
         const { userId, ride_id } = req.body;
         const datetime = await getRideDateTime(ride_id, userId);
-        
+
         var today = new Date();
         var day = today.getDate();
-        var mon = today.getMonth()+1;
+        var mon = today.getMonth() + 1;
         var year = today.getFullYear();
-        today = (mon +" "+day+","+year);
+        today = (mon + " " + day + "," + year);
         console.log(today);
         //var todayDate = new Date(today)
         var time = new Date();
@@ -310,27 +251,27 @@ export const drivercancelRide = async (req, res, next) => {
         console.log(currentTime);
         const date = datetime.Date;
         const [rday, rmonth, ryear] = date.split('-');
-            const dateObj = {rmonth, rday, ryear};
-            const rideDate = dateObj.rmonth + ' ' + dateObj.rday + ',' + dateObj.ryear;
-            const str = datetime.Time; 
-            const rtime =  str.substring(0,str.length-2)
+        const dateObj = { rmonth, rday, ryear };
+        const rideDate = dateObj.rmonth + ' ' + dateObj.rday + ',' + dateObj.ryear;
+        const str = datetime.Time;
+        const rtime = str.substring(0, str.length - 2)
         console.log(rtime);
-        
-           
-         var dt1 = new Date(today + " " + currentTime);
-         var dt2 = new Date(rideDate + " " + "4:00");
-         
 
-         var diff =(dt2.getTime() - dt1.getTime()) / 1000;
-         diff /= (60 * 60);
-         const hrDiff = Math.abs(Math.round(diff));
-         console.log(hrDiff);
-         if(hrDiff > 1){
-            await changeRideStatusToCancel(ride_id, userId); 
-         }
-         console.log(Math.abs(Math.round(diff)));
-        
-       return res.status(200).send({datetime});
+
+        var dt1 = new Date(today + " " + currentTime);
+        var dt2 = new Date(rideDate + " " + "4:00");
+
+
+        var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+        diff /= (60 * 60);
+        const hrDiff = Math.abs(Math.round(diff));
+        console.log(hrDiff);
+        if (hrDiff > 1) {
+            await changeRideStatusToCancel(ride_id, userId);
+        }
+        console.log(Math.abs(Math.round(diff)));
+
+        return res.status(200).send({ datetime });
 
 
     } catch (error) {
@@ -338,27 +279,27 @@ export const drivercancelRide = async (req, res, next) => {
     }
 }
 
-export const getdriverridestatus = async(req, res, next)=>{
- 
-    try{
-        const{ride_id} = req.body;
+export const getdriverridestatus = async (req, res, next) => {
+
+    try {
+        const { ride_id } = req.body;
         const status = await driverridestatus(ride_id);
-        return res.status(200).send({status});
+        return res.status(200).send({ status });
     }
-    catch(error){
+    catch (error) {
         next(error);
     }
 
 }
 
-export const getpassengerridestatus = async(req, res, next)=>{
- 
-    try{
-        const{user_id, ride_id} = req.body;
+export const getpassengerridestatus = async (req, res, next) => {
+
+    try {
+        const { user_id, ride_id } = req.body;
         const status = await passengerridestatus(ride_id, user_id);
-        return res.status(200).send({status});
+        return res.status(200).send({ status });
     }
-    catch(error){
+    catch (error) {
         next(error);
     }
 
