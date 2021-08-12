@@ -72,7 +72,7 @@ export const completedRides = async (req, res, next) => {
 
                 if (passanger[index].userId == _id) {
                     const status = passanger[index].status;
-                    if ((todayDate > RideDate) || ((todayDate == RideDate) && (status == "Completed"))) {
+                    if (((todayDate > RideDate) && (status == "Upcoming"))||(status == "Completed") || ((todayDate > RideDate) && (status == "Cancelled"))) {
                         var myJson = { "Type": "Bookride", Details }
                         Bookrides.push(myJson);
                     }
