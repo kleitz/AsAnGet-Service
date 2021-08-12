@@ -50,7 +50,7 @@ export const getuserratingOutOf5 = async (user_id) => {
                             3*rating3.length +  2*rating2.length + 1*rating1.length;
        const totalResponse = rating5.length +  rating4.length +  rating3.length + 
                              rating2.length + rating1.length;  
-        const rating5Star = (totalResponse > 0) ? (allRatingSum / totalResponse).toFixed(1) : 0;
+        const rating5Star = (totalResponse > 0) ? (allRatingSum / totalResponse).toFixed(1) : 1;
         console.log('888888888----', rating5Star,allRatingSum,totalResponse);
         return rating5Star;                   
 

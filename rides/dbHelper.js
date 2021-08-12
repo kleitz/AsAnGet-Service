@@ -113,7 +113,6 @@ export const getBookRideDetails = async (ride_id) => {
         const driverId = ridesDetails.userId;
         const driverDetails = await getbyId(driverId);
         const rating = await getuserratingOutOf5(driverId);
-        console.log('444444', rating);
         driverDetails.rating = rating;
         const requestRides = ridesDetails.requestRides;
         var passengers = [];
