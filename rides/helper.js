@@ -48,3 +48,11 @@ export const makeCurrentRideArray = async (rides, rideType, rideCat) => {
     }
     return currentRideArray;
 }
+
+export const isPassengerAlreadyBookTheRide = (passangerList, passengerUserId)=>{
+    for (var i = 0; i < passangerList.length; i++) {
+        if (passangerList[i].userId === passengerUserId) {
+            return true;
+        }
+    }
+}

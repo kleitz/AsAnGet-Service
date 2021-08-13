@@ -1,8 +1,10 @@
+import { COMPLETED } from './const';
 import {
     getUserOfferRides, getUserBookRides, getBookRideDetails,
-    getRideotp, changeRideStatus, getRideDateTime, changeRideStatusToCompleted,
-    getCurrentRideDetails, changeRideStatusToCancel, driverstarthisride, driverridestatus,
-    passengerridestatus, drivercompletehisride
+    getRideotp, changeRideStatus, getRideDateTime, changePassengerRideStatus,
+    getCurrentRideDetails, changeRideStatusToCancel, rideStartedByDriver, driverridestatus,
+    passengerridestatus, driverCompletedHisRide, updatePassengerStatusByUserId,
+    perRidePassengerCost
 } from './dbHelper';
 
 import {makeCurrentRideArray} from './helper';
@@ -30,8 +32,8 @@ export const currentrideDetails = async (req, res, next) => {
     try {
         console.log("new api");
         const { ride_id } = req.body;
+        const total = await driverCompletedHisRide(ride_id);
         const rideDetails = await getCurrentRideDetails(ride_id);
-        const total = await drivercompletehisride(ride_id);
         return res.status(200).send({ rideDetails, total });
     } catch (error) {
         next(error);
@@ -103,11 +105,12 @@ export const verifyRideOTP = async (req, res, next) => {
     }
 }
 
-export const statusCompleted = async (req, res, next) => {
+export const passengerRideCompleted = async (req, res, next) => {
     try {
         console.log("new api");
-        const { userId, ride_id } = req.body;
-        const amount = await changeRideStatusToCompleted(ride_id, userId);
+        const { ride_id, userId } = req.body;
+        await updatePassengerStatusByUserId(ride_id, userId, COMPLETED);
+        const amount = await perRidePassengerCost(ride_id, userId);
         console.log(amount);
         return res.status(200).send({ "Ride": "Completed", "Amount": amount });
     } catch (error) {
@@ -119,7 +122,7 @@ export const driverstartride = async (req, res, next) => {
     try {
 
         const { ride_id } = req.body;
-        await driverstarthisride(ride_id);
+        await rideStartedByDriver(ride_id);
 
         return res.status(200).send({ "Ride": "Started" });
     } catch (error) {
@@ -130,7 +133,7 @@ export const driverstatusCompleted = async (req, res, next) => {
     try {
 
         const { ride_id } = req.body;
-        const total = await drivercompletehisride(ride_id);
+        const total = await driverCompletedHisRide(ride_id);
 
         return res.status(200).send({ "Ride": "Completed", total });
     } catch (error) {

@@ -1,9 +1,88 @@
+import { ObjectID } from 'mongodb';
 import model from './model';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
 import { sendFireBaseMessage } from '../firebase/firebase';
-import {getRideDate,getRideTime} from './helper';
-import {COMPLETED, ONGOING, UPCOMING} from './const';
+import { getRideDate, getRideTime, isPassengerAlreadyBookTheRide } from './helper';
+import { COMPLETED, ONGOING, UPCOMING } from './const';
+
+
+const getRideWithDriverDetailsById = async (ride_id) => {
+    const ridesDetails = await model.findOne({ _id: ride_id });
+
+    const driverId = ridesDetails.userId;
+    const driverDetails = await getbyId(driverId);
+    const rating = await getuserratingOutOf5(driverId);
+    driverDetails.rating = rating;
+
+    const requestRides = ridesDetails.requestRides;
+    var passengers = [];
+
+    for (let index = 0; index < requestRides.length; index++) {
+        const passengerId = requestRides[index].userId;
+        const passengerDetails = await getbyId(passengerId);
+
+        passengers.push({
+            name: passengerDetails.existUser.name ?? '',
+            imageUrl: passengerDetails.existUser.imageUrl ?? '',
+            userId: requestRides[index].userId,
+            status: requestRides[index].status,
+            phoneNum: requestRides[index].phoneNum ?? '',
+            from: requestRides[index].from,
+            to: requestRides[index].to,
+            date: requestRides[index].date,
+            time: requestRides[index].time,
+        })
+
+    }
+
+    return { ridesDetails, driverDetails, passengers };
+}
+
+const updateAllRequestedStatus = async (ride_id, status) => {
+    try {
+        const ride = await model.findOne({ _id: new ObjectID(ride_id) });
+
+        //...update driver ride status
+        await model.updateOne(
+            { _id: new ObjectID(ride_id), 'offerRides._id': new ObjectID(ride.offerRides[0]._id) },
+            { $set: { "offerRides.$.status": status } });
+
+        //...update all passenger ride status  
+        if (ride.requestRides && ride.requestRides.length > 0) {
+            const requestRides = ride.requestRides;
+            for (let index = 0; index < requestRides.length; index++) {
+                const element = requestRides[index];
+                await model.updateOne(
+                    { _id: new ObjectID(ride_id), 'requestRides._id': new ObjectID(element._id) },
+                    { $set: { "requestRides.$.status": status } }
+                );
+            }
+        }
+    } catch (error) {
+        throw new Error(error);
+    }
+
+}
+
+export const perRidePassengerCost = async (ride_id, userId) => {
+    const ride = await model.findOne({ "_id": new ObjectID(ride_id) });
+    const passenger = ride.requestRides.find(reqRide=>(reqRide.userId === userId));
+
+    const perseatcost = ride.offerRides[0].pricePerSeat;
+    const perbagcost = ride.offerRides[0].pricePerBag;
+
+    const passangerseats = passenger.noOfSeats;
+    const passangerbags = passenger.bigBagNo;
+    return ((perseatcost * passangerseats) + (perbagcost * passangerbags));
+}
+
+export const updatePassengerStatusByUserId = async(ride_id, userId, status) => {
+    await model.updateOne(
+        { _id: new ObjectID(ride_id), 'requestRides.userId': userId },
+        { $set: { "requestRides.$.status": status } }
+    );
+}
 
 
 export const saveRideInDB = async (newRide) => {
@@ -37,12 +116,12 @@ export const getRideDetails = async (ride_id) => {
             const passengerId = requestRides[index].userId;
             const passengerDetails = await getbyId(passengerId);
             console.log(passengerDetails);
-            passengers.push({ 
-                user_id: requestRides[index].userId, 
-                date: requestRides[index].date, 
-                time: requestRides[index].time, 
-                name: passengerDetails.existUser.name, 
-                imageUrl: passengerDetails.existUser.imageUrl 
+            passengers.push({
+                user_id: requestRides[index].userId,
+                date: requestRides[index].date,
+                time: requestRides[index].time,
+                name: passengerDetails.existUser.name,
+                imageUrl: passengerDetails.existUser.imageUrl
             })
         }
         return {
@@ -63,16 +142,7 @@ export const getRideDetails = async (ride_id) => {
 export const bookRideSaveinDb = async (newRide) => {
     try {
         const ride = await model.findOne({ _id: newRide.id });
-        const passanger = ride.requestRides;
-
-
-        for (var i = 0; i < passanger.length; i++) {
-            console.log(passanger[i].userId);
-            console.log(newRide.userId);
-            if (passanger[i].userId == newRide.userId) {
-                return false;
-            }
-        }
+        if (isPassengerAlreadyBookTheRide(ride.requestRides, newRide.userId)) return true;
 
         let updatedNewRide = newRide;
         updatedNewRide.firebaseTopic = ride.firebaseTopic;
@@ -80,20 +150,22 @@ export const bookRideSaveinDb = async (newRide) => {
         ride.requestRides.push(updatedNewRide);
         await ride.save();
 
+        //...will refactor once we implemnt firebase
         const offerRide = ride.offerRides[0];
-
         const text = `${newRide.userName} booked ride from ${offerRide.from} to ${offerRide.to}`;
         const objForDb = { text }
         const topic = ride.userId.toString();
         const title = 'Booked Ride';
 
         sendFireBaseMessage(objForDb, topic, title);
-        return true;
+
+        return false;
 
     } catch (error) {
         return Promise.reject(error);
     }
 }
+
 export const getUserOfferRides = async (userId) => {
     try {
         const Rides = await model.find({ userId: userId })
@@ -113,50 +185,19 @@ export const getUserBookRides = async (userId) => {
     }
 }
 
-const getRideWithDriverDetailsById = async(ride_id) => {
-    const ridesDetails = await model.findOne({ _id: ride_id });
-
-    const driverId = ridesDetails.userId;
-    const driverDetails = await getbyId(driverId);
-    const rating = await getuserratingOutOf5(driverId);
-    driverDetails.rating = rating;
-
-    const requestRides = ridesDetails.requestRides;
-    var passengers = [];
-
-    for (let index = 0; index < requestRides.length; index++) {
-        const passengerId = requestRides[index].userId;
-        const passengerDetails = await getbyId(passengerId);
-
-        passengers.push({
-            name: passengerDetails.existUser.name ?? '',
-            imageUrl: passengerDetails.existUser.imageUrl ?? '',
-            userId: requestRides[index].userId,
-            status: requestRides[index].status,
-            phoneNum: requestRides[index].phoneNum ?? '',
-            from: requestRides[index].from,
-            to: requestRides[index].to,
-            date: requestRides[index].date,
-            time: requestRides[index].time, 
-        })
-
-    }
-
-    return {ridesDetails,driverDetails, passengers};
-}
 
 export const getBookRideDetails = async (ride_id) => {
     try {
-        const {ridesDetails,driverDetails, passengers} = await getRideWithDriverDetailsById(ride_id);
+        const { ridesDetails, driverDetails, passengers } = await getRideWithDriverDetailsById(ride_id);
         return {
-            RideId: ridesDetails._id, 
-            From: ridesDetails.offerRides[0].from, 
+            RideId: ridesDetails._id,
+            From: ridesDetails.offerRides[0].from,
             To: ridesDetails.offerRides[0].to,
-            Time: getRideTime(ridesDetails.offerRides[0]), 
+            Time: getRideTime(ridesDetails.offerRides[0]),
             Date: getRideDate(ridesDetails.offerRides[0]),
-            carType: ridesDetails.offerRides[0].carType, 
+            carType: ridesDetails.offerRides[0].carType,
             status: ridesDetails.offerRides[0].status,
-            Passengers: passengers, 
+            Passengers: passengers,
             driverDetails
         };
     } catch (error) {
@@ -200,30 +241,11 @@ export const changeRideStatus = async (ride_id, user_Id) => {
     }
 }
 
-export const changeRideStatusToCompleted = async (ride_id, user_Id) => {
+export const changePassengerRideStatus = async (ride_id, userId, Status) => {
     try {
+        await updatePassengerStatusByUserId(ride_id, userId, Status)
+        return await perRideDriverIncome(ride_id);
 
-        await model.updateOne(
-            {
-                "_id": ride_id, "requestRides.userId": user_Id, "requestRides.status": ONGOING
-            },
-            {
-                $set: { "requestRides.$.status": COMPLETED }
-
-            })
-        const seats = await model.findOne({ "_id": ride_id, "requestRides.userId": user_Id });
-        const cost = await model.findOne({ "_id": ride_id });
-        console.log(cost);
-        const perseatcost = cost.offerRides[0].pricePerSeat;
-        const perbagcost = cost.offerRides[0].pricePerBag;
-        const passangerseats = cost.requestRides[0].noOfSeats;
-        const passangerbags = cost.requestRides[0].bigBagNo;
-        console.log(passangerseats);
-        console.log(passangerbags);
-        const total = ((perseatcost * passangerseats) + (perbagcost * passangerbags));
-        console.log(passangerbags);
-
-        return total;
     } catch (error) {
         return Promise.reject(error);
     }
@@ -246,34 +268,34 @@ export const getRideDateTime = async (ride_id, user_Id) => {
 
 export const getCurrentRideDetails = async (ride_id) => {
     try {
-        const {ridesDetails,driverDetails, passengers} = await getRideWithDriverDetailsById(ride_id);
+        const { ridesDetails, driverDetails, passengers } = await getRideWithDriverDetailsById(ride_id);
 
         return {
-            Name: driverDetails.existUser.name ?? '', 
+            Name: driverDetails.existUser.name ?? '',
             ProfileUrl: driverDetails.existUser.imageUrl ?? '',
-            phoneNum: driverDetails.existUser.phoneNum ?? '', 
-            From: ridesDetails.offerRides[0].from, 
+            phoneNum: driverDetails.existUser.phoneNum ?? '',
+            From: ridesDetails.offerRides[0].from,
             To: ridesDetails.offerRides[0].to,
-            Time: ridesDetails.offerRides[0].time, 
-            Date: ridesDetails.offerRides[0].date, 
+            Time: ridesDetails.offerRides[0].time,
+            Date: ridesDetails.offerRides[0].date,
             NoOfSeats: ridesDetails.offerRides[0].noOfSeats,
-            pricePerSeat: ridesDetails.offerRides[0].pricePerSeat, 
+            pricePerSeat: ridesDetails.offerRides[0].pricePerSeat,
             pricePerBag: ridesDetails.offerRides[0].pricePerBag,
-            noOfSeats: ridesDetails.offerRides[0].noOfSeats, 
-            NoOfBags: ridesDetails.offerRides[0].bigBagNo, 
+            noOfSeats: ridesDetails.offerRides[0].noOfSeats,
+            NoOfBags: ridesDetails.offerRides[0].bigBagNo,
             smoking: ridesDetails.offerRides[0].smoking,
             petAllow: ridesDetails.offerRides[0].petAllow,
-            noOfPauses: ridesDetails.offerRides[0].noOfPauses, 
+            noOfPauses: ridesDetails.offerRides[0].noOfPauses,
             foodAllow: ridesDetails.offerRides[0].foodAllow,
             status: ridesDetails.offerRides[0].status,
-            CarType: ridesDetails.offerRides[0].carType, 
+            CarType: ridesDetails.offerRides[0].carType,
             recurringRideStartDate: ridesDetails.offerRides[0].recurringRideStartDate,
-            recurringRideEndDate: ridesDetails.offerRides[0].recurringRideEndDate, 
+            recurringRideEndDate: ridesDetails.offerRides[0].recurringRideEndDate,
             recurringRideTime: ridesDetails.offerRides[0].recurringRideTime,
-            user_id: ridesDetails.userId, Ride_id: ridesDetails._id, 
+            user_id: ridesDetails.userId, Ride_id: ridesDetails._id,
             Currency: ridesDetails.offerRides[0].currency,
-            pricePerSeat: ridesDetails.offerRides[0].pricePerSeat, 
-            priceperBag: ridesDetails.offerRides[0].pricePerBag, 
+            pricePerSeat: ridesDetails.offerRides[0].pricePerSeat,
+            priceperBag: ridesDetails.offerRides[0].pricePerBag,
             Passengers: passengers,
         };
     } catch (error) {
@@ -319,46 +341,18 @@ export const changecompleteride = async (ride_id, user_Id) => {
 }
 
 
-export const driverstarthisride = async (ride_id) => {
+export const rideStartedByDriver = async (ride_id) => {
     try {
-
-        await model.updateOne(
-            { _id: ride_id, "offerRides.status": UPCOMING },
-            { $set: { "offerRides.$.status": ONGOING } })
-        return;
+        await updateAllRequestedStatus(ride_id, ONGOING);
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export const drivercompletehisride = async (ride_id) => {
+export const driverCompletedHisRide = async (ride_id) => {
     try {
-
-        await model.updateOne(
-            { _id: ride_id, "offerRides.status": ONGOING },
-            { $set: { "offerRides.$.status": COMPLETED } })
-
-        const passenger = await model.find({ _id: ride_id });
-        const price = passenger[0].offerRides[0].pricePerSeat;
-        const bagprice = passenger[0].offerRides[0].pricePerBag;
-        const details = passenger[0].requestRides;
-        console.log(price);
-        console.log(bagprice);
-
-
-        var total = 0;
-        for (var i = 0; i < details.length; i++) {
-            if (details[i].status == COMPLETED) {
-                const seats = details[i].noOfSeats;
-                const bags = details[i].bigBagNo;
-                console.log(seats);
-                console.log(bags);
-
-
-                total = total + ((price * seats) + (bagprice * bags));
-            }
-        }
-        return total;
+        await updateAllRequestedStatus(ride_id, COMPLETED);
+        return await perRideDriverIncome(ride_id);
     } catch (error) {
         return Promise.reject(error);
     }
