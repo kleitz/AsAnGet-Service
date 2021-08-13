@@ -31,8 +31,8 @@ export const getCurrentRide = async (bookOfferRide, rideId, rideCat) => {
 
 }
 
-const isRideCompleted = (rideDate, status) => {
-    return (status == "Completed") || isCurrentDateGreaterThan(rideDate);
+const isRideCompleted = (status) => {
+    return (status == "Completed");
 }
 
 export const makeCurrentRideArray = async (rides, rideType, rideCat) => {

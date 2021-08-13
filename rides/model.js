@@ -1,5 +1,5 @@
 import {Schema, model} from 'mongoose';
-
+import { UPCOMING } from './const';
 
 
 
@@ -68,7 +68,7 @@ const OfferRideSchema = new Schema({
   }, 
   status: {
     type: String, // Number type
-    default:'Upcoming',
+    default:UPCOMING,
   },
   firebaseTopic:{
     type: String
@@ -130,7 +130,7 @@ const RequestRideSchema = new Schema({
   }, 
   status: {
     type: String, // Number type
-    default:'Upcoming',
+    default:UPCOMING,
   },
   OTP: {
     type: Number,
