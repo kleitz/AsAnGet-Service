@@ -1,4 +1,5 @@
-import { myCars, edituserbyId, updateuserprofile, getprofilebyId, getuserjoineddays, getbyId} from './dbHelper';
+import { myCars, edituserbyId, updateuserprofile, getprofilebyId, 
+    getuserjoineddays, getbyId, getAllUsers} from './dbHelper';
 import {getuserratings} from '../ratings/dbHelper';
 import {tokenForUser} from './helper';
 
@@ -71,6 +72,17 @@ export const userdata = async (req, res, next) => {
         const existUser = await getbyId(user_id);
         
         return res.status(200).json({token: tokenForUser(existUser),name:existUser.existUser.name,id:existUser.existUser._id,url:existUser.existUser.imageUrl,email:existUser.existUser.email, cars:existUser.existUser.cars.length});
+        
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const getAll = async (req, res, next) => {
+    try {
+        const users = await getAllUsers();
+        
+        return res.status(200).json({users});
         
     } catch (error) {
         next(error);

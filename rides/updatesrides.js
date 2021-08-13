@@ -17,9 +17,7 @@ export const currentRide = async (req, res, next) => {
 
         const offerRidesForuser = await getUserOfferRides(_id);
         const offeredRides = await makeCurrentRideArray(offerRidesForuser,'OfferRide');
-
-
-        console.log('--------...Bookrides,...Offeredrides', JSON.stringify([...bookedRides, ...offeredRides]));
+        console.log('currenrride', JSON.stringify([...bookedRides, ...offeredRides]));
         return res.status(200).json([...bookedRides, ...offeredRides]);
     } catch (error) {
         next(error);
@@ -43,66 +41,18 @@ export const currentrideDetails = async (req, res, next) => {
 
 export const completedRides = async (req, res, next) => {
     try {
-        console.log('0000000', req.body);
+
         const { _id } = req.body;
-        var Bookrides = [];
-        var Offeredrides = [];
-        var today = new Date();
-        var day = today.getDate();
-        var mon = today.getMonth() + 1;
-        var year = today.getFullYear();
-        today = (mon + "-" + day + "-" + year);
-        var todayDate = new Date(today);
-        const bookrides = await getUserBookRides(_id);
-        console.log('1111', bookrides);
-        for (let index = 0; index < bookrides.length; index++) {
+        
+        const bookRidesForUser = await getUserBookRides(_id);
+        const bookedRides = await makeCurrentRideArray(bookRidesForUser,'BookRide', 'COMPLETED');
 
-            const date = bookrides[index].offerRides[0].date;
-            const [day, month, year] = date.split('-');
-            const dateObj = { month, day, year };
-            const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
-            const RideDate = new Date(rideDate);
-            const rideId = bookrides[index]._id;
-            const Details = await getBookRideDetails(rideId);
-            const passanger = [Details.Passengers[0]];
+        const offerRidesForuser = await getUserOfferRides(_id);
+        const offeredRides = await makeCurrentRideArray(offerRidesForuser,'OfferRide', 'COMPLETED');
 
+        console.log('completedRide', JSON.stringify([...bookedRides, ...offeredRides]));
+        return res.status(200).json([...bookedRides, ...offeredRides]);
 
-            console.log('8888888---', passanger);
-            for (let index = 0; index < passanger.length; index++) {
-
-                if (passanger[index].userId == _id) {
-                    const status = passanger[index].status;
-                    if ((todayDate > RideDate) || ((todayDate == RideDate) && (status == "Completed"))) {
-                        var myJson = { "Type": "Bookride", Details }
-                        Bookrides.push(myJson);
-                    }
-                }
-
-            }
-
-
-
-        }
-        const getOfferRides = await getUserOfferRides(_id);
-        console.log(getOfferRides);
-        for (let index = 0; index < getOfferRides.length; index++) {
-            const date = getOfferRides[index].offerRides[0].date;
-            const status = getOfferRides[index].offerRides[0].status;
-            const [day, month, year] = date.split('-');
-            const dateObj = { month, day, year };
-
-            const rideDate = dateObj.month + '-' + dateObj.day + '-' + dateObj.year;
-            const RideDate = new Date(rideDate);
-            if ((todayDate > RideDate) || ((todayDate == RideDate) && (status == "Completed"))) {
-                const rideId = getOfferRides[index]._id;
-                const Details = await getBookRideDetails(rideId);
-                var myJson = { "Type": "OfferRide", Details }
-
-                Offeredrides.push(myJson);
-            }
-
-        }
-        return res.status(200).send([...Bookrides, ...Offeredrides]);
     } catch (error) {
         next(error);
     }
@@ -110,7 +60,6 @@ export const completedRides = async (req, res, next) => {
 
 export const historyrideDetails = async (req, res, next) => {
     try {
-
         const { ride_id } = req.body;
         const rideDetails = await getCurrentRideDetails(ride_id);
         return res.status(200).send(rideDetails);

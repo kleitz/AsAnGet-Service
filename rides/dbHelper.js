@@ -69,6 +69,7 @@ export const bookRideSaveinDb = async (newRide) => {
 
         let updatedNewRide = newRide;
         updatedNewRide.firebaseTopic = ride.firebaseTopic;
+
         ride.requestRides.push(updatedNewRide);
         await ride.save();
 
@@ -105,15 +106,41 @@ export const getUserBookRides = async (userId) => {
     }
 }
 
+const getRideWithDriverDetailsById = async(ride_id) => {
+    const ridesDetails = await model.findOne({ _id: ride_id });
 
+    const driverId = ridesDetails.userId;
+    const driverDetails = await getbyId(driverId);
+    const rating = await getuserratingOutOf5(driverId);
+    driverDetails.rating = rating;
+
+    const requestRides = ridesDetails.requestRides;
+    var passengers = [];
+
+    for (let index = 0; index < requestRides.length; index++) {
+        const passengerId = requestRides[index].userId;
+        const passengerDetails = await getbyId(passengerId);
+
+        passengers.push({
+            name: passengerDetails.existUser.name ?? '',
+            imageUrl: passengerDetails.existUser.imageUrl ?? '',
+            userId: requestRides[index].userId,
+            status: requestRides[index].status,
+            phoneNum: requestRides[index].phoneNum ?? '',
+            From: requestRides[index].from,
+            To: requestRides[index].to,
+            date: requestRides[index].date,
+            time: requestRides[index].time, 
+        })
+
+    }
+
+    return {ridesDetails,driverDetails};
+}
 
 export const getBookRideDetails = async (ride_id) => {
     try {
-        const ridesDetails = await model.findOne({ _id: ride_id });
-        const driverId = ridesDetails.userId;
-        const driverDetails = await getbyId(driverId);
-        const rating = await getuserratingOutOf5(driverId);
-        driverDetails.rating = rating;
+        const {ridesDetails,driverDetails} = await getRideWithDriverDetailsById(ride_id);
         const requestRides = ridesDetails.requestRides;
         var passengers = [];
 
@@ -261,18 +288,13 @@ export const getCurrentRideDetails = async (ride_id) => {
             recurringRideEndDate: ridesDetails.offerRides[0].recurringRideEndDate, recurringRideTime: ridesDetails.offerRides[0].recurringRideTime,
             user_id: ridesDetails.userId, Ride_id: ridesDetails._id, Currency: ridesDetails.offerRides[0].currency,
             pricePerSeat: ridesDetails.offerRides[0].pricePerSeat, priceperBag: ridesDetails.offerRides[0].pricePerBag, Passengers: passengers,
-
-
-
-
-
-
-
         };
     } catch (error) {
         return Promise.reject(error);
     }
 }
+
+
 export const changeRideStatusToCancel = async (ride_id, user_Id) => {
     try {
 

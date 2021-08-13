@@ -152,6 +152,10 @@ modifiedDate: {
     type: Date,
     default: Date.now
 },
+Type:{
+  type: String,
+  default:'BookRide'
+}
 
 });
 

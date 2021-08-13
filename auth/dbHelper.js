@@ -1,4 +1,13 @@
 import model from './model';
+
+export const getAllUsers = async() => {
+    try {
+        const users = await model.findOne({});
+        return users;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
 /*getbyId() used to get existing user by userId*/
 export const getbyId = async(user_id) => {
     try {
