@@ -2,7 +2,7 @@ import model from './model';
 
 export const getAllUsers = async() => {
     try {
-        const users = await model.findOne({});
+        const users = await model.find({});
         return users;
     } catch (error) {
         return Promise.reject(error);
