@@ -190,21 +190,25 @@ export const rideDistance = async (req, res, next) => {
         }
         else {
             let placeUrl = process.env.getPlaceName.replace('replace_lat_lng', startPoint);
+            
             //Api call to get start place from Lat/Log
             const getStartPlace = await axios.get(placeUrl);
             placeUrl = process.env.getPlaceName.replace('replace_lat_lng', endPoint);
             //Api call to get Destination name from Lat/Log
             const getEndPlace = await axios.get(placeUrl);
             const startPlaceName = getStartPlace.data.results[0].formatted_address;
+           
             const endPlaceName = getEndPlace.data.results[0].formatted_address;
 
 
             let getPolyline = process.env.googleDirectionApi.replace('replace_start_place', startPlaceName);
             getPolyline = getPolyline.replace('replace_end_place', endPlaceName);
-
+           
+            const URI = getPolyline;
+            const encodedURI = encodeURI(URI);
             //Api call to get Distance directions and all the polyline points
-            const response = await axios.get(getPolyline);
-
+            const response = await axios.get(encodedURI);
+            
             const distance = response.data.routes[0] ? 
                     response.data.routes[0].legs[0].distance.text : 'To Far';
             return res.status(200).send({ "Distance": distance });
