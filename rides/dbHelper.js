@@ -269,7 +269,7 @@ export const getRideDateTime = async (ride_id, user_Id) => {
 export const getCurrentRideDetails = async (ride_id) => {
     try {
         const { ridesDetails, driverDetails, passengers } = await getRideWithDriverDetailsById(ride_id);
-
+        const spaceAailable = ridesDetails.offerRides[0].noOfSeats - passengers.length;
         return {
             Name: driverDetails.existUser.name ?? '',
             ProfileUrl: driverDetails.existUser.imageUrl ?? '',
@@ -278,11 +278,8 @@ export const getCurrentRideDetails = async (ride_id) => {
             To: ridesDetails.offerRides[0].to,
             Time: ridesDetails.offerRides[0].time,
             Date: ridesDetails.offerRides[0].date,
-            NoOfSeats: ridesDetails.offerRides[0].noOfSeats,
-            pricePerSeat: ridesDetails.offerRides[0].pricePerSeat,
-            pricePerBag: ridesDetails.offerRides[0].pricePerBag,
             noOfSeats: ridesDetails.offerRides[0].noOfSeats,
-            NoOfBags: ridesDetails.offerRides[0].bigBagNo,
+            noOfBags: ridesDetails.offerRides[0].bigBagNo,
             smoking: ridesDetails.offerRides[0].smoking,
             petAllow: ridesDetails.offerRides[0].petAllow,
             noOfPauses: ridesDetails.offerRides[0].noOfPauses,
@@ -293,10 +290,12 @@ export const getCurrentRideDetails = async (ride_id) => {
             recurringRideEndDate: ridesDetails.offerRides[0].recurringRideEndDate,
             recurringRideTime: ridesDetails.offerRides[0].recurringRideTime,
             user_id: ridesDetails.userId, Ride_id: ridesDetails._id,
-            Currency: ridesDetails.offerRides[0].currency,
+            currency: ridesDetails.offerRides[0].currency,
             pricePerSeat: ridesDetails.offerRides[0].pricePerSeat,
-            priceperBag: ridesDetails.offerRides[0].pricePerBag,
+            pricePerBag: ridesDetails.offerRides[0].pricePerBag,
             Passengers: passengers,
+            rating: driverDetails.rating,
+            spaceAailable
         };
     } catch (error) {
         return Promise.reject(error);
