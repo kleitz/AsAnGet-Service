@@ -12,6 +12,7 @@ import {makeCurrentRideArray} from './helper';
 
 export const currentRide = async (req, res, next) => {
     try {
+        console.log('currentride', req.body._id);
         const { _id } = req.body;
         
         const bookRidesForUser = await getUserBookRides(_id);
@@ -19,7 +20,7 @@ export const currentRide = async (req, res, next) => {
 
         const offerRidesForuser = await getUserOfferRides(_id);
         const offeredRides = await makeCurrentRideArray(offerRidesForuser,'OfferRide');
-        console.log('currenrride', JSON.stringify([...bookedRides, ...offeredRides]));
+        // console.log('currenrride', JSON.stringify([...bookedRides, ...offeredRides]));
         return res.status(200).json([...bookedRides, ...offeredRides]);
     } catch (error) {
         next(error);
@@ -52,7 +53,7 @@ export const completedRides = async (req, res, next) => {
         const offerRidesForuser = await getUserOfferRides(_id);
         const offeredRides = await makeCurrentRideArray(offerRidesForuser,'OfferRide', 'COMPLETED');
 
-        console.log('completedRide', JSON.stringify([...bookedRides, ...offeredRides]));
+        // console.log('completedRide', JSON.stringify([...bookedRides, ...offeredRides]));
         return res.status(200).json([...bookedRides, ...offeredRides]);
 
     } catch (error) {

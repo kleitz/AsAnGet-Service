@@ -244,7 +244,7 @@ export const changeRideStatus = async (ride_id, user_Id) => {
 export const changePassengerRideStatus = async (ride_id, userId, Status) => {
     try {
         await updatePassengerStatusByUserId(ride_id, userId, Status)
-        return await perRideDriverIncome(ride_id);
+        return await perRidePassengerCost(ride_id, userId);
 
     } catch (error) {
         return Promise.reject(error);
@@ -352,7 +352,7 @@ export const rideStartedByDriver = async (ride_id) => {
 export const driverCompletedHisRide = async (ride_id) => {
     try {
         await updateAllRequestedStatus(ride_id, COMPLETED);
-        return await perRideDriverIncome(ride_id);
+        // return await perRideDriverIncome(ride_id);
     } catch (error) {
         return Promise.reject(error);
     }

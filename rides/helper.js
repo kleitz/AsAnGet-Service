@@ -19,9 +19,7 @@ export const isCurrentDateGreaterThan = (date2) => {
 
 export const getCurrentRide = async (bookOfferRide, rideId, rideCat) => {
     const status = bookOfferRide.status;
-    const date = getRideDate(bookOfferRide);
-    const rideDate = convertStringToDate(date);
-    const checkRideCompleted = isRideCompleted(rideDate, status);
+    const checkRideCompleted = isRideCompleted(status);
     const makeCurrentCondtionCheck = (rideCat === 'COMPLETED') ?
                                     checkRideCompleted : !checkRideCompleted;
     if (makeCurrentCondtionCheck) {
@@ -32,7 +30,7 @@ export const getCurrentRide = async (bookOfferRide, rideId, rideCat) => {
 }
 
 const isRideCompleted = (status) => {
-    return (status == "Completed");
+    return (status.trim() === "Completed");
 }
 
 export const makeCurrentRideArray = async (rides, rideType, rideCat) => {
