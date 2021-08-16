@@ -1,10 +1,11 @@
+import { sendFireBaseMessage } from '../firebase/firebase';
 import { COMPLETED } from './const';
 import {
     getUserOfferRides, getUserBookRides, getBookRideDetails,
     getRideotp, changeRideStatus, getRideDateTime, changePassengerRideStatus,
     getCurrentRideDetails, changeRideStatusToCancel, rideStartedByDriver, driverridestatus,
     passengerridestatus, driverCompletedHisRide, updatePassengerStatusByUserId,
-    perRidePassengerCost
+    perRidePassengerCost,rideCancelByDriver
 } from './dbHelper';
 
 import {makeCurrentRideArray} from './helper';
@@ -121,7 +122,8 @@ export const driverstartride = async (req, res, next) => {
 
         const { ride_id } = req.body;
         await rideStartedByDriver(ride_id);
-
+        //... will add firebase
+        //sendFireBaseMessage();
         return res.status(200).send({ "Ride": "Started" });
     } catch (error) {
         next(error);
@@ -139,42 +141,12 @@ export const driverstatusCompleted = async (req, res, next) => {
     }
 }
 
-export const cancelRide = async (req, res, next) => {
+export const driverCancelRide = async (req, res, next) => {
     try {
-        const { userId, ride_id } = req.body;
-        const datetime = await getRideDateTime(ride_id, userId);
-
-        var today = new Date();
-        var day = today.getDate();
-        var mon = today.getMonth() + 1;
-        var year = today.getFullYear();
-        today = (mon + " " + day + "," + year);
-        console.log(today);
-        //var todayDate = new Date(today)
-        var time = new Date();
-        var currentTime = time.getHours() + ":" + time.getMinutes();
-        console.log(currentTime);
-        const date = datetime.Date;
-        const [rday, rmonth, ryear] = date.split('-');
-        const dateObj = { rmonth, rday, ryear };
-        const rideDate = dateObj.rmonth + ' ' + dateObj.rday + ',' + dateObj.ryear;
-        const str = datetime.Time;
-        const rtime = str.substring(0, str.length - 2)
-        console.log(rtime);
-
-
-        var dt1 = new Date(today + " " + currentTime);
-        var dt2 = new Date(rideDate + " " + "4:00");
-
-
-        var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-        diff /= (60 * 60);
-        const hrDiff = Math.abs(Math.round(diff));
-        console.log(hrDiff);
-        if (hrDiff > 1) {
-            await changeRideStatusToCancel(ride_id, userId);
-        }
-        console.log(Math.abs(Math.round(diff)));
+        const { ride_id } = req.body;
+        await rideCancelByDriver(ride_id);
+        //... will add firebase
+        //sendFireBaseMessage();
 
         return res.status(200).send({ datetime });
 
@@ -184,50 +156,50 @@ export const cancelRide = async (req, res, next) => {
     }
 }
 
-export const drivercancelRide = async (req, res, next) => {
-    try {
-        const { userId, ride_id } = req.body;
-        const datetime = await getRideDateTime(ride_id, userId);
+// export const drivercancelRide = async (req, res, next) => {
+//     try {
+//         const { userId, ride_id } = req.body;
+//         const datetime = await getRideDateTime(ride_id, userId);
 
-        var today = new Date();
-        var day = today.getDate();
-        var mon = today.getMonth() + 1;
-        var year = today.getFullYear();
-        today = (mon + " " + day + "," + year);
-        console.log(today);
-        //var todayDate = new Date(today)
-        var time = new Date();
-        var currentTime = time.getHours() + ":" + time.getMinutes();
-        console.log(currentTime);
-        const date = datetime.Date;
-        const [rday, rmonth, ryear] = date.split('-');
-        const dateObj = { rmonth, rday, ryear };
-        const rideDate = dateObj.rmonth + ' ' + dateObj.rday + ',' + dateObj.ryear;
-        const str = datetime.Time;
-        const rtime = str.substring(0, str.length - 2)
-        console.log(rtime);
-
-
-        var dt1 = new Date(today + " " + currentTime);
-        var dt2 = new Date(rideDate + " " + "4:00");
+//         var today = new Date();
+//         var day = today.getDate();
+//         var mon = today.getMonth() + 1;
+//         var year = today.getFullYear();
+//         today = (mon + " " + day + "," + year);
+//         console.log(today);
+//         //var todayDate = new Date(today)
+//         var time = new Date();
+//         var currentTime = time.getHours() + ":" + time.getMinutes();
+//         console.log(currentTime);
+//         const date = datetime.Date;
+//         const [rday, rmonth, ryear] = date.split('-');
+//         const dateObj = { rmonth, rday, ryear };
+//         const rideDate = dateObj.rmonth + ' ' + dateObj.rday + ',' + dateObj.ryear;
+//         const str = datetime.Time;
+//         const rtime = str.substring(0, str.length - 2)
+//         console.log(rtime);
 
 
-        var diff = (dt2.getTime() - dt1.getTime()) / 1000;
-        diff /= (60 * 60);
-        const hrDiff = Math.abs(Math.round(diff));
-        console.log(hrDiff);
-        if (hrDiff > 1) {
-            await changeRideStatusToCancel(ride_id, userId);
-        }
-        console.log(Math.abs(Math.round(diff)));
-
-        return res.status(200).send({ datetime });
+//         var dt1 = new Date(today + " " + currentTime);
+//         var dt2 = new Date(rideDate + " " + "4:00");
 
 
-    } catch (error) {
-        next(error);
-    }
-}
+//         var diff = (dt2.getTime() - dt1.getTime()) / 1000;
+//         diff /= (60 * 60);
+//         const hrDiff = Math.abs(Math.round(diff));
+//         console.log(hrDiff);
+//         if (hrDiff > 1) {
+//             await changeRideStatusToCancel(ride_id, userId);
+//         }
+//         console.log(Math.abs(Math.round(diff)));
+
+//         return res.status(200).send({ datetime });
+
+
+//     } catch (error) {
+//         next(error);
+//     }
+// }
 
 export const getdriverridestatus = async (req, res, next) => {
 

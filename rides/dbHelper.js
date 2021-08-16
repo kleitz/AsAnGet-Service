@@ -4,7 +4,7 @@ import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
 import { sendFireBaseMessage } from '../firebase/firebase';
 import { getRideDate, getRideTime, isPassengerAlreadyBookTheRide } from './helper';
-import { COMPLETED, ONGOING, UPCOMING } from './const';
+import { COMPLETED, ONGOING, UPCOMING, CANCELLED } from './const';
 
 
 const getRideWithDriverDetailsById = async (ride_id) => {
@@ -343,6 +343,14 @@ export const changecompleteride = async (ride_id, user_Id) => {
 export const rideStartedByDriver = async (ride_id) => {
     try {
         await updateAllRequestedStatus(ride_id, ONGOING);
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+export const rideCancelByDriver = async (ride_id) => {
+    try {
+        await updateAllRequestedStatus(ride_id, CANCELLED);
     } catch (error) {
         return Promise.reject(error);
     }

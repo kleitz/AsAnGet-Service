@@ -2,7 +2,7 @@ import express from 'express';
 
 
 import {createRide,findRide,bookRide,rideDetails, rideDistance} from './controller';
-import{currentRide, completedRides, getRideOTP, verifyRideOTP, cancelRide, passengerRideCompleted
+import{currentRide, completedRides, getRideOTP, verifyRideOTP, driverCancelRide, passengerRideCompleted
        ,currentrideDetails,historyrideDetails,driverstartride, getdriverridestatus, 
        driverstatusCompleted,
        getpassengerridestatus} from './updatesrides';
@@ -17,7 +17,7 @@ router.post('/current_rides',currentRide);
 router.post('/completed_rides',completedRides);
 router.post('/ride_otp',getRideOTP);
 router.post('/verify_otp',verifyRideOTP);
-router.post('/cancel_ride',cancelRide);
+router.post('/cancel_ride',driverCancelRide);
 router.post('/driverstatus_completed',driverstatusCompleted);
 router.post('/status_completed',passengerRideCompleted);
 router.post('/currentride_details',currentrideDetails);
