@@ -28,9 +28,9 @@ export const getuserratings = async (user_id, role) => {
     }
 }
 
-export const getuserratingOutOf5 = async (user_id) => {
+export const getuserratingOutOf5 = async (user_id, role) => {
     try {
-        const userdata = await ratings.find({ "ratedUserId": user_id});
+        const userdata = await ratings.find({ "ratedUserId": user_id, role});
         const rating5 = [];
         const rating4 = []
         const rating3 = []
@@ -39,11 +39,11 @@ export const getuserratingOutOf5 = async (user_id) => {
 
         for (let index = 0; index < userdata.length; index++) {
             const element = userdata[index];
-            if(task.rate === 5)     rating5.push(element.rate);
-            else if(task.rate === 4) rating4.push(element.rate);
-            else if(task.rate === 3) rating3.push(element.rate);
-            else if(task.rate === 2) rating2.push(element.rate);
-            else if(task.rate === 1) rating1.push(element.rate);
+            if(element.rate === 5)     rating5.push(element.rate);
+            else if(element.rate === 4) rating4.push(element.rate);
+            else if(element.rate === 3) rating3.push(element.rate);
+            else if(element.rate === 2) rating2.push(element.rate);
+            else if(element.rate === 1) rating1.push(element.rate);
         }
 
        const allRatingSum = 5*rating5.length +  4*rating4.length +  
@@ -51,7 +51,7 @@ export const getuserratingOutOf5 = async (user_id) => {
        const totalResponse = rating5.length +  rating4.length +  rating3.length + 
                              rating2.length + rating1.length;  
         const rating5Star = (totalResponse > 0) ? (allRatingSum / totalResponse).toFixed(1) : 1;
-        return rating5Star;                   
+        return {rating5Star, userRatedByCount: userdata.length};                   
 
     } catch (error) {
         return Promise.reject(error);

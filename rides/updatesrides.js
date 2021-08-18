@@ -1,27 +1,25 @@
 import { sendFireBaseMessage } from '../firebase/firebase';
-import { COMPLETED } from './const';
+import { COMPLETED, ONGOING } from './const';
 import {
     getUserOfferRides, getUserBookRides, getBookRideDetails,
-    getRideotp, changeRideStatus, getRideDateTime, changePassengerRideStatus,
+    getRideotp, getRideDateTime, changePassengerRideStatus,
     getCurrentRideDetails, changeRideStatusToCancel, rideStartedByDriver, driverridestatus,
     passengerridestatus, driverCompletedHisRide, updatePassengerStatusByUserId,
-    perRidePassengerCost,rideCancelByDriver
+    perRidePassengerCost, rideCancelByDriver
 } from './dbHelper';
 
-import {makeCurrentRideArray} from './helper';
+import { makeCurrentRideArray } from './helper';
 
 
 export const currentRide = async (req, res, next) => {
     try {
-        console.log('currentride', req.body._id);
         const { _id } = req.body;
-        
+
         const bookRidesForUser = await getUserBookRides(_id);
-        const bookedRides = await makeCurrentRideArray(bookRidesForUser,'BookRide');
+        const bookedRides = await makeCurrentRideArray(bookRidesForUser, 'BookRide');
 
         const offerRidesForuser = await getUserOfferRides(_id);
-        const offeredRides = await makeCurrentRideArray(offerRidesForuser,'OfferRide');
-        // console.log('currenrride', JSON.stringify([...bookedRides, ...offeredRides]));
+        const offeredRides = await makeCurrentRideArray(offerRidesForuser, 'OfferRide');
         return res.status(200).json([...bookedRides, ...offeredRides]);
     } catch (error) {
         next(error);
@@ -30,10 +28,9 @@ export const currentRide = async (req, res, next) => {
 
 export const currentrideDetails = async (req, res, next) => {
     try {
-        console.log("new api");
         const { ride_id } = req.body;
         const rideDetails = await getCurrentRideDetails(ride_id);
-        return res.status(200).send({ rideDetails, total:0 });
+        return res.status(200).send({ rideDetails, total: 0 });
     } catch (error) {
         next(error);
     }
@@ -44,12 +41,12 @@ export const completedRides = async (req, res, next) => {
     try {
 
         const { _id } = req.body;
-        
+
         const bookRidesForUser = await getUserBookRides(_id);
-        const bookedRides = await makeCurrentRideArray(bookRidesForUser,'BookRide', 'COMPLETED');
+        const bookedRides = await makeCurrentRideArray(bookRidesForUser, 'BookRide', 'COMPLETED');
 
         const offerRidesForuser = await getUserOfferRides(_id);
-        const offeredRides = await makeCurrentRideArray(offerRidesForuser,'OfferRide', 'COMPLETED');
+        const offeredRides = await makeCurrentRideArray(offerRidesForuser, 'OfferRide', 'COMPLETED');
 
         // console.log('completedRide', JSON.stringify([...bookedRides, ...offeredRides]));
         return res.status(200).json([...bookedRides, ...offeredRides]);
@@ -84,20 +81,14 @@ export const verifyRideOTP = async (req, res, next) => {
     try {
 
         const { userId, ride_id, otp } = req.body;
-
-
         const rideotp = await getRideotp(ride_id, userId);
-        console.log(rideotp);
-        if (rideotp.OTP == otp) {
-            const rideStatus = await changeRideStatus(ride_id, userId);
+        console.log(rideotp,req.body);
+        if (rideotp.OTP.toString() !== otp) return res.status(500).send({ "Failed": "Otp not correct" });
 
-        }
-        else {
-            return res.status(200).send({ "Failed": "Otp not correct" });
-        }
-
+        await updatePassengerStatusByUserId(ride_id, userId, ONGOING);
+        //...use sendfirebase
+        //sendfirebase();
         return res.status(200).send({ "Success": "Ride Started" });
-
 
     } catch (error) {
         next(error);
@@ -106,7 +97,6 @@ export const verifyRideOTP = async (req, res, next) => {
 
 export const passengerRideCompleted = async (req, res, next) => {
     try {
-        console.log("new api");
         const { ride_id, userId } = req.body;
         await updatePassengerStatusByUserId(ride_id, userId, COMPLETED);
         const amount = await perRidePassengerCost(ride_id, userId);
@@ -129,6 +119,7 @@ export const driverstartride = async (req, res, next) => {
         next(error);
     }
 }
+
 export const driverstatusCompleted = async (req, res, next) => {
     try {
 

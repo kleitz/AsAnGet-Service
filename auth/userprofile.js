@@ -1,6 +1,6 @@
 import { myCars, edituserbyId, updateuserprofile, getprofilebyId, 
     getuserjoineddays, getbyId, getAllUsers} from './dbHelper';
-import {getuserratings} from '../ratings/dbHelper';
+import {getuserratingOutOf5} from '../ratings/dbHelper';
 import {tokenForUser} from './helper';
 
 /*editprofile() is used to edit profile  of the user by id*/
@@ -34,7 +34,7 @@ export const getdriverprofile = async (req, res, next) => {
         const {user_id,role } = req.body;     
         
         const data = await getprofilebyId(user_id);
-        const rating = await getuserratings(user_id, role);
+        const rating = await getuserratingOutOf5(user_id, role);
         return res.status(200).send({data,rating});
     } catch (error) {
         next(error);
@@ -46,7 +46,7 @@ export const getpassengerprofile = async (req, res, next) => {
     try {
         const {user_id,role } = req.body;     
         const data = await getprofilebyId(user_id);
-        const rating = await getuserratings(user_id, role);
+        const rating = await getuserratingOutOf5(user_id, role);
         return res.status(200).send({data,rating});
         
     } catch (error) {

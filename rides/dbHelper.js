@@ -12,8 +12,8 @@ const getRideWithDriverDetailsById = async (ride_id) => {
 
     const driverId = ridesDetails.userId;
     const driverDetails = await getbyId(driverId);
-    const rating = await getuserratingOutOf5(driverId);
-    driverDetails.rating = rating;
+    const {rating5Star} = await getuserratingOutOf5(driverId,'driver');
+    driverDetails.rating = rating5Star;
 
     const requestRides = ridesDetails.requestRides;
     var passengers = [];
@@ -25,9 +25,9 @@ const getRideWithDriverDetailsById = async (ride_id) => {
         passengers.push({
             name: passengerDetails.existUser.name ?? '',
             imageUrl: passengerDetails.existUser.imageUrl ?? '',
-            userId: requestRides[index].userId,
+            userId: passengerId,
             status: requestRides[index].status,
-            phoneNum: requestRides[index].phoneNum ?? '',
+            phoneNum: passengerDetails.existUser.phoneNum ?? '',
             from: requestRides[index].from,
             to: requestRides[index].to,
             date: requestRides[index].date,
@@ -65,9 +65,25 @@ const updateAllRequestedStatus = async (ride_id, status) => {
 
 }
 
+const updateDriverRideStatus = async (ride_id, status) => {
+    try {
+        const ride = await model.findOne({ _id: new ObjectID(ride_id) });
+
+        //...update driver ride status
+        await model.updateOne(
+            { _id: new ObjectID(ride_id), 'offerRides._id': new ObjectID(ride.offerRides[0]._id) },
+            { $set: { "offerRides.$.status": status } });
+    } catch (error) {
+        throw new Error(error);
+    }
+
+}
+
+
+
 export const perRidePassengerCost = async (ride_id, userId) => {
     const ride = await model.findOne({ "_id": new ObjectID(ride_id) });
-    const passenger = ride.requestRides.find(reqRide=>(reqRide.userId === userId));
+    const passenger = ride.requestRides.find(reqRide => (reqRide.userId === userId));
 
     const perseatcost = ride.offerRides[0].pricePerSeat;
     const perbagcost = ride.offerRides[0].pricePerBag;
@@ -77,7 +93,7 @@ export const perRidePassengerCost = async (ride_id, userId) => {
     return ((perseatcost * passangerseats) + (perbagcost * passangerbags));
 }
 
-export const updatePassengerStatusByUserId = async(ride_id, userId, status) => {
+export const updatePassengerStatusByUserId = async (ride_id, userId, status) => {
     await model.updateOne(
         { _id: new ObjectID(ride_id), 'requestRides.userId': userId },
         { $set: { "requestRides.$.status": status } }
@@ -210,36 +226,22 @@ export const getRideotp = async (ride_id, userId) => {
     try {
         const ridesDetails = await model.findOne({ "_id": ride_id, "requestRides.userId": userId });
         const requestRides = ridesDetails.requestRides;
-
-        for (let index = 0; index < requestRides.length; index++) {
-            if (userId == requestRides[index].userId) {
-                var otp = requestRides[index].OTP;
-            }
-        }
-
-        return { OTP: otp };
+        const matchUser = requestRides.find(u => (u.userId === userId));
+        return { OTP: matchUser ? matchUser.OTP : null };
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-export const changeRideStatus = async (ride_id, user_Id) => {
-    try {
-
-        await model.updateOne(
-            {
-                "_id": ride_id, "requestRides.userId": user_Id, "requestRides.status": UPCOMING
-            },
-            {
-                $set: { "requestRides.$.status": ONGOING }
-
-            })
-
-        return;
-    } catch (error) {
-        return Promise.reject(error);
-    }
-}
+// export const changePassengerRideStatus = async (ride_id, user_Id, status) => {
+//     try {
+//         await model.updateOne({ "_id": ride_id, "requestRides.userId": user_Id },
+//             { $set: { "requestRides.$.status": status } });
+//         return 'Ride Updated';  
+//     } catch (error) {
+//         return Promise.reject(error);
+//     }
+// }
 
 export const changePassengerRideStatus = async (ride_id, userId, Status) => {
     try {
@@ -342,7 +344,7 @@ export const changecompleteride = async (ride_id, user_Id) => {
 
 export const rideStartedByDriver = async (ride_id) => {
     try {
-        await updateAllRequestedStatus(ride_id, ONGOING);
+        await updateDriverRideStatus(ride_id, ONGOING);
     } catch (error) {
         return Promise.reject(error);
     }
