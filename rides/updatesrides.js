@@ -1,5 +1,5 @@
 import { sendFireBaseMessage } from '../firebase/firebase';
-import { COMPLETED, ONGOING } from './const';
+import { CANCELLED, COMPLETED, ONGOING } from './const';
 import {
     getUserOfferRides, getUserBookRides, getBookRideDetails,
     getRideotp, getRideDateTime, changePassengerRideStatus,
@@ -136,6 +136,21 @@ export const driverCancelRide = async (req, res, next) => {
     try {
         const { ride_id } = req.body;
         await rideCancelByDriver(ride_id);
+        //... will add firebase
+        //sendFireBaseMessage();
+
+        return res.status(200).send({ datetime });
+
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const passengerCancelRide = async (req, res, next) => {
+    try {
+        const { ride_id,userId } = req.body;
+        await updatePassengerStatusByUserId(ride_id, userId, CANCELLED);
         //... will add firebase
         //sendFireBaseMessage();
 

@@ -53,9 +53,10 @@ const updateAllRequestedStatus = async (ride_id, status) => {
             const requestRides = ride.requestRides;
             for (let index = 0; index < requestRides.length; index++) {
                 const element = requestRides[index];
+                const passengerStatus = element.status;
                 await model.updateOne(
                     { _id: new ObjectID(ride_id), 'requestRides._id': new ObjectID(element._id) },
-                    { $set: { "requestRides.$.status": status } }
+                    { $set: { "requestRides.$.status": checkPassengerStatusWithDriverStatus(passengerStatus,status) } }
                 );
             }
         }
@@ -63,6 +64,10 @@ const updateAllRequestedStatus = async (ride_id, status) => {
         throw new Error(error);
     }
 
+}
+
+const checkPassengerStatusWithDriverStatus = (passengerStatus,rideStatus)=>{
+   return rideStatus === COMPLETED && passengerStatus === UPCOMING ? CANCELLED : rideStatus;
 }
 
 const updateDriverRideStatus = async (ride_id, status) => {
