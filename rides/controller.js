@@ -1,5 +1,6 @@
 import { saveRideInDB, getRidesFromDb, getAllRides, getRideDetails, bookRideSaveinDb } from './dbHelper';
 import { getbyId } from '../auth/dbHelper';
+import { getuserratingOutOf5 } from '../ratings/dbHelper';
 import axios from 'axios';
 import { PolyUtil } from "node-geometry-library";
 
@@ -101,18 +102,28 @@ export const findRide = async (req, res, next) => {
 
                         const userId = cursor[index].userId;
                         const UserDetails = await getbyId(userId);
-
+                        const {rating5Star} = await getuserratingOutOf5(userId,'driver');
+                        UserDetails.rating = rating5Star;
+                        
                         availabeRides.push({
-                            id: cursor[index]._id, from: cursor[index].offerRides[0].from, to: cursor[index].offerRides[0].to,
-                            time: cursor[index].offerRides[0].time, Date: cursor[index].offerRides[0].date,
+                            id: cursor[index]._id, 
+                            from: cursor[index].offerRides[0].from, 
+                            to: cursor[index].offerRides[0].to,
+                            time: cursor[index].offerRides[0].time, 
+                            Date: cursor[index].offerRides[0].date,
                             carType: cursor[index].offerRides[0].carType,
-                            noOfSeats: cursor[index].offerRides[0].noOfSeats, currency: cursor[index].offerRides[0].currency,
-                            pricePerSeat: cursor[index].offerRides[0].pricePerSeat, pricePerBag: cursor[index].offerRides[0].pricePerBag,
+                            noOfSeats: cursor[index].offerRides[0].noOfSeats, 
+                            currency: cursor[index].offerRides[0].currency,
+                            pricePerSeat: cursor[index].offerRides[0].pricePerSeat, 
+                            pricePerBag: cursor[index].offerRides[0].pricePerBag,
                             recurringRideStartDate: cursor[index].offerRides[0].recurringRideStartDate,
                             recurringRideEndDate: cursor[index].offerRides[0].recurringRideEndDate,
                             recurringRideTime: cursor[index].offerRides[0].recurringRideTime,
-                            noOfPauses: cursor[index].offerRides[0].noOfPauses, smoking: cursor[index].offerRides[0].smoking, petAllow: cursor[index].offerRides[0].petAllow,
-                            foodAllow: cursor[index].offerRides[0].foodAllow, user: UserDetails
+                            noOfPauses: cursor[index].offerRides[0].noOfPauses, 
+                            smoking: cursor[index].offerRides[0].smoking, 
+                            petAllow: cursor[index].offerRides[0].petAllow,
+                            foodAllow: cursor[index].offerRides[0].foodAllow, 
+                            user: UserDetails
                         });
 
                     }
