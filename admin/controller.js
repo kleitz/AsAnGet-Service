@@ -4,7 +4,7 @@ import {getrequestrides,getrequestridesdetails,validate} from './dbHelper';
 export const adminlogin = async (req, res, next) => {  
     try {  
 
-        const {username, password  } = validate(req.body);
+        const {username, password  } = req.body;
         console.log(username);
         console.log(password);
         if(username == process.env.adminUsername && password == process.env.adminPassword){

@@ -8,7 +8,9 @@ import {
     perRidePassengerCost, rideCancelByDriver
 } from './dbHelper';
 
+import * as openpgp from 'openpgp'
 import { makeCurrentRideArray } from './helper';
+
 
 
 export const currentRide = async (req, res, next) => {
@@ -233,3 +235,94 @@ export const getpassengerridestatus = async (req, res, next) => {
 
 }
 
+export const pgpGeneator = async (req, res, next) => {
+
+    try {
+            console.log("keys generator");
+       
+            const { privateKey, publicKey, revocationCertificate } = await openpgp.generateKey({
+                type: 'ecc', // Type of the key, defaults to ECC
+                curve: 'curve25519', // ECC curve name, defaults to curve25519
+                userIDs: [{ name: 'Jon Smith', email: 'jon@example.com' }], // you can pass multiple user IDs
+                passphrase: 'super long and hard to guess secret', // protects the private key
+                format: 'armored' // output key format, defaults to 'armored' (other options: 'binary' or 'object')
+            });
+            console.log(privateKey);     // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
+            console.log(publicKey);      // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
+            return res.status(200).send({ privateKey, publicKey });
+           
+            console.log(revocationCertificate); 
+           
+          
+    }
+    catch (error) {
+        next(error);
+    }
+
+}
+
+
+export const encryptDcrypt = async (req, res, next) => {
+
+    try {
+        const publicKeyArmored = `-----BEGIN PGP PUBLIC KEY BLOCK-----xjMEYSORHRYJKwYBBAHaRw8BAQdA8d55exX0wmVIV9GWbsF991oqV88wsbJV
+        +Mwe2cSDJQXNG0pvbiBTbWl0aCA8am9uQGV4YW1wbGUuY29tPsKMBBAWCgAd
+        BQJhI5EdBAsJBwgDFQgKBBYAAgECGQECGwMCHgEAIQkQADfvdax2dj8WIQTy
+        hgYJN7MNYQIS21wAN+91rHZ2P/UxAP9iTSJ3ZrShqJR33sVPEILwBhxDGEyS
+        Nf3vkvUApxrxkAEA4affT+ICqoclwqLrXv3kD5pFTVlIRKeSbNBxvXebYA/O
+        OARhI5EdEgorBgEEAZdVAQUBAQdAL9lFtFD+vV6o9KlnrCcJWQq8EkKc4qCZ
+        h9gfzzI6CDQDAQgHwngEGBYIAAkFAmEjkR0CGwwAIQkQADfvdax2dj8WIQTy
+        hgYJN7MNYQIS21wAN+91rHZ2P3MWAP4kGG19diE4T8cewlbSHH2YBMFZv+8s
+        10qY9soL1Y4jlwEAme290RiUv9lOfqC2Yy4A1To7MELgCPz2yMmcdFmlyQU=
+        =O4DX-----END PGP PUBLIC KEY BLOCK-----`;
+        
+            const privateKeyArmored = `-----BEGIN PGP PRIVATE KEY BLOCK-----xYYEYSORHRYJKwYBBAHaRw8BAQdA8d55exX0wmVIV9GWbsF991oqV88wsbJV
++Mwe2cSDJQX+CQMIo6U9KOfNGIDgF9Nt/NxwzhWlkdAtj1qd/bzlZz/Nt8PY
+7Y8lrk+wBbw5eILOxdwqY+rQ7B/nuRYSvGBjn0eaGHWvNslIyyll/5vubtya
+Tc0bSm9uIFNtaXRoIDxqb25AZXhhbXBsZS5jb20+wowEEBYKAB0FAmEjkR0E
+CwkHCAMVCAoEFgACAQIZAQIbAwIeAQAhCRAAN+91rHZ2PxYhBPKGBgk3sw1h
+AhLbXAA373WsdnY/9TEA/2JNIndmtKGolHfexU8QgvAGHEMYTJI1/e+S9QCn
+GvGQAQDhp99P4gKqhyXCoute/eQPmkVNWUhEp5Js0HG9d5tgD8eLBGEjkR0S
+CisGAQQBl1UBBQEBB0Av2UW0UP69Xqj0qWesJwlZCrwSQpzioJmH2B/PMjoI
+NAMBCAf+CQMIYdo3odbDFH3guyv9WQJKvl2hiyoMJ2Yij8Gwpoowu0PfDePu
+ZuU7no3jhoQOi0uF4PfXqU2yvi0f9b2EKisXrCJ6XX8C34idniSmOVlsVsJ4
+BBgWCAAJBQJhI5EdAhsMACEJEAA373WsdnY/FiEE8oYGCTezDWECEttcADfv
+dax2dj9zFgD+JBhtfXYhOE/HHsJW0hx9mATBWb/vLNdKmPbKC9WOI5cBAJnt
+vdEYlL/ZTn6gtmMuANU6OzBC4Aj89sjJnHRZpckF
+=zIf9
+-----END PGP PRIVATE KEY BLOCK-----`; // encrypted private key
+            const passphrase = `super long and hard to guess secret`; // what the private key is encrypted with
+            
+            const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
+        
+            const privateKey = await openpgp.decryptKey({
+                privateKey: await openpgp.readPrivateKey({ armoredKey: privateKeyArmored }),
+                passphrase
+            });
+        
+            const encrypted = await openpgp.encrypt({
+                message: await openpgp.createMessage({ text: 'Hello, World!' }), // input as Message object
+                encryptionKeys: publicKey,
+                signingKeys: privateKey // optional
+            });
+            console.log(encrypted); // '-----BEGIN PGP MESSAGE ... END PGP MESSAGE-----'
+        
+            const message = await openpgp.readMessage({
+                armoredMessage: encrypted // parse armored message
+            });
+            const { data: decrypted, signatures } = await openpgp.decrypt({
+                message,
+                verificationKeys: publicKey, // optional
+                decryptionKeys: privateKey
+            });
+            console.log(decrypted); // 'Hello, World!'
+            return res.status(200).send({ privateKey, publicKey });
+            
+           
+          
+    }
+    catch (error) {
+        next(error);
+    }
+
+}
