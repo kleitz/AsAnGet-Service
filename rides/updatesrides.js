@@ -8,7 +8,9 @@ import {
     perRidePassengerCost, rideCancelByDriver
 } from './dbHelper';
 
+import * as openpgp from 'openpgp'
 import { makeCurrentRideArray } from './helper';
+
 
 
 export const currentRide = async (req, res, next) => {
@@ -82,7 +84,7 @@ export const verifyRideOTP = async (req, res, next) => {
 
         const { userId, ride_id, otp } = req.body;
         const rideotp = await getRideotp(ride_id, userId);
-        console.log(rideotp,req.body);
+        console.log(rideotp, req.body);
         if (rideotp.OTP.toString() !== otp) return res.status(500).send({ "Failed": "Otp not correct" });
 
         await updatePassengerStatusByUserId(ride_id, userId, ONGOING);
@@ -149,7 +151,7 @@ export const driverCancelRide = async (req, res, next) => {
 
 export const passengerCancelRide = async (req, res, next) => {
     try {
-        const { ride_id,userId } = req.body;
+        const { ride_id, userId } = req.body;
         await updatePassengerStatusByUserId(ride_id, userId, CANCELLED);
         //... will add firebase
         //sendFireBaseMessage();
@@ -233,3 +235,74 @@ export const getpassengerridestatus = async (req, res, next) => {
 
 }
 
+export const pgpGeneator = async (req, res, next) => {
+
+    try {
+        console.log("keys generator");
+
+        const { privateKey, publicKey, revocationCertificate } = await openpgp.generateKey({
+            type: 'ecc', // Type of the key, defaults to ECC
+            curve: 'curve25519', // ECC curve name, defaults to curve25519
+            userIDs: [{ name: 'Jon Smith', email: 'jon@example.com' }], // you can pass multiple user IDs
+            passphrase: 'super long and hard to guess secret', // protects the private key
+            format: 'armored' // output key format, defaults to 'armored' (other options: 'binary' or 'object')
+        });
+        console.log(privateKey);     // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
+        console.log(publicKey);      // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
+        return { privateKey, publicKey, revocationCertificate };
+        return res.status(200).send({ privateKey, publicKey });
+
+        console.log(revocationCertificate);
+
+
+    }
+    catch (error) {
+        next(error);
+    }
+
+}
+
+
+export const encryptDcrypt = async (req, res, next) => {
+    
+    try {
+       
+        const pgpGenerated = await pgpGeneator(req, res, next);
+        const publicKeyArmored = pgpGenerated.publicKey;
+        const privateKeyArmored = pgpGenerated.privateKey;
+       
+        const passphrase = `super long and hard to guess secret`; // what the private key is encrypted with
+        console.log('readKey');
+        const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
+        console.log('publicKey');
+        const privateKey = await openpgp.decryptKey({
+            privateKey: await openpgp.readPrivateKey({ armoredKey: privateKeyArmored }),
+            passphrase
+        });
+
+        const encrypted = await openpgp.encrypt({
+            message: await openpgp.createMessage({ text: 'Hello, World!' }), // input as Message object
+            encryptionKeys: publicKey,
+            signingKeys: privateKey // optional
+        });
+        console.log(encrypted); // '-----BEGIN PGP MESSAGE ... END PGP MESSAGE-----'
+
+        const message = await openpgp.readMessage({
+            armoredMessage: encrypted // parse armored message
+        });
+        const { data: decrypted, signatures } = await openpgp.decrypt({
+            message,
+            verificationKeys: publicKey, // optional
+            decryptionKeys: privateKey
+        });
+        console.log("decrypted"); // 'Hello, World!'
+        return res.status(200).send({ });
+
+
+
+    }
+    catch (error) {
+        next(error);
+    }
+
+}

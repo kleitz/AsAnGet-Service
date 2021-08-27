@@ -7,7 +7,7 @@ import {
   passengerRideCompleted
   , currentrideDetails, historyrideDetails, driverstartride, getdriverridestatus,
   driverstatusCompleted,
-  getpassengerridestatus, passengerCancelRide
+  getpassengerridestatus, passengerCancelRide, pgpGeneator, encryptDcrypt
 } from './updatesrides';
 
 const router = express.Router();
@@ -33,6 +33,8 @@ router.post('/driverstart_ride', driverstartride);
 router.post('/getdriverride_status', getdriverridestatus);
 router.post('/getpassengerride_status', getpassengerridestatus);
 router.post('/getRide_distance', rideDistance);
+router.post('/pgp_Geneator', pgpGeneator);
+router.post('/encrypt_Dcrypt', encryptDcrypt);
 
 
 router.get('/test3', (req, res, next) => {
