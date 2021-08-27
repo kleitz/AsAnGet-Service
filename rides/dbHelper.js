@@ -215,9 +215,11 @@ export const getBookRideDetails = async (ride_id) => {
             From: ridesDetails.offerRides[0].from,
             To: ridesDetails.offerRides[0].to,
             Time: getRideTime(ridesDetails.offerRides[0]),
-            Date: getRideDate(ridesDetails.offerRides[0]),
+            Date: getRideDate(ridesDetails.offerRides[0]), //...same as recurringEndDate
             carType: ridesDetails.offerRides[0].carType,
             status: ridesDetails.offerRides[0].status,
+            isRecurringRide: (ridesDetails.offerRides[0].date === ''),
+            recurringRideStartDate: ridesDetails.offerRides[0].recurringRideStartDate,
             Passengers: passengers,
             driverDetails
         };

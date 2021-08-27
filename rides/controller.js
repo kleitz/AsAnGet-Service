@@ -1,4 +1,9 @@
-import { saveRideInDB, getRidesFromDb, getAllRides, getRideDetails, bookRideSaveinDb } from './dbHelper';
+import { saveRideInDB, 
+    getRidesFromDb, 
+    getAllRides, 
+    getRideDetails,
+    bookRideSaveinDb,
+getBookRideDetails } from './dbHelper';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
 import axios from 'axios';
@@ -153,7 +158,7 @@ export const rideDetails = async (req, res, next) => {
     try {
 
         const { ride_id } = req.body;
-        const rideDetail = await getRideDetails(ride_id);
+        const rideDetail = await getBookRideDetails(ride_id);
         return res.status(200).send(rideDetail);
     } catch (error) {
         next(error);
