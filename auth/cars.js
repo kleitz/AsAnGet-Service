@@ -1,4 +1,4 @@
-import {addUserCar, myCars} from './dbHelper';
+import {addUserCar, myCars, deleteCar} from './dbHelper';
 
 /*addCar() adds car according to modelView*/
 export const addCar = async (req, res, next) => {
@@ -48,6 +48,18 @@ export const userCars = async (req, res, next) => {
 
     }
         return res.status(200).send({"data":[]});
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+export const removeCar = async (req, res, next) => {
+    try {
+        const {user_id, car_no } = req.body;     
+        
+        await deleteCar(user_id, car_no);
+        return res.status(200).send("removed");
     } catch (error) {
         next(error);
     }

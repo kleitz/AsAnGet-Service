@@ -34,7 +34,7 @@ router.post('/getdriverride_status', getdriverridestatus);
 router.post('/getpassengerride_status', getpassengerridestatus);
 router.post('/getRide_distance', rideDistance);
 router.post('/pgp_Geneator', pgpGeneator);
-router.post('/encrypt_Dcrypt', encryptDcrypt);
+router.post('/call_asanget', encryptDcrypt);
 
 
 router.get('/test3', (req, res, next) => {

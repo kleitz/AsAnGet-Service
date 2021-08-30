@@ -1,3 +1,4 @@
+import { Model } from 'mongoose';
 import model from './model';
 
 export const getAllUsers = async () => {
@@ -106,3 +107,14 @@ export const getprofilebyId = async (user_id) => {
     }
 }
 
+export const deleteCar = async (user_id, car_no) => {
+    try {
+        await model.removeObject.update( {'_id': user_id},
+        ... {$pull:{"cars":{"carNo":car_no}}},
+        ... false,true);
+
+        return ;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
