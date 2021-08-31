@@ -3,7 +3,8 @@ import model from './model';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
 import { sendFireBaseMessage } from '../firebase/firebase';
-import { getRideDate, getRideTime, isPassengerAlreadyBookTheRide } from './helper';
+import { getRideDate, getRideTime, 
+    isPassengerAlreadyBookTheRide, getDriverDetail } from './helper';
 import { COMPLETED, ONGOING, UPCOMING, CANCELLED } from './const';
 
 
@@ -11,10 +12,7 @@ const getRideWithDriverDetailsById = async (ride_id) => {
     const ridesDetails = await model.findOne({ _id: ride_id });
 
     const driverId = ridesDetails.userId;
-    const driverDetails = await getbyId(driverId);
-    const {rating5Star} = await getuserratingOutOf5(driverId,'driver');
-    driverDetails.rating = rating5Star;
-
+    const driverDetails = await getDriverDetail(driverId)
     const requestRides = ridesDetails.requestRides;
     var passengers = [];
 
@@ -210,18 +208,29 @@ export const getUserBookRides = async (userId) => {
 export const getBookRideDetails = async (ride_id) => {
     try {
         const { ridesDetails, driverDetails, passengers } = await getRideWithDriverDetailsById(ride_id);
+        const spaceAailable = ridesDetails.offerRides[0].noOfSeats - passengers.length;
         return {
-            RideId: ridesDetails._id,
-            From: ridesDetails.offerRides[0].from,
-            To: ridesDetails.offerRides[0].to,
-            Time: getRideTime(ridesDetails.offerRides[0]),
-            Date: getRideDate(ridesDetails.offerRides[0]), //...same as recurringEndDate
+            rideId: ridesDetails._id,
+            from: ridesDetails.offerRides[0].from,
+            to: ridesDetails.offerRides[0].to,
+            time: getRideTime(ridesDetails.offerRides[0]),
+            date: getRideDate(ridesDetails.offerRides[0]), //...same as recurringEndDate
             carType: ridesDetails.offerRides[0].carType,
+            noOfSeats: ridesDetails.offerRides[0].noOfSeats,
+            currency: ridesDetails.offerRides[0].currency,
+            pricePerSeat: ridesDetails.offerRides[0].pricePerSeat,
+            pricePerBag: ridesDetails.offerRides[0].pricePerBag,
+            noOfPauses: ridesDetails.offerRides[0].noOfPauses,
+            smoking: ridesDetails.offerRides[0].smoking,
+            petAllow: ridesDetails.offerRides[0].petAllow,
+            foodAllow: ridesDetails.offerRides[0].foodAllow,
+            firebaseTopic: ridesDetails.offerRides[0].firebaseTopic,
             status: ridesDetails.offerRides[0].status,
             isRecurringRide: (ridesDetails.offerRides[0].date === ''),
             recurringRideStartDate: ridesDetails.offerRides[0].recurringRideStartDate,
             Passengers: passengers,
-            driverDetails
+            driverDetails,
+            spaceAailable
         };
     } catch (error) {
         return Promise.reject(error);

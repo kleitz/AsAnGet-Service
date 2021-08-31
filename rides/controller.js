@@ -1,13 +1,16 @@
-import { saveRideInDB, 
-    getRidesFromDb, 
-    getAllRides, 
+import {
+    saveRideInDB,
+    getRidesFromDb,
+    getAllRides,
     getRideDetails,
     bookRideSaveinDb,
-getBookRideDetails } from './dbHelper';
+    getBookRideDetails
+} from './dbHelper';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
 import axios from 'axios';
 import { PolyUtil } from "node-geometry-library";
+import { getDriverDetail } from './helper';
 
 import { sendFireBaseMessage } from '../firebase/firebase';
 
@@ -105,10 +108,8 @@ export const findRide = async (req, res, next) => {
                     console.log(rideFound);
                     if (rideFound) {
 
-                        const userId = cursor[index].userId;
-                        const UserDetails = await getbyId(userId);
-                        const {rating5Star} = await getuserratingOutOf5(userId,'driver');
-                        UserDetails.rating = rating5Star;
+                        const driverId = cursor[index].userId;
+                        const driverDetails = await getDriverDetail(driverId);
                         
                         availabeRides.push({
                             id: cursor[index]._id, 
@@ -128,7 +129,7 @@ export const findRide = async (req, res, next) => {
                             smoking: cursor[index].offerRides[0].smoking, 
                             petAllow: cursor[index].offerRides[0].petAllow,
                             foodAllow: cursor[index].offerRides[0].foodAllow, 
-                            user: UserDetails
+                            driverDetails
                         });
 
                     }
@@ -188,9 +189,9 @@ export const bookRide = async (req, res, next) => {
             OTP: otp,
         };
         const saved = await bookRideSaveinDb(modelView);
-        return saved ? res.status(200).send({ "Status": "Already booked this ride" }) : 
-                        res.status(200).send({ "Success": "Saved" });
-        
+        return saved ? res.status(200).send({ "Status": "Already booked this ride" }) :
+            res.status(200).send({ "Success": "Saved" });
+
     } catch (error) {
         next(error);
     }
@@ -206,27 +207,27 @@ export const rideDistance = async (req, res, next) => {
         }
         else {
             let placeUrl = process.env.getPlaceName.replace('replace_lat_lng', startPoint);
-            
+
             //Api call to get start place from Lat/Log
             const getStartPlace = await axios.get(placeUrl);
             placeUrl = process.env.getPlaceName.replace('replace_lat_lng', endPoint);
             //Api call to get Destination name from Lat/Log
             const getEndPlace = await axios.get(placeUrl);
             const startPlaceName = getStartPlace.data.results[0].formatted_address;
-           
+
             const endPlaceName = getEndPlace.data.results[0].formatted_address;
 
 
             let getPolyline = process.env.googleDirectionApi.replace('replace_start_place', startPlaceName);
             getPolyline = getPolyline.replace('replace_end_place', endPlaceName);
-           
+
             const URI = getPolyline;
             const encodedURI = encodeURI(URI);
             //Api call to get Distance directions and all the polyline points
             const response = await axios.get(encodedURI);
-            
-            const distance = response.data.routes[0] ? 
-                    response.data.routes[0].legs[0].distance.text : 'To Far';
+
+            const distance = response.data.routes[0] ?
+                response.data.routes[0].legs[0].distance.text : 'To Far';
             return res.status(200).send({ "Distance": distance });
 
 

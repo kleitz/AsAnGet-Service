@@ -1,4 +1,6 @@
 import { getBookRideDetails } from './dbHelper';
+import { getbyId } from '../auth/dbHelper';
+import { getuserratingOutOf5 } from '../ratings/dbHelper';
 
 export const getRideTime = (ride) => ((ride.time !== '') ? ride.time : ride.recurringRideTime);
 
@@ -53,4 +55,11 @@ export const isPassengerAlreadyBookTheRide = (passangerList, passengerUserId)=>{
             return true;
         }
     }
+}
+
+export const getDriverDetail = async(driverId) => {
+    const driverDetails = await getbyId(driverId);
+    const {rating5Star} = await getuserratingOutOf5(driverId,'driver');
+    driverDetails.rating = rating5Star;
+    return driverDetails;
 }
