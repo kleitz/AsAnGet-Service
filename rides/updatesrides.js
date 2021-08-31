@@ -7,9 +7,10 @@ import {
     passengerridestatus, driverCompletedHisRide, updatePassengerStatusByUserId,
     perRidePassengerCost, rideCancelByDriver
 } from './dbHelper';
-
+const fs = require('fs');
 import * as openpgp from 'openpgp'
 import { makeCurrentRideArray } from './helper';
+import { Console } from 'winston/lib/winston/transports';
 
 
 
@@ -247,6 +248,13 @@ export const pgpGeneator = async (req, res, next) => {
             passphrase: 'super long and hard to guess secret', // protects the private key
             format: 'armored' // output key format, defaults to 'armored' (other options: 'binary' or 'object')
         });
+        fs.readFile('privatekey.txt', 'utf8' , (err, data) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+            console.log("asdfghjkl" + data)
+          })
         console.log(privateKey);     // '-----BEGIN PGP PRIVATE KEY BLOCK ... '
         console.log(publicKey);      // '-----BEGIN PGP PUBLIC KEY BLOCK ... '
         return { privateKey, publicKey, revocationCertificate };
@@ -266,11 +274,33 @@ export const pgpGeneator = async (req, res, next) => {
 export const encryptDcrypt = async (req, res, next) => {
     
     try {
-       
-        const pgpGenerated = await pgpGeneator(req, res, next);
-        const publicKeyArmored = pgpGenerated.publicKey;
-        const privateKeyArmored = pgpGenerated.privateKey;
-       
+        
+        const publicKeyArmored = await fs.readFileSync('publickey.asc', 'utf8' , (err, publicKeyArmored) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+            return publicKeyArmored;
+            
+          })
+
+        const privateKeyArmored =  await fs.readFileSync('privatekey.asc', 'utf8' , (err, privateKeyArmored) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+
+            return privateKeyArmored;
+            
+          })
+          console.log("asdfghjkl" + publicKeyArmored)
+          console.log("asdfghjkl" + privateKeyArmored)
+
+        // const pgpGenerated = await pgpGeneator(req, res, next);
+        // const publicKeyArmored = pgpGenerated.publicKey;
+        // const privateKeyArmored = pgpGenerated.privateKey;
+        
+
         const passphrase = `super long and hard to guess secret`; // what the private key is encrypted with
         console.log('readKey');
         const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
@@ -285,7 +315,7 @@ export const encryptDcrypt = async (req, res, next) => {
             encryptionKeys: publicKey,
             signingKeys: privateKey // optional
         });
-        console.log(encrypted); // '-----BEGIN PGP MESSAGE ... END PGP MESSAGE-----'
+         // '-----BEGIN PGP MESSAGE ... END PGP MESSAGE-----'
 
         const message = await openpgp.readMessage({
             armoredMessage: encrypted // parse armored message
@@ -295,8 +325,8 @@ export const encryptDcrypt = async (req, res, next) => {
             verificationKeys: publicKey, // optional
             decryptionKeys: privateKey
         });
-        console.log("decrypted"); // 'Hello, World!'
-        return res.status(200).send({ });
+        console.log(decrypted); // 'Hello, World!'
+        return res.status(200).send({ "Success": "Success" });
 
 
 
