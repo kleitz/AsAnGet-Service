@@ -32,7 +32,7 @@ export const currentRide = async (req, res, next) => {
 export const currentrideDetails = async (req, res, next) => {
     try {
         const { ride_id } = req.body;
-        const rideDetails = await getCurrentRideDetails(ride_id);
+        const rideDetails = await getBookRideDetails(ride_id);
         return res.status(200).send({ rideDetails, total: 0 });
     } catch (error) {
         next(error);
