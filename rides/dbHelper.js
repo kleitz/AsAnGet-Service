@@ -3,8 +3,10 @@ import model from './model';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
 import { sendFireBaseMessage } from '../firebase/firebase';
-import { getRideDate, getRideTime, 
-    isPassengerAlreadyBookTheRide, getDriverDetail } from './helper';
+import {
+    getRideDate, getRideTime,
+    isPassengerAlreadyBookTheRide, getDriverDetail
+} from './helper';
 import { COMPLETED, ONGOING, UPCOMING, CANCELLED } from './const';
 
 
@@ -54,7 +56,7 @@ const updateAllRequestedStatus = async (ride_id, status) => {
                 const passengerStatus = element.status;
                 await model.updateOne(
                     { _id: new ObjectID(ride_id), 'requestRides._id': new ObjectID(element._id) },
-                    { $set: { "requestRides.$.status": checkPassengerStatusWithDriverStatus(passengerStatus,status) } }
+                    { $set: { "requestRides.$.status": checkPassengerStatusWithDriverStatus(passengerStatus, status) } }
                 );
             }
         }
@@ -64,8 +66,8 @@ const updateAllRequestedStatus = async (ride_id, status) => {
 
 }
 
-const checkPassengerStatusWithDriverStatus = (passengerStatus,rideStatus)=>{
-   return rideStatus === COMPLETED && passengerStatus === UPCOMING ? CANCELLED : rideStatus;
+const checkPassengerStatusWithDriverStatus = (passengerStatus, rideStatus) => {
+    return rideStatus === COMPLETED && passengerStatus === UPCOMING ? CANCELLED : rideStatus;
 }
 
 const updateDriverRideStatus = async (ride_id, status) => {
@@ -94,6 +96,25 @@ export const perRidePassengerCost = async (ride_id, userId) => {
     const passangerseats = passenger.noOfSeats;
     const passangerbags = passenger.bigBagNo;
     return ((perseatcost * passangerseats) + (perbagcost * passangerbags));
+}
+
+const perRideDriverIncome = async (ride_id) => {
+    const ride = await model.findOne({ "_id": new ObjectID(ride_id) });
+    const passengers = ride.requestRides;
+    let income = 0;
+    for (let index = 0; index < passengers.length; index++) {
+        const passenger = passengers[index];
+        if(passenger.status !== CANCELLED){
+            const perseatcost = ride.offerRides[0].pricePerSeat;
+            const perbagcost = ride.offerRides[0].pricePerBag;
+    
+            const passangerseats = passenger.noOfSeats;
+            const passangerbags = passenger.bigBagNo;
+            income += ((perseatcost * passangerseats) + (perbagcost * passangerbags));
+        }
+        
+    }
+    return income;
 }
 
 export const updatePassengerStatusByUserId = async (ride_id, userId, status) => {
@@ -377,7 +398,7 @@ export const rideCancelByDriver = async (ride_id) => {
 export const driverCompletedHisRide = async (ride_id) => {
     try {
         await updateAllRequestedStatus(ride_id, COMPLETED);
-        // return await perRideDriverIncome(ride_id);
+        return await perRideDriverIncome(ride_id);
     } catch (error) {
         return Promise.reject(error);
     }
