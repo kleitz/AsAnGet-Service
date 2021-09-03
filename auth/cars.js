@@ -38,11 +38,12 @@ export const userCars = async (req, res, next) => {
         
         if(cars){
             const data = cars.map( (task)=> {
+            const id = task._id;     
             const category = task.category;
             const carNo = task.carNo; 
             const seats = task.seats -1; 
             const model = task.model;
-            return {category, carNo, seats, model};
+            return {category, carNo, seats, model,id};
         });
         return res.status(200).send({data});
 

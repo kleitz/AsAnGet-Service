@@ -118,3 +118,17 @@ export const deleteCar = async (user_id, car_no) => {
         return Promise.reject(error);
     }
 }
+
+export const updateCarCompleteCount = async (userId, carId) => {
+    try {
+        const user = await model.findOne({ _id: userId});
+        const car = user.cars.find(c=>(c._id.toString() === carId));
+        const count = car.ridescompletedbycar;
+
+        await model.updateOne(
+            { _id: userId, 'cars._id': carId },
+            { $set: { "cars.$.ridescompletedbycar": count + 1 } });
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}

@@ -18,7 +18,7 @@ import { sendFireBaseMessage } from '../firebase/firebase';
 
 export const createRide = async (req, res, next) => {
     try {
-        const { userId, startPoint, endPoint, carType, rideDate, Time, noOfPassenger, costPerSeat, pricePerBag, currency, noOfSeats, noBigBags,
+        const { userId, startPoint, endPoint, carId, rideDate, Time, noOfPassenger, costPerSeat, pricePerBag, currency, noOfSeats, noBigBags,
             noOfPauses, smokingAllow, petAllow, foodAllow, recurringRideStartDate, recurringRideEndDate, recurringRideTime } = req.body;
         let placeUrl = process.env.getPlaceName.replace('replace_lat_lng', startPoint);
         //Api call to get start place from Lat/Log
@@ -48,13 +48,13 @@ export const createRide = async (req, res, next) => {
 
         const viewModel = {
             userId: userId,
+            carId: carId,
             offerRides: [{
 
                 from: startPlaceName,
                 to: endPlaceName,
                 time: Time,
                 date: rideDate,
-                carType: carType,
                 passengers: noOfPassenger,
                 noOfSeats: noOfSeats,
                 currency: currency,
@@ -109,7 +109,9 @@ export const findRide = async (req, res, next) => {
                     if (rideFound) {
 
                         const driverId = cursor[index].userId;
+                        const carId = cursor[index].carId;
                         const driverDetails = await getDriverDetail(driverId);
+                        const carDetail = driverDetails.existUser.cars.find(car=>(car._id.toString() === carId));
                         
                         availabeRides.push({
                             id: cursor[index]._id, 
@@ -117,7 +119,7 @@ export const findRide = async (req, res, next) => {
                             to: cursor[index].offerRides[0].to,
                             time: cursor[index].offerRides[0].time, 
                             Date: cursor[index].offerRides[0].date,
-                            carType: cursor[index].offerRides[0].carType,
+                            carDetail,
                             noOfSeats: cursor[index].offerRides[0].noOfSeats, 
                             currency: cursor[index].offerRides[0].currency,
                             pricePerSeat: cursor[index].offerRides[0].pricePerSeat, 

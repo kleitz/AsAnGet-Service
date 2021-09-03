@@ -102,8 +102,8 @@ export const passengerRideCompleted = async (req, res, next) => {
     try {
         const { ride_id, userId } = req.body;
         await updatePassengerStatusByUserId(ride_id, userId, COMPLETED);
-        const amount = await perRidePassengerCost(ride_id, userId);
-        return res.status(200).send({ "Ride": "Completed", "Amount": amount });
+        const {amount, currency} = await perRidePassengerCost(ride_id, userId);
+        return res.status(200).send({ "Ride": "Completed", "Amount": amount, currency });
     } catch (error) {
         next(error);
     }
@@ -126,9 +126,9 @@ export const driverstatusCompleted = async (req, res, next) => {
     try {
 
         const { ride_id } = req.body;
-        const total = await driverCompletedHisRide(ride_id);
+        const {income, currency} = await driverCompletedHisRide(ride_id);
 
-        return res.status(200).send({ "Ride": "Completed", total });
+        return res.status(200).send({ "Ride": "Completed", total:income, currency });
     } catch (error) {
         next(error);
     }

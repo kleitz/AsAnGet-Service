@@ -1,7 +1,6 @@
 import { ObjectID } from 'mongodb';
 import model from './model';
-import { getbyId } from '../auth/dbHelper';
-import { getuserratingOutOf5 } from '../ratings/dbHelper';
+import { getbyId, updateCarCompleteCount } from '../auth/dbHelper';
 import { sendFireBaseMessage } from '../firebase/firebase';
 import {
     getRideDate, getRideTime,
@@ -95,11 +94,14 @@ export const perRidePassengerCost = async (ride_id, userId) => {
 
     const passangerseats = passenger.noOfSeats;
     const passangerbags = passenger.bigBagNo;
-    return ((perseatcost * passangerseats) + (perbagcost * passangerbags));
+    const amount = ((perseatcost * passangerseats) + (perbagcost * passangerbags));
+    const currency = ride.offerRides[0].currency;
+    return {amount, currency};
 }
 
 const perRideDriverIncome = async (ride_id) => {
     const ride = await model.findOne({ "_id": new ObjectID(ride_id) });
+    const currency =  ride.offerRides[0].currency;
     const passengers = ride.requestRides;
     let income = 0;
     for (let index = 0; index < passengers.length; index++) {
@@ -114,7 +116,7 @@ const perRideDriverIncome = async (ride_id) => {
         }
         
     }
-    return income;
+    return {income, currency};
 }
 
 export const updatePassengerStatusByUserId = async (ride_id, userId, status) => {
@@ -230,13 +232,15 @@ export const getBookRideDetails = async (ride_id) => {
     try {
         const { ridesDetails, driverDetails, passengers } = await getRideWithDriverDetailsById(ride_id);
         const spaceAailable = ridesDetails.offerRides[0].noOfSeats - passengers.length;
+        const carId = ridesDetails.carId;
+        const carDetail = driverDetails.existUser.cars.find(car=>(car._id.toString() === carId));
         return {
             rideId: ridesDetails._id,
             from: ridesDetails.offerRides[0].from,
             to: ridesDetails.offerRides[0].to,
             time: getRideTime(ridesDetails.offerRides[0]),
             date: getRideDate(ridesDetails.offerRides[0]), //...same as recurringEndDate
-            carType: ridesDetails.offerRides[0].carType,
+            carDetail,
             noOfSeats: ridesDetails.offerRides[0].noOfSeats,
             currency: ridesDetails.offerRides[0].currency,
             pricePerSeat: ridesDetails.offerRides[0].pricePerSeat,
@@ -270,15 +274,6 @@ export const getRideotp = async (ride_id, userId) => {
     }
 }
 
-// export const changePassengerRideStatus = async (ride_id, user_Id, status) => {
-//     try {
-//         await model.updateOne({ "_id": ride_id, "requestRides.userId": user_Id },
-//             { $set: { "requestRides.$.status": status } });
-//         return 'Ride Updated';  
-//     } catch (error) {
-//         return Promise.reject(error);
-//     }
-// }
 
 export const changePassengerRideStatus = async (ride_id, userId, Status) => {
     try {
@@ -397,11 +392,19 @@ export const rideCancelByDriver = async (ride_id) => {
 
 export const driverCompletedHisRide = async (ride_id) => {
     try {
+        await updateCompleteRideInUser(ride_id);
         await updateAllRequestedStatus(ride_id, COMPLETED);
         return await perRideDriverIncome(ride_id);
     } catch (error) {
         return Promise.reject(error);
     }
+}
+
+const updateCompleteRideInUser = async(ride_id)=>{
+    const ridesDetails = await model.findOne({ _id: ride_id });
+    const driverId = ridesDetails.userId;
+    const carId = ridesDetails.carId;
+    await updateCarCompleteCount(driverId, carId);
 }
 
 export const driverridestatus = async (ride_id) => {
