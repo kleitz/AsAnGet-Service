@@ -111,7 +111,8 @@ export const findRide = async (req, res, next) => {
                         const driverId = cursor[index].userId;
                         const carId = cursor[index].carId;
                         const driverDetails = await getDriverDetail(driverId);
-                        const carDetail = driverDetails.existUser.cars.find(car=>(car._id.toString() === carId));
+                        let carDetail = driverDetails.existUser.cars.find(car=>(car._id.toString() === carId));
+                        carDetail = carDetail ?? {};
                         
                         availabeRides.push({
                             id: cursor[index]._id, 

@@ -233,7 +233,8 @@ export const getBookRideDetails = async (ride_id) => {
         const { ridesDetails, driverDetails, passengers } = await getRideWithDriverDetailsById(ride_id);
         const spaceAailable = ridesDetails.offerRides[0].noOfSeats - passengers.length;
         const carId = ridesDetails.carId;
-        const carDetail = driverDetails.existUser.cars.find(car=>(car._id.toString() === carId));
+        let carDetail = driverDetails.existUser.cars.find(car=>(car._id.toString() === carId));
+        carDetail = carDetail ?? {};
         return {
             rideId: ridesDetails._id,
             from: ridesDetails.offerRides[0].from,
