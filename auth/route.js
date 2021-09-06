@@ -5,7 +5,7 @@ import {facebookAuth} from './facebook';
 import {googleAuth} from './google';
 import {requireAuth} from './helper';
 import { instagramAuth } from './instagram';
-import {addCar, myCar, userCars, removeCar} from './cars';
+import {addCar, myCar, userCars, removeCar, editCar} from './cars';
 import {editprofile, updateprofile,getdriverprofile, 
     getpassengerprofile, getNoOfjoindays,userdata, getAll} from './userprofile';
 const router=express.Router();
@@ -26,9 +26,7 @@ router.post('/get_passengerprofile',getpassengerprofile);
 router.post('/get_joineddays',getNoOfjoindays);
 router.post('/get_userdata',userdata);
 router.get('/getAll', getAll);
-router.get('/delete_car', removeCar);
+router.post('/delete_car', removeCar);
+router.post('/edit_car', editCar);
 
-
-
- 
- export default router;
+export default router;

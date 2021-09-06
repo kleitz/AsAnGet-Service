@@ -1,15 +1,17 @@
-import {addUserCar, myCars, deleteCar} from './dbHelper';
+import {addUserCar, myCars, deleteCar, updateCar} from './dbHelper';
 
 /*addCar() adds car according to modelView*/
 export const addCar = async (req, res, next) => {
     try {
-        const {user_id,  category,model_type, seat, car_no  } = req.body;     
+        const {user_id,  category,model_type, seat, car_no, brand  } = req.body;     
         const modelView = {
             user_id : user_id,
             category : category,
             model : model_type,
             seats : seat,
-            carNo : car_no    
+            carNo : car_no,
+            brand : brand
+
         };
         await addUserCar(modelView);
         return res.status(200).send({"Success":"Car added succesfully"});
@@ -58,8 +60,19 @@ export const removeCar = async (req, res, next) => {
     try {
         const {user_id, car_no } = req.body;     
         
-        await deleteCar(user_id, car_no);
-        return res.status(200).send("removed");
+       await deleteCar(user_id, car_no);
+        return res.status(200).send("Success");
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const editCar = async (car_id, user_Id, category, model, seat, brand) => {
+    try {
+        const {user_id, car_no, category, model, seat, brand } = req.body;     
+        
+       await updateCar(user_id, car_no, category, model, seat, brand);
+        return res.status(200).send("Success");
     } catch (error) {
         next(error);
     }

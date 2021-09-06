@@ -1,5 +1,6 @@
 import { Model } from 'mongoose';
 import model from './model';
+import { userdata } from './userprofile';
 
 export const getAllUsers = async () => {
     try {
@@ -109,11 +110,36 @@ export const getprofilebyId = async (user_id) => {
 
 export const deleteCar = async (user_id, car_no) => {
     try {
-        await model.removeObject.update( {'_id': user_id},
-        ... {$pull:{"cars":{"carNo":car_no}}},
-        ... false,true);
-
+        await model.updateOne(
+            { '_id': user_id }, 
+            { $pull: { cars: { carNo: car_no } } }
+            
+        );
         return ;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
+
+export const updateCar = async (car_id, user_Id, category, model_no, seat, brand) => {
+    try {
+
+        await model.updateOne(
+            {
+                "_id": user_Id, "cars.carNo": car_id
+            },
+            {
+                $set: { "requestRides.$.category": category,
+                        "requestRides.$.model": model_no,
+                        "requestRides.$.seat": seat,
+                        "requestRides.$.brand": brand,
+                        "requestRides.$.carNo": car_id
+                        
+                }
+
+            })
+
+        return;
     } catch (error) {
         return Promise.reject(error);
     }
