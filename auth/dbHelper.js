@@ -123,7 +123,7 @@ export const updateCarCompleteCount = async (userId, carId) => {
     try {
         const user = await model.findOne({ _id: userId});
         const car = user.cars.find(c=>(c._id.toString() === carId));
-        const count = car.ridescompletedbycar;
+        const count = car && car.ridescompletedbycar ? car.ridescompletedbycar : 0;
 
         await model.updateOne(
             { _id: userId, 'cars._id': carId },

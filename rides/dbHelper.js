@@ -422,6 +422,7 @@ export const passengerridestatus = async (ride_id, user_id) => {
     try {
 
         const data = await model.findOne({ "_id": ride_id, "requestRides.userId": user_id });
+        if(!(data && data.requestRides)) return 'No Requeste Ride';
         const requestRides = data.requestRides;
         var newdata = requestRides.filter(task => {
             if (task.userId == user_id) {
