@@ -121,25 +121,39 @@ export const deleteCar = async (user_id, car_no) => {
     }
 }
 
-export const updateCar = async (car_id, user_Id, category, model_no, seat, brand) => {
+
+export const updateCar = async (user_id, car_no, category, model_name, seat, brand) => {
     try {
 
         await model.updateOne(
             {
-                "_id": user_Id, "cars.carNo": car_id
+                "_id": user_id, "cars.carNo": car_no
             },
             {
-                $set: { "requestRides.$.category": category,
-                        "requestRides.$.model": model_no,
-                        "requestRides.$.seat": seat,
-                        "requestRides.$.brand": brand,
-                        "requestRides.$.carNo": car_id
+                $set: { "cars.$.category": category,
+                        "cars.$.model": model_name,
+                        "cars.$.seat": seat,
+                        "cars.$.brand": brand,
+                        "cars.$.carNo": car_no
                         
                 }
+            });
 
-            })
+                return ;
+            } catch (error) {
+                return Promise.reject(error);
+            }
+        }
+export const updateCarCompleteCount = async (userId, carId) => {
+    try {
+        const user = await model.findOne({ _id: userId});
+        const car = user.cars.find(c=>(c._id.toString() === carId));
+        const count = car && car.ridescompletedbycar ? car.ridescompletedbycar : 0;
 
-        return;
+        await model.updateOne(
+            { _id: userId, 'cars._id': carId },
+            { $set: { "cars.$.ridescompletedbycar": count + 1 } });
+
     } catch (error) {
         return Promise.reject(error);
     }

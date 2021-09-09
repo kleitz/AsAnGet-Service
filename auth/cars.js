@@ -40,11 +40,12 @@ export const userCars = async (req, res, next) => {
         
         if(cars){
             const data = cars.map( (task)=> {
+            const id = task._id;     
             const category = task.category;
             const carNo = task.carNo; 
             const seats = task.seats -1; 
             const model = task.model;
-            return {category, carNo, seats, model};
+            return {category, carNo, seats, model,id};
         });
         return res.status(200).send({data});
 
@@ -67,11 +68,11 @@ export const removeCar = async (req, res, next) => {
     }
 }
 
-export const editCar = async (car_id, user_Id, category, model, seat, brand) => {
+export const editCar = async (req, res, next) => {
     try {
-        const {user_id, car_no, category, model, seat, brand } = req.body;     
+        const {user_id, car_no, category, model_name, seat, brand } = req.body;     
         
-       await updateCar(user_id, car_no, category, model, seat, brand);
+       await updateCar(user_id, car_no, category, model_name, seat, brand);
         return res.status(200).send("Success");
     } catch (error) {
         next(error);
