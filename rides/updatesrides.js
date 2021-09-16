@@ -270,6 +270,7 @@ export const encryptDcrypt = async (req, res, next) => {
             encryptionKeys: publicKey,
             signingKeys: privateKey // optional
         });
+        console.log("101" + encrypted);
          // '-----BEGIN PGP MESSAGE ... END PGP MESSAGE-----'
 
         const message = await openpgp.readMessage({
@@ -280,8 +281,10 @@ export const encryptDcrypt = async (req, res, next) => {
             verificationKeys: publicKey, // optional
             decryptionKeys: privateKey
         });
+        // 'Hello, World!'
+
         console.log(decrypted); // 'Hello, World!'
-        return res.status(200).send({ "Success": "Success" });
+        return res.status(200).send({ "Success" : "Success" });
 
 
 
