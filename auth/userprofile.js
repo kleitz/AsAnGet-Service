@@ -1,5 +1,5 @@
 import { myCars, edituserbyId, updateuserprofile, getprofilebyId, 
-    getuserjoineddays, getbyId, getAllUsers} from './dbHelper';
+    getuserjoineddays, getbyId, getAllUsers,updateUserFireBaseTopic} from './dbHelper';
 import {getuserratingOutOf5} from '../ratings/dbHelper';
 import {tokenForUser} from './helper';
 
@@ -87,4 +87,12 @@ export const getAll = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+}
+
+export const updateFireBaseTopic = async(req, res, next)=>{
+    console.log('hello', req.body);
+    await updateUserFireBaseTopic(req.body);
+        
+    //const userdata = await updateuserprofile(user_id, name, age,phoneNum,email,homeaddress,officeaddress,imageUrl);
+    return res.status(200).send({"FireBaseTopicUpdated":"Success"});
 }

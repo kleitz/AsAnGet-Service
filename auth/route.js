@@ -7,7 +7,8 @@ import {requireAuth} from './helper';
 import { instagramAuth } from './instagram';
 import {addCar, myCar, userCars, removeCar} from './cars';
 import {editprofile, updateprofile,getdriverprofile, 
-    getpassengerprofile, getNoOfjoindays,userdata, getAll} from './userprofile';
+    getpassengerprofile, getNoOfjoindays,userdata, 
+    getAll, updateFireBaseTopic} from './userprofile';
 const router=express.Router();
 import upload from '../helper/upload';
 
@@ -27,6 +28,7 @@ router.post('/get_joineddays',getNoOfjoindays);
 router.post('/get_userdata',userdata);
 router.get('/getAll', getAll);
 router.get('/delete_car', removeCar);
+router.post('/update_firebaseTopic', updateFireBaseTopic);
 
 
 

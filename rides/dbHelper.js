@@ -9,7 +9,7 @@ import {
 import { COMPLETED, ONGOING, UPCOMING, CANCELLED } from './const';
 
 
-const getRideWithDriverDetailsById = async (ride_id) => {
+export const getRideWithDriverDetailsById = async (ride_id) => {
     const ridesDetails = await model.findOne({ _id: ride_id });
 
     const driverId = ridesDetails.userId;
@@ -31,6 +31,7 @@ const getRideWithDriverDetailsById = async (ride_id) => {
             to: requestRides[index].to,
             date: requestRides[index].date,
             time: requestRides[index].time,
+            firebaseTopic: passengerDetails.existUser.firebaseTopic ?? '',
         })
 
     }

@@ -64,6 +64,20 @@ export const updateuserprofile = async (body, files) => {
         return Promise.reject(error);
     }
 }
+
+export const updateUserFireBaseTopic = async (body) => {
+    try {
+        await model.updateOne({ "_id": body.userId },
+            {
+                $set: {
+                    "firebaseTopic": body.fcmToken
+                }
+            })
+        return;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}
 /* addUserCar() is used to add a new car to user profile  */
 export const addUserCar = async (newCar) => {
     try {

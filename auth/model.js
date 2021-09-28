@@ -36,7 +36,10 @@ const User = new Schema({
             ridescompletedbycar: { type: Number, default: 0 }
 
         }
-    ]
+    ],
+    firebaseTopic: {
+        type: String
+      }
 });/*stores the car details of the user*/
 
 

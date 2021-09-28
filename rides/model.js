@@ -133,9 +133,6 @@ const RequestRideSchema = new Schema({
     type: Number,
     required: true,
   },
-  firebaseTopic: {
-    type: String
-  },
   active: {
     type: Boolean,
     default: true

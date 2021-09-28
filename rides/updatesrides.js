@@ -2,15 +2,13 @@ import { sendFireBaseMessage } from '../firebase/firebase';
 import { CANCELLED, COMPLETED, ONGOING } from './const';
 import {
     getUserOfferRides, getUserBookRides, getBookRideDetails,
-    getRideotp, getRideDateTime, changePassengerRideStatus,
-    getCurrentRideDetails, changeRideStatusToCancel, rideStartedByDriver, driverridestatus,
+    getRideotp, getCurrentRideDetails, driverridestatus,
     passengerridestatus, driverCompletedHisRide, updatePassengerStatusByUserId,
-    perRidePassengerCost, rideCancelByDriver
+    perRidePassengerCost, rideCancelByDriver,getRideWithDriverDetailsById
 } from './dbHelper';
 const fs = require('fs');
 import * as openpgp from 'openpgp'
 import { makeCurrentRideArray } from './helper';
-import { Console } from 'winston/lib/winston/transports';
 
 
 
@@ -113,9 +111,20 @@ export const driverstartride = async (req, res, next) => {
     try {
 
         const { ride_id } = req.body;
-        await rideStartedByDriver(ride_id);
+        // await rideStartedByDriver(ride_id);
+
         //... will add firebase
-        //sendFireBaseMessage();
+        // sendFireBaseMessage();
+        const {passengers} = await getRideWithDriverDetailsById(ride_id);
+        const allPassengerHasTopic = passengers.filter(p=>(p.firebaseTopic !== ''));
+        const allTopics = allPassengerHasTopic.map(pass=>(pass.firebaseTopic));
+
+        for (let index = 0; index < allTopics.length; index++) {
+            const element = allTopics[index];
+            sendFireBaseMessage({ text: 'Ride Started' }, element, 'Ride');  
+        }
+
+        
         return res.status(200).send({ "Ride": "Started" });
     } catch (error) {
         next(error);
@@ -271,7 +280,7 @@ export const encryptDcrypt = async (req, res, next) => {
             signingKeys: privateKey // optional
         });
          // '-----BEGIN PGP MESSAGE ... END PGP MESSAGE-----'
-
+        console.log('000000000000000000', encrypted);
         const message = await openpgp.readMessage({
             armoredMessage: encrypted // parse armored message
         });
@@ -280,7 +289,8 @@ export const encryptDcrypt = async (req, res, next) => {
             verificationKeys: publicKey, // optional
             decryptionKeys: privateKey
         });
-        console.log(decrypted); // 'Hello, World!'
+        console.log('signaturessignaturessignatures   ', signatures);
+        console.log('   decrypteddecrypteddecrypted   ',decrypted); // 'Hello, World!'
         return res.status(200).send({ "Success": "Success" });
 
 
@@ -290,4 +300,39 @@ export const encryptDcrypt = async (req, res, next) => {
         next(error);
     }
 
+}
+
+const readSecreteFile = async()=>{
+    const privateKeyArmored =  await fs.readFileSync('privatekey.asc', 'utf8' , (err, privateKeyArmored) => {
+        if (err) {
+          console.error(err)
+          return
+        }
+
+        return privateKeyArmored;
+        
+      })
+    // console.log('---', privateKeyArmored);
+    const passphrase = `super long and hard to guess secret`;
+    const privateKey = await openpgp.readPrivateKey({ armoredKey:privateKeyArmored});
+    // await privateKey.decrypt(passphrase);
+    // const encryptedData = fs.readFileSync('./asanget_test_config.txt');
+    const encryptedData =  await fs.readFileSync('asanget_test_config.txt', 'utf8' , (err, privateKeyArmored) => {
+        if (err) {
+          console.error(err)
+          return
+        }
+
+        return privateKeyArmored;
+        
+      })
+      console.log('encryptedData', encryptedData);
+    const decrypted = await openpgp.decrypt({
+        message: await openpgp.readMessage({
+            armoredMessage: encryptedData // parse armored message
+        }),
+        decryptionKeys: privateKey
+      });
+      console.log(`successfully decrypted data... 👇`);
+      console.log(decrypted.data);
 }

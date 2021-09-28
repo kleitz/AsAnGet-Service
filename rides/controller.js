@@ -12,10 +12,11 @@ import axios from 'axios';
 import { PolyUtil } from "node-geometry-library";
 import { getDriverDetail } from './helper';
 
-import { sendFireBaseMessage } from '../firebase/firebase';
+import { sendFireBaseMessage, sendPushNotification } from '../firebase/firebase';
 
 
-
+// sendPushNotification();
+// sendFireBaseMessage({ text: 'Find ride Test' }, '', 'Find Ride');
 export const createRide = async (req, res, next) => {
     try {
         const { userId, startPoint, endPoint, carId, rideDate, Time, noOfPassenger, costPerSeat, pricePerBag, currency, noOfSeats, noBigBags,
@@ -91,7 +92,7 @@ export const findRide = async (req, res, next) => {
             recurringRideStartDate, recurringRideEndDate, recurringRideTime, fcmToken } = req.body;
 
         console.log('fcmToken', fcmToken.toString());
-        sendFireBaseMessage({ text: 'Find ride Test' }, fcmToken, 'Find Ride');
+        
         var availabeRides = [];
 
         const cursor = await getAllRides();
