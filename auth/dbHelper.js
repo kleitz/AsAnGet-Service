@@ -146,3 +146,28 @@ export const updateCarCompleteCount = async (userId, carId) => {
         return Promise.reject(error);
     }
 }
+
+export const findCar = async (userId, carId) => {
+   try {
+         const user = await model.findOne({ _id: userId});
+         const car = user.cars.find(c=>(c._id.toString() === carId));
+        return car;
+    } catch (error) {
+       return Promise.reject(error);
+    }
+ }
+
+ export const updateCar = async (body) => {
+    try {
+        await model.updateOne({ _id: body.user_id, 'cars._id': body.carId },
+            {
+                $set: {
+                    "cars.$.category": body.category, "cars.$.model": body.model,
+                     "cars.$.seats": body.seats, "cars.$.carNo": body.carNo
+                }
+            })
+        return;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+}

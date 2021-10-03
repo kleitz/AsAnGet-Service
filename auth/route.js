@@ -5,7 +5,7 @@ import {facebookAuth} from './facebook';
 import {googleAuth} from './google';
 import {requireAuth} from './helper';
 import { instagramAuth } from './instagram';
-import {addCar, myCar, userCars, removeCar} from './cars';
+import {addCar, myCar, userCars, removeCar , getcar ,updatecar} from './cars';
 import {editprofile, updateprofile,getdriverprofile, 
     getpassengerprofile, getNoOfjoindays,userdata, 
     getAll, updateFireBaseTopic} from './userprofile';
@@ -20,6 +20,8 @@ router.post('/userid',getUser);
 router.post('/add_car',addCar);
 router.post('/my_car',myCar);
 router.post('/user_car',userCars);
+router.post('/edit_car',getcar);
+router.post('/update_car',updatecar);
 router.post('/edit_profile',editprofile);
 router.post('/update_profile', upload.saveImage, updateprofile);
 router.post('/get_driverprofile',getdriverprofile);
