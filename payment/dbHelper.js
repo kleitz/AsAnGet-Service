@@ -27,7 +27,8 @@ paymentDbHelper.save = async (paymentInput) => {
         return Promise.reject(err);
     }
 }
-export const update = async (user_id, role) => {
+
+paymentDbHelper.update = async (user_id, role) => {
     try {
         const userdata = await payment.find({ "ratedUserId": user_id, "role": role });
         const rating = userdata.map((task) => {
@@ -43,6 +44,10 @@ export const update = async (user_id, role) => {
     } catch (error) {
         return Promise.reject(error);
     }
+}
+
+paymentDbHelper.getAll = async()=>{
+    return await payment.find({});
 }
 
 

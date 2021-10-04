@@ -21,5 +21,14 @@ export const update = async (req, res, next) => {
     }
 }
 
+export const getAll = async(req, res, next) => {
+    try {
+        const payments = await dbHelper.getAll();
+        return res.status(200).send({payments});
+    } catch (error) {
+        next(error);
+    }
+}
+
 
 export default payment;
