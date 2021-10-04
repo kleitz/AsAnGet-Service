@@ -18,7 +18,8 @@ var build_files_paths = {
         envCopy: ['./config/.env.production', './config/.env.development', './config/.env.test'],
         lastlocation_path: ['./lastlocation/*.js'],
         admin_path: ['./admin/*.js'],
-        firebase_path: ['./firebase/*.*']
+        firebase_path: ['./firebase/*.*'],
+        payment_path: ['./ratings/*.js']
 };
 
 gulp.task('clean', function () {
@@ -134,7 +135,16 @@ gulp.task('copyFirebase', function () {
                 .pipe(gulp.dest('dist/firebase'));
 });
 
+gulp.task('minifypayment', function () {
+        return gulp.src(build_files_paths.payment_path)
+                .pipe(babel({
+                        presets: ['@babel/preset-env']
+                }))
+                .pipe(uglify())
+                .pipe(gulp.dest('dist/payment'));
+});
+
 gulp.task('build', gulp.series('clean', 'copynojs', 'copyimage', 'minifypublicjs', 'minifyauth',
         'minifyride', 'minifyhelper',
         'minifyroot', 'minifyconfig', 'copyEnv', 'copypublic',
-        'minifyrating', 'minifylastlocation', 'minifyAdmin', 'copyFirebase'));
+        'minifyrating', 'minifylastlocation', 'minifyAdmin', 'copyFirebase','minifypayment'));
