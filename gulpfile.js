@@ -19,7 +19,7 @@ var build_files_paths = {
         lastlocation_path: ['./lastlocation/*.js'],
         admin_path: ['./admin/*.js'],
         firebase_path: ['./firebase/*.*'],
-        payment_path: ['./ratings/*.js']
+        payment_path: ['./payment/*.js']
 };
 
 gulp.task('clean', function () {
