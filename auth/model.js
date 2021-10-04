@@ -33,6 +33,7 @@ const User = new Schema({
             model: { type: String, required: true },
             seats: { type: Number, required: true },
             carNo: { type: String, required: true },
+            brand: { type: String },
             ridescompletedbycar: { type: Number, default: 0 }
 
         }

@@ -3,11 +3,12 @@ import {addUserCar, myCars, deleteCar, findCar, updateCar} from './dbHelper';
 /*addCar() adds car according to modelView*/
 export const addCar = async (req, res, next) => {
     try {
-        const {user_id,  category,model_type, seat, car_no  } = req.body;     
+        const {user_id,  category,model_type, seat, car_no ,Brand } = req.body;     
         const modelView = {
             user_id : user_id,
             category : category,
             model : model_type,
+            brand : Brand,
             seats : seat,
             carNo : car_no    
         };

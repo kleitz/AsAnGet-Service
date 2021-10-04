@@ -163,7 +163,7 @@ export const findCar = async (userId, carId) => {
             {
                 $set: {
                     "cars.$.category": body.category, "cars.$.model": body.model,
-                     "cars.$.seats": body.seats, "cars.$.carNo": body.carNo
+                     "cars.$.seats": body.seats, "cars.$.carNo": body.carNo , "cars.$.brand":body.Brand
                 }
             })
         return;
