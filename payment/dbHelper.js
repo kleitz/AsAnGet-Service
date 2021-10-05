@@ -28,19 +28,9 @@ paymentDbHelper.save = async (paymentInput) => {
     }
 }
 
-paymentDbHelper.update = async (user_id, role) => {
+paymentDbHelper.update = async (body) => {
     try {
-        const userdata = await payment.find({ "ratedUserId": user_id, "role": role });
-        const rating = userdata.map((task) => {
-            return task.rate;
-        });
-        var totalSum = 0;
-        for (var i in rating) {
-            totalSum += rating[i];
-        }
-        var average = totalSum / rating.length;
-        return average;
-
+        return await payment.updateOne({ "orderId": '000000' },{$set:{"status":JSON.stringify(body)}});
     } catch (error) {
         return Promise.reject(error);
     }

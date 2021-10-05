@@ -30,5 +30,12 @@ export const getAll = async(req, res, next) => {
     }
 }
 
+export const callback = async(req, res, next)=>{
+    console.log('------req-------', req.body);
+    const updatePayment = await dbHelper.update(req.body);
+    return res.status(200).send({updatePayment});
+    
+}
+
 
 export default payment;
