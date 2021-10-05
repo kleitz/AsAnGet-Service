@@ -1,5 +1,6 @@
 
 import payment from './model';
+import {UnSUCCESS,SUCCESS} from './const';
 const paymentDbHelper = {};
 
 paymentDbHelper.getOrderId = async () => {
@@ -30,7 +31,13 @@ paymentDbHelper.save = async (paymentInput) => {
 
 paymentDbHelper.update = async (body) => {
     try {
-        return await payment.updateOne({ "orderId": '000000' },{$set:{"status":JSON.stringify(body)}});
+        const {ORDER,ACTION,RC} = body;
+        let status = UnSUCCESS;
+        if(ACTION === '0' && RC === '00') status = SUCCESS;
+        return await payment.updateMany({ "orderId": ORDER },{$set:{
+            "transcation":JSON.stringify(body),
+            "status":status
+        }});
     } catch (error) {
         return Promise.reject(error);
     }

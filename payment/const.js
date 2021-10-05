@@ -1,3 +1,3 @@
 export const INPROGRESS = 'InProgress';
-export const UnSuccess = 'UnSuccess';
-export const Success = 'Success';
+export const UnSUCCESS = 'UnSuccess';
+export const SUCCESS = 'Success';

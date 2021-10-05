@@ -10,16 +10,6 @@ export const add = async (req, res, next) => {
         return next(err);
     }
 }
-export const update = async (req, res, next) => {
-    try {
-        
-        // const { user_id,role } = req.body;
-        // const rideDetails = await getuserpayment(user_id,role );
-        return res.status(200).send({});
-    } catch (error) {
-        next(error);
-    }
-}
 
 export const getAll = async(req, res, next) => {
     try {
@@ -31,7 +21,6 @@ export const getAll = async(req, res, next) => {
 }
 
 export const callback = async(req, res, next)=>{
-    console.log('------req-------', req.body);
     const updatePayment = await dbHelper.update(req.body);
     return res.status(200).send({updatePayment});
     

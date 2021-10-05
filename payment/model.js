@@ -9,8 +9,7 @@ const payment = new Schema({
     amount: { type: String },
     currency:{type: String},
     status: { type: String,default: INPROGRESS },
-    modeOfPayment: {type: String},
-    transcationId:{type: String},
+    transcation:{type: String, default:""},
     createdDate: {
         type: Date,
         default: Date.now
