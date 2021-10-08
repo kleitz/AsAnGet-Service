@@ -47,6 +47,10 @@ paymentDbHelper.getAll = async()=>{
     return await payment.find({});
 }
 
+paymentDbHelper.getByOrderId =async(orderId)=>{
+    return await payment.find({"orderId":orderId});
+} 
+
 
 export default paymentDbHelper;
 

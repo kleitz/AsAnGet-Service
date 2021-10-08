@@ -21,9 +21,23 @@ export const getAll = async(req, res, next) => {
 }
 
 export const callback = async(req, res, next)=>{
+    try{
     const updatePayment = await dbHelper.update(req.body);
     return res.status(200).send({updatePayment});
+    } catch (error) {
+        next(error);
+    }
     
+}
+
+export const getByOrderId = async(req, res, next) => {
+    try {
+        const {orderId} = req.body;
+        const payments = await dbHelper.getByOrderId(orderId);
+        return res.status(200).send({payments});
+    } catch (error) {
+        next(error);
+    }
 }
 
 
