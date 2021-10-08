@@ -33,8 +33,8 @@ export const callback = async(req, res, next)=>{
 export const getByOrderId = async(req, res, next) => {
     try {
         const {orderId} = req.body;
-        const payments = await dbHelper.getByOrderId(orderId);
-        return res.status(200).send({payments});
+        const order = await dbHelper.getByOrderId(orderId);
+        return res.status(200).send(order);
     } catch (error) {
         next(error);
     }

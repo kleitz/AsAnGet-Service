@@ -48,7 +48,7 @@ paymentDbHelper.getAll = async()=>{
 }
 
 paymentDbHelper.getByOrderId =async(orderId)=>{
-    return await payment.find({"orderId":orderId});
+    return await payment.findOne({"orderId":orderId});
 } 
 
 
