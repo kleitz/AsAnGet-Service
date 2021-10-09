@@ -1,11 +1,13 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import {createServer} from 'https';
 import { urlencoded, json } from "body-parser";
 import cors from 'cors';
 import path from 'path';
 import { promisifyAll } from 'bluebird';
 import mongoose from 'mongoose';
 import cluster from 'cluster';
+import fs from 'fs';
 
 import logger from './config/logger';
 import authRouter from './auth/route';
@@ -74,6 +76,11 @@ if (cluster.isMaster && process.env.NODE_ENV === 'production') {
     console.log(`worker ${worker.process.pid} died`);
   });
 }else {
+  const sslServer = createServer({
+    key:fs.readFileSync(path.join(__dirname,'cert','key.pem')),
+    cert:fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
+  },app);
+  sslServer.listen(3443,()=>console.log('ssl server is running on 3443'));
   app.listen(PORT, () => {
     console.info(`App listening on port ${PORT}`)
   })
