@@ -77,8 +77,8 @@ if (cluster.isMaster && process.env.NODE_ENV === 'production') {
   });
 }else {
   const sslServer = createServer({
-    key:fs.readFileSync(path.join(__dirname,'cert','key.pem')),
-    cert:fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
+    key:fs.readFileSync('/root/cert/asanget.com.key'),
+    cert:fs.readFileSync('/root/cert/asanget.com.crt')
   },app);
   sslServer.listen(PORT,()=>console.log('ssl server is running on 3002'));
   app.listen(3443, () => {
