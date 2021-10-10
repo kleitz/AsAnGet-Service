@@ -81,7 +81,7 @@ if (cluster.isMaster && process.env.NODE_ENV === 'production') {
   //   cert:fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
   // },app);
   // sslServer.listen(PORT,()=>console.log('ssl server is running on 3002'));
-  app.listen(3443, () => {
-    console.info(`App listening on port 3443`)
+  app.listen(PORT, () => {
+    console.info(`App listening on port ${PORT}`)
   })
 }
