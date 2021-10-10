@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import {createServer} from 'https';
 import { urlencoded, json } from "body-parser";
 import cors from 'cors';
 import path from 'path';
@@ -76,11 +75,6 @@ if (cluster.isMaster && process.env.NODE_ENV === 'production') {
     console.log(`worker ${worker.process.pid} died`);
   });
 }else {
-  // const sslServer = createServer({
-  //   key:fs.readFileSync(path.join(__dirname,'cert','key.pem')),
-  //   cert:fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
-  // },app);
-  // sslServer.listen(PORT,()=>console.log('ssl server is running on 3002'));
   app.listen(PORT, () => {
     console.info(`App listening on port ${PORT}`)
   })
