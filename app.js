@@ -76,11 +76,11 @@ if (cluster.isMaster && process.env.NODE_ENV === 'production') {
     console.log(`worker ${worker.process.pid} died`);
   });
 }else {
-  const sslServer = createServer({
-    key:fs.readFileSync(path.join(__dirname,'cert','key.pem')),
-    cert:fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
-  },app);
-  sslServer.listen(PORT,()=>console.log('ssl server is running on 3002'));
+  // const sslServer = createServer({
+  //   key:fs.readFileSync(path.join(__dirname,'cert','key.pem')),
+  //   cert:fs.readFileSync(path.join(__dirname,'cert','cert.pem'))
+  // },app);
+  // sslServer.listen(PORT,()=>console.log('ssl server is running on 3002'));
   app.listen(3443, () => {
     console.info(`App listening on port 3443`)
   })
