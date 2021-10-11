@@ -241,8 +241,6 @@ export const rideDistance = async (req, res, next) => {
     catch (error) {
         next(error);
         return res.status(200).send("Unable to calculatedistance");
-
-
     }
 }
 

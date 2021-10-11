@@ -6,6 +6,7 @@ import path from 'path';
 import { promisifyAll } from 'bluebird';
 import mongoose from 'mongoose';
 import cluster from 'cluster';
+import fs from 'fs';
 
 import logger from './config/logger';
 import authRouter from './auth/route';
@@ -13,6 +14,7 @@ import ridesRouter from './rides/route';
 import ratingsRouter from './ratings/route';
 import locationRouter from './lastlocation/route';
 import adminRouter from './admin/route';
+import orderRouter from './payment/route';
 
 
 
@@ -53,6 +55,7 @@ app.use('/ride',ridesRouter);
 app.use('/ratings',ratingsRouter);
 app.use('/lastlocation',locationRouter);
 app.use('/admin',adminRouter);
+app.use('/order',orderRouter);
 
 app.use((err, req, res, next) => {
   logger.saveError(err.stack);
