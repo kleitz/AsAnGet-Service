@@ -58,10 +58,9 @@ export const userCars = async (req, res, next) => {
 
 export const removeCar = async (req, res, next) => {
     try {
-        const {user_id, car_no } = req.body;     
-        
-        await deleteCar(user_id, car_no);
-        return res.status(200).send("removed");
+        const {userId, carId } = req.body;     
+        await deleteCar(userId, carId);
+        return res.status(200).send("Car Deleted");
     } catch (error) {
         next(error);
     }

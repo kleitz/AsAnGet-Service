@@ -121,12 +121,10 @@ export const getprofilebyId = async (user_id) => {
     }
 }
 
-export const deleteCar = async (user_id, car_no) => {
+export const deleteCar = async (userId, carId) => {
     try {
-        await model.removeObject.update( {'_id': user_id},
-        ... {$pull:{"cars":{"carNo":car_no}}},
-        ... false,true);
-
+        await model.updateOne( {'_id':userId},
+        {$pull:{cars:{_id:carId}}});
         return ;
     } catch (error) {
         return Promise.reject(error);

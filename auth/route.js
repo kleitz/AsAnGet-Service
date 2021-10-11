@@ -29,7 +29,7 @@ router.post('/get_passengerprofile',getpassengerprofile);
 router.post('/get_joineddays',getNoOfjoindays);
 router.post('/get_userdata',userdata);
 router.get('/getAll', getAll);
-router.get('/delete_car', removeCar);
+router.post('/delete_car', removeCar);
 router.post('/update_firebaseTopic', updateFireBaseTopic);
 
 

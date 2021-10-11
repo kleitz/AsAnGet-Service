@@ -18,16 +18,13 @@ export const editprofile = async (req, res, next) => {
 /*updateprofile() is used to update profile  of the user*/
 export const updateprofile = async (req, res, next) => {
     try {
-        console.log(req.body);
-        console.log(req.files);
-        const  userdata = await updateuserprofile(req.body, req.files);
-        
-        //const userdata = await updateuserprofile(user_id, name, age,phoneNum,email,homeaddress,officeaddress,imageUrl);
+        await updateuserprofile(req.body, req.files);
         return res.status(200).send({"ProfileUpdated":"Success"});
     } catch (error) {
         next(error);
     }
 }
+
 /*getdriverprofile() is used to get driver profile */
 export const getdriverprofile = async (req, res, next) => {
     try {
