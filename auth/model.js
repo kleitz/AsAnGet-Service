@@ -7,6 +7,7 @@ const User = new Schema({
     socialMediaId: { type: String },  /*stores the socialMediaId of the user*/
     createdDate: { type: Date, default: Date.now },   /*stores on which date, the particular entry is added  */
     imageUrl: { type: String }, /*stores the image of the user*/
+    driveryLicenceUrl : {type: String},
     age: { type: Number },  /*stores the age of the user*/
     phoneNum: { type: Number }, /*stores the phoneNum of the user*/
     rating: { type: Number }, /*stores the rating of the user*/
