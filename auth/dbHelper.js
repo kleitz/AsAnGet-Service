@@ -49,14 +49,26 @@ export const edituserbyId = async (user_id) => {
 /*updateuserprofile() is used to update user profile */
 export const updateuserprofile = async (body, files) => {
     try {
-
-        console.log(files);
+        let profileUrl = '';
+        let dlImageUrl = '';
+        for (let index = 0; index < files.length; index++) {
+            const element = files[index];
+            let imageName = element.originalname;
+            if(imageName.startsWith("asanget_profile")){
+                profileUrl = imageName;
+            }
+            else if(imageName.startsWith("asanget_dl")){
+                dlImageUrl = imageName;
+            }    
+        }
         await model.updateOne({ "_id": body.user_id },
             {
                 $set: {
                     "name": body.name, "age": body.age, "phoneNum": body.phoneNum, "email": body.email
                     , "homeaddress": body.homeaddress, "officeaddress": body.officeaddress,
-                    "imageUrl": `http://${process.env.serverIPAddress}:${process.env.PORT}/img/${files[0].originalname}`
+                    "imageUrl": `http://${process.env.serverIPAddress}:${process.env.PORT}/img/${profileUrl}`,
+                    "driveryLicenceUrl": `http://${process.env.serverIPAddress}:${process.env.PORT}/img/${dlImageUrl}`
+
                 }
             })
         return;
