@@ -8,6 +8,7 @@ import {
 } from './dbHelper';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
+import {getRideWithDriverDetailsById} from '../rides/dbHelper';
 import axios from 'axios';
 import { PolyUtil } from "node-geometry-library";
 import { getDriverDetail } from './helper';
@@ -16,7 +17,31 @@ import { sendFireBaseMessage, sendPushNotification } from '../firebase/firebase'
 
 
 // sendPushNotification();
-// sendFireBaseMessage({ text: 'Find ride Test' }, '', 'Find Ride');
+// sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
+
+export const checkfirebase = async(req, res, next)=>{
+    try {
+        const {passengers, driverDetails} = await getRideWithDriverDetailsById(req.body.rideId);
+        const allPassengerHasTopic = passengers.filter(p=>(p.firebaseTopic !== ''));
+        const allTopics = allPassengerHasTopic.map(pass=>(pass.firebaseTopic));
+
+        for (let index = 0; index < allTopics.length; index++) {
+            const element = allTopics[index];
+            console.log('topic passenger',element);
+            sendFireBaseMessage({ text: 'Ride Started' }, element, 'Ride');  
+        }
+        console.log('topic driver',driverDetails.existUser.firebaseTopic);
+        sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
+        return res.status(200).json("sent message");
+    }
+    catch (error) {
+        next(error);
+        return res.status(200).send("Unable to create your ride");
+
+
+    }
+
+}
 export const createRide = async (req, res, next) => {
     try {
         const { userId, startPoint, endPoint, carId, rideDate, Time, noOfPassenger, costPerSeat, pricePerBag, currency, noOfSeats, noBigBags,
