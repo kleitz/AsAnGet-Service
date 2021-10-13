@@ -33,7 +33,8 @@ paymentDbHelper.update = async (body) => {
     try {
         const {ORDER,ACTION,RC} = body;
         let status = UnSUCCESS;
-        if(ACTION === '0' && RC === '00') status = SUCCESS;
+        if(ACTION === '0' && RC === '00') {status = SUCCESS;}
+        else {status = UnSUCCESS;}
         return await payment.updateMany({ "orderId": ORDER },{$set:{
             "transcation":JSON.stringify(body),
             "status":status
