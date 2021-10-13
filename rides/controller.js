@@ -4,7 +4,8 @@ import {
     getAllRides,
     getRideDetails,
     bookRideSaveinDb,
-    getBookRideDetails
+    getBookRideDetails,
+    updateBigBag
 } from './dbHelper';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
@@ -126,6 +127,7 @@ export const findRide = async (req, res, next) => {
                             currency: cursor[index].offerRides[0].currency,
                             pricePerSeat: cursor[index].offerRides[0].pricePerSeat, 
                             pricePerBag: cursor[index].offerRides[0].pricePerBag,
+                            noBigBags : cursor[index].offerRides[0].bigBagNo,
                             recurringRideStartDate: cursor[index].offerRides[0].recurringRideStartDate,
                             recurringRideEndDate: cursor[index].offerRides[0].recurringRideEndDate,
                             recurringRideTime: cursor[index].offerRides[0].recurringRideTime,
@@ -192,7 +194,16 @@ export const bookRide = async (req, res, next) => {
             recurringRideTime: recurringRideTime,
             OTP: otp,
         };
+
         const saved = await bookRideSaveinDb(modelView);
+
+        const rideInfo = await getBookRideDetails(_id);
+        const TotalBigBag = rideInfo.noBigBags;
+        const currentNoOfBags = TotalBigBag - noBigBags;
+        if(saved == false){
+            await updateBigBag(_id,currentNoOfBags);
+        }
+        
         return saved ? res.status(200).send({ "Status": "Already booked this ride" }) :
             res.status(200).send({ "Success": "Saved" });
 
