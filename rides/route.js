@@ -1,7 +1,7 @@
 import express from 'express';
 
 
-import { createRide, findRide, bookRide, rideDetails, rideDistance } from './controller';
+import { createRide, findRide, bookRide, rideDetails, rideDistance,checkfirebase } from './controller';
 import {
   currentRide, completedRides, getRideOTP, verifyRideOTP, driverCancelRide,
   passengerRideCompleted
@@ -35,6 +35,7 @@ router.post('/getpassengerride_status', getpassengerridestatus);
 router.post('/getRide_distance', rideDistance);
 router.post('/pgp_Geneator', pgpGeneator);
 router.post('/call_asanget', encryptDcrypt);
+router.post('/checkfirebase', checkfirebase);
 
 
 router.get('/test3', (req, res, next) => {

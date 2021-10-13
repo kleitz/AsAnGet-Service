@@ -8,14 +8,15 @@ admin.initializeApp({
 
 const firebase = {};
 
-firebase.sendFireBaseMessage = (jsonObject, topic, title) => {
+firebase.
+sendFireBaseMessage = (jsonObject, topic, title) => {
     const message = {
       "notification": {
         "title": title,
         "body": jsonObject.text,
         "image": "http://asanget.com/assets/Asanget%20Logo.jpg"
       },
-      "token": topic
+      "token": topic,
     };
     // Send a message to devices subscribed to the provided topic.
     admin.messaging().send(message)
@@ -29,7 +30,7 @@ firebase.sendFireBaseMessage = (jsonObject, topic, title) => {
   }
 
   firebase.sendPushNotification = async () => {
-    const FIREBASE_API_KEY = "AAAA-hVxvFU:APA91bFx645sA_orxNEzUsqxvPTYCPzxRQtn7kAH-pAL11iXeWlQR7IGnKZmxkH0qCYRfo2fJYXshd3h3qzXDErTHEHvg-yovxZO2Q-7d9K6OvsRyXGpm5oGLwCfxK-FdVGoK-BJeuCc"
+    const FIREBASE_API_KEY = "AAAAbHBFVQw:APA91bGlLSQfLx-uBP7gRPZCLAmhIT27IlawPfxTSJhcdHQLFPLlmDZ6Nlk7ICKY90nJnRSut0HwDt0QLRWFgmKgm01VkSO9f3Q3u05ei2JurZtkw4mZOAmzTEMAj9jOfR5e1WhWPQ8U"
     const message = {
       registration_ids: [
         "eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR",
