@@ -7,6 +7,7 @@ import {
     isPassengerAlreadyBookTheRide, getDriverDetail
 } from './helper';
 import { COMPLETED, ONGOING, UPCOMING, CANCELLED } from './const';
+import { rideDetails } from './controller';
 
 
 export const getRideWithDriverDetailsById = async (ride_id) => {
@@ -244,6 +245,7 @@ export const getBookRideDetails = async (ride_id) => {
             date: getRideDate(ridesDetails.offerRides[0]), //...same as recurringEndDate
             carDetail,
             noOfSeats: ridesDetails.offerRides[0].noOfSeats,
+            noBigBags: ridesDetails.offerRides[0].bigBagNo,
             currency: ridesDetails.offerRides[0].currency,
             pricePerSeat: ridesDetails.offerRides[0].pricePerSeat,
             pricePerBag: ridesDetails.offerRides[0].pricePerBag,
@@ -430,10 +432,19 @@ export const passengerridestatus = async (ride_id, user_id) => {
                 return task.status;
             }
         });
-
         return newdata[0].status;
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
+export const updateBigBag = async (_id, currentNoOfBags) => {
+        try {
+            const ride = await model.findOne({ _id: new ObjectID(_id) });
+            await model.updateOne(
+                { _id: new ObjectID(_id), 'offerRides._id': new ObjectID(ride.offerRides[0]._id) },
+                { $set: { "offerRides.$.bigBagNo": currentNoOfBags } });
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
