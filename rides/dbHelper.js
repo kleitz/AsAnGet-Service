@@ -438,12 +438,12 @@ export const passengerridestatus = async (ride_id, user_id) => {
     }
 }
 
-export const updateBigBag = async (_id, currentNoOfBags) => {
+export const updateBigBag = async (_id, currentNoOfBags,currentNoOfSeats) => {
         try {
             const ride = await model.findOne({ _id: new ObjectID(_id) });
             await model.updateOne(
                 { _id: new ObjectID(_id), 'offerRides._id': new ObjectID(ride.offerRides[0]._id) },
-                { $set: { "offerRides.$.bigBagNo": currentNoOfBags } });
+                { $set: { "offerRides.$.bigBagNo": currentNoOfBags ,"offerRides.$.noOfSeats": currentNoOfSeats} });
         } catch (error) {
             throw new Error(error);
         }

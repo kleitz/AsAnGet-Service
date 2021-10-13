@@ -223,10 +223,13 @@ export const bookRide = async (req, res, next) => {
         const saved = await bookRideSaveinDb(modelView);
 
         const rideInfo = await getBookRideDetails(_id);
+        const NoOfSeats = rideInfo.noOfSeats;
         const TotalBigBag = rideInfo.noBigBags;
         const currentNoOfBags = TotalBigBag - noBigBags;
+        const currentNoOfSeats = NoOfSeats - noOfSeats;
+
         if(saved == false){
-            await updateBigBag(_id,currentNoOfBags);
+            await updateBigBag(_id,currentNoOfBags,currentNoOfSeats);
         }
         
         return saved ? res.status(200).send({ "Status": "Already booked this ride" }) :
