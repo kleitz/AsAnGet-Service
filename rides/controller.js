@@ -97,7 +97,9 @@ export const createRide = async (req, res, next) => {
                 smoking: smokingAllow,
                 petAllow: petAllow,
                 foodAllow: foodAllow,
-                firebaseTopic: `${userId}${Date.now()}`
+                firebaseTopic: `${userId}${Date.now()}`,
+                startLatLong: startPoint,
+                endLatLong: endPoint
 
             }],
         }
@@ -115,26 +117,29 @@ export const createRide = async (req, res, next) => {
 export const findRide = async (req, res, next) => {
     try {
         const { userId, startPoint, endPoint, rideDate, rideTime, noOfPassenger,
-            recurringRideStartDate, recurringRideEndDate, recurringRideTime, fcmToken } = req.body;
+            recurringRideStartDate, recurringRideEndDate, recurringRideTime } = req.body;
 
-        console.log('fcmToken', fcmToken.toString());
-        
+        console.log('startPoint',startPoint);
         var availabeRides = [];
 
         const cursor = await getAllRides();
-        console.log(cursor);
         for (let index = 0; index < cursor.length; index++) {
             const element = cursor[index].offerRides[0];
-            const {startLatLong,endLatLong} = element;
-            const distance = SphericalUtil.computeDistanceBetween(startLatLong,endPoint);
+            const {startLatLong,endLatLong, to, from} = element;
+            const startPointSplit = startLatLong.split(',');
+
+            // check condition for oppsite same source and destination
+            const distance = SphericalUtil.computeDistanceBetween({lat:startPointSplit[0],lng:startPointSplit[1]},endPoint);
+            console.log('distance',distance,from, to);
             
             if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats && 
                 userId != cursor[index].userId && 
                 distance!==0) {
 
                 const locfound = PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations, 1000);
+                console.log('locfoundlocfound',locfound);
                 if (locfound) {
-                    console.log(locfound);
+                    console.log('inside',locfound);
 
                     const rideFound = PolyUtil.isLocationOnEdge(endPoint, cursor[index].offerRides[0].end_loactions, 1000);
                     console.log(rideFound);
