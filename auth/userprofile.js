@@ -19,6 +19,12 @@ export const editprofile = async (req, res, next) => {
 export const updateprofile = async (req, res, next) => {
     try {
         await updateuserprofile(req.body, req.files);
+
+        const userDetail = await getbyId(req.body.user_id);
+
+        sendFireBaseMessage({ text: 'Profile Updated' }, userDetail.existUser.firebaseTopic, 'Profile Updated');
+
+
         return res.status(200).send({"ProfileUpdated":"Success"});
     } catch (error) {
         next(error);

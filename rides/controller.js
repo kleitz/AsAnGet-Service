@@ -22,17 +22,17 @@ import { sendFireBaseMessage, sendPushNotification } from '../firebase/firebase'
 
 export const checkfirebase = async(req, res, next)=>{
     try {
-        const {passengers, driverDetails} = await getRideWithDriverDetailsById(req.body.rideId);
-        const allPassengerHasTopic = passengers.filter(p=>(p.firebaseTopic !== ''));
-        const allTopics = allPassengerHasTopic.map(pass=>(pass.firebaseTopic));
+        // const {passengers, driverDetails} = await getRideWithDriverDetailsById(req.body.rideId);
+        // const allPassengerHasTopic = passengers.filter(p=>(p.firebaseTopic !== ''));
+        // const allTopics = allPassengerHasTopic.map(pass=>(pass.firebaseTopic));
 
-        for (let index = 0; index < allTopics.length; index++) {
-            const element = allTopics[index];
-            console.log('topic passenger',element);
-            sendFireBaseMessage({ text: 'Ride Started' }, element, 'Ride');  
-        }
-        console.log('topic driver',driverDetails.existUser.firebaseTopic);
-        sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
+        // for (let index = 0; index < allTopics.length; index++) {
+        //     const element = allTopics[index];
+        //     console.log('topic passenger',element);
+        //     sendFireBaseMessage({ text: 'Ride Started' }, element, 'Ride');  
+        // }
+        // console.log('topic driver',driverDetails.existUser.firebaseTopic);
+        sendFireBaseMessage({ text: 'Find ride Test' }, 'dVnwJbFORaaTEtCgygXb6Y:APA91bEPfDEhd-MIrutbcJvmfUtDMLRQwN3iP8T2aWxN0GgOYuuDYTXqXFf2cJuWSqt4rrEDRBVs6z2TNoIFkO-TB-7UfUbgBcOUEVpFSuGKJTxqr2JpEQVKkegZA_PUsW1moIBD1Rx7', 'Find Ride');
         return res.status(200).json("sent message");
     }
     catch (error) {
