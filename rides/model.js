@@ -48,6 +48,8 @@ const OfferRideSchema = new Schema({
   },
   start_locations: [],
   end_loactions: [],
+  startLatLong:{},
+  endLatLong:{},
   bigBagNo: {
     type: Number
   },

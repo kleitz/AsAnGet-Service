@@ -11,7 +11,7 @@ import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
 import {getRideWithDriverDetailsById} from '../rides/dbHelper';
 import axios from 'axios';
-import { PolyUtil } from "node-geometry-library";
+import { PolyUtil,SphericalUtil } from "node-geometry-library";
 import { getDriverDetail } from './helper';
 
 import { sendFireBaseMessage, sendPushNotification } from '../firebase/firebase';
@@ -124,8 +124,13 @@ export const findRide = async (req, res, next) => {
         const cursor = await getAllRides();
         console.log(cursor);
         for (let index = 0; index < cursor.length; index++) {
-            const element = cursor[index];
-            if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats && userId != cursor[index].userId) {
+            const element = cursor[index].offerRides[0];
+            const {startLatLong,endLatLong} = element;
+            const distance = SphericalUtil.computeDistanceBetween(startLatLong,endPoint);
+            
+            if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats && 
+                userId != cursor[index].userId && 
+                distance!==0) {
 
                 const locfound = PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations, 1000);
                 if (locfound) {
