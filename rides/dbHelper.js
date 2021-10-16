@@ -194,6 +194,9 @@ export const bookRideSaveinDb = async (newRide) => {
         ride.requestRides.push(updatedNewRide);
         await ride.save();
 
+        //sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
+
+
         //...will refactor once we implemnt firebase
         const offerRide = ride.offerRides[0];
         const text = `${newRide.userName} booked ride from ${offerRide.from} to ${offerRide.to}`;

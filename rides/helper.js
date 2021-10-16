@@ -1,6 +1,7 @@
-import { getBookRideDetails } from './dbHelper';
+import { getBookRideDetails ,getRideWithDriverDetailsById } from './dbHelper';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
+import { sendFireBaseMessage, sendPushNotification } from '../firebase/firebase';
 
 export const getRideTime = (ride) => ((ride.time !== '') ? ride.time : ride.recurringRideTime);
 
@@ -62,4 +63,18 @@ export const getDriverDetail = async(driverId) => {
     const {rating5Star} = await getuserratingOutOf5(driverId,'driver');
     driverDetails.rating = rating5Star;
     return driverDetails;
+}
+
+
+export const sendMessageToAllPassenger = async(rideId,text,message) => {
+
+    const {passengers} = await getRideWithDriverDetailsById(rideId);
+        const allPassengerHasTopic = passengers.filter(p=>(p.firebaseTopic !== ''));
+        const allTopics = allPassengerHasTopic.map(pass=>(pass.firebaseTopic));
+
+        for (let index = 0; index < allTopics.length; index++) {
+            const element = allTopics[index];
+            console.log('topic passenger',element);
+            sendFireBaseMessage({text}, element, message);  
+        }
 }

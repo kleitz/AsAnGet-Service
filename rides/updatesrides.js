@@ -8,7 +8,7 @@ import {
 } from './dbHelper';
 const fs = require('fs');
 import * as openpgp from 'openpgp'
-import { makeCurrentRideArray } from './helper';
+import { makeCurrentRideArray,sendMessageToAllPassenger } from './helper';
 
 
 
@@ -101,6 +101,11 @@ export const passengerRideCompleted = async (req, res, next) => {
         const { ride_id, userId } = req.body;
         await updatePassengerStatusByUserId(ride_id, userId, COMPLETED);
         const {amount, currency} = await perRidePassengerCost(ride_id, userId);
+
+        //sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
+
+        sendMessageToAllPassenger(ride_id,'You successfully completed your ride.','You successfully completed your ride.');
+
         return res.status(200).send({ "Ride": "Completed", "Amount": amount, currency });
     } catch (error) {
         next(error);
@@ -124,6 +129,9 @@ export const driverstartride = async (req, res, next) => {
             sendFireBaseMessage({ text: 'Ride Started' }, element, 'Ride');  
         }
 
+        //sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
+
+        
         
         return res.status(200).send({ "Ride": "Started" });
     } catch (error) {
@@ -147,9 +155,10 @@ export const driverCancelRide = async (req, res, next) => {
     try {
         const { ride_id } = req.body;
         await rideCancelByDriver(ride_id);
-        //... will add firebase
-        //sendFireBaseMessage();
+        
+        //sendFireBaseMessage({ text: 'Your ride has been cancelled' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
 
+        sendMessageToAllPassenger(ride_id,'Your ride has been cancelled','Ride Cancel')
         return res.status(200).send({ desc:'success'});
 
 
@@ -162,8 +171,9 @@ export const passengerCancelRide = async (req, res, next) => {
     try {
         const { ride_id, userId } = req.body;
         await updatePassengerStatusByUserId(ride_id, userId, CANCELLED);
-        //... will add firebase
-        //sendFireBaseMessage();
+        
+        const driverDetail = await getRideWithDriverDetailsById(ride_id);
+        sendFireBaseMessage({ text: 'Passenger cancel ride' }, driverDetail.existUser.firebaseTopic, 'Passenger Cancel ride');
 
         return res.status(200).send({ desc:'success' });
 
