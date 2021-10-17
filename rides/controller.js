@@ -9,10 +9,10 @@ import {
 } from './dbHelper';
 import { getbyId } from '../auth/dbHelper';
 import { getuserratingOutOf5 } from '../ratings/dbHelper';
-import {getRideWithDriverDetailsById} from '../rides/dbHelper';
+import { getRideWithDriverDetailsById } from '../rides/dbHelper';
 import axios from 'axios';
-import { PolyUtil,SphericalUtil } from "node-geometry-library";
-import { getDriverDetail } from './helper';
+import { PolyUtil, SphericalUtil } from "node-geometry-library";
+import { getDriverDetail, filterRideByDateTime } from './helper';
 
 import { sendFireBaseMessage, sendPushNotification } from '../firebase/firebase';
 
@@ -20,7 +20,7 @@ import { sendFireBaseMessage, sendPushNotification } from '../firebase/firebase'
 // sendPushNotification();
 // sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
 
-export const checkfirebase = async(req, res, next)=>{
+export const checkfirebase = async (req, res, next) => {
     try {
         // const {passengers, driverDetails} = await getRideWithDriverDetailsById(req.body.rideId);
         // const allPassengerHasTopic = passengers.filter(p=>(p.firebaseTopic !== ''));
@@ -119,71 +119,82 @@ export const findRide = async (req, res, next) => {
         const { userId, startPoint, endPoint, rideDate, rideTime, noOfPassenger,
             recurringRideStartDate, recurringRideEndDate, recurringRideTime } = req.body;
 
-        console.log('startPoint',startPoint);
         var availabeRides = [];
 
         const cursor = await getAllRides();
         for (let index = 0; index < cursor.length; index++) {
             const element = cursor[index].offerRides[0];
-            const {startLatLong,endLatLong, to, from} = element;
-            const startPointSplit = startLatLong.split(',');
 
-            // check condition for oppsite same source and destination
-            const distance = SphericalUtil.computeDistanceBetween({lat:startPointSplit[0],lng:startPointSplit[1]},endPoint);
-            console.log('distance',distance,from, to);
-            
-            if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats && 
-                userId != cursor[index].userId && 
-                distance!==0) {
+            if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats &&
+                userId != cursor[index].userId) {
 
-                const locfound = PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations, 1000);
-                console.log('locfoundlocfound',locfound);
-                if (locfound) {
-                    console.log('inside',locfound);
+                const { startLatLong, endLatLong, to, from } = element;
+                const startPointSplit = startLatLong.split(',');
 
-                    const rideFound = PolyUtil.isLocationOnEdge(endPoint, cursor[index].offerRides[0].end_loactions, 1000);
-                    console.log(rideFound);
-                    if (rideFound) {
+                // check condition for oppsite same source and destination
+                const distance = SphericalUtil.computeDistanceBetween({ lat: startPointSplit[0], lng: startPointSplit[1] }, endPoint);
+                // console.log('distance',distance,from, to);
 
-                        const driverId = cursor[index].userId;
-                        const carId = cursor[index].carId;
-                        const driverDetails = await getDriverDetail(driverId);
-                        let carDetail = driverDetails.existUser.cars.find(car=>(car._id.toString() === carId));
-                        carDetail = carDetail ?? {};
-                        
-                        availabeRides.push({
-                            id: cursor[index]._id, 
-                            from: cursor[index].offerRides[0].from, 
-                            to: cursor[index].offerRides[0].to,
-                            time: cursor[index].offerRides[0].time, 
-                            Date: cursor[index].offerRides[0].date,
-                            carDetail,
-                            noOfSeats: cursor[index].offerRides[0].noOfSeats, 
-                            currency: cursor[index].offerRides[0].currency,
-                            pricePerSeat: cursor[index].offerRides[0].pricePerSeat, 
-                            pricePerBag: cursor[index].offerRides[0].pricePerBag,
-                            noBigBags : cursor[index].offerRides[0].bigBagNo,
-                            recurringRideStartDate: cursor[index].offerRides[0].recurringRideStartDate,
-                            recurringRideEndDate: cursor[index].offerRides[0].recurringRideEndDate,
-                            recurringRideTime: cursor[index].offerRides[0].recurringRideTime,
-                            noOfPauses: cursor[index].offerRides[0].noOfPauses, 
-                            smoking: cursor[index].offerRides[0].smoking, 
-                            petAllow: cursor[index].offerRides[0].petAllow,
-                            foodAllow: cursor[index].offerRides[0].foodAllow, 
-                            driverDetails
-                        });
+                if (distance !== 0) {
 
-                    }
+                    // console.log('-----------element', element);
+                    //..date time condition
+                    const isDateTimeInRange = await filterRideByDateTime(element, rideDate, rideTime, recurringRideStartDate, recurringRideEndDate, recurringRideTime)
 
-                    else {
-                        console.log("No Ride Found");
+                    console.log('isDateTimeInRange----------------', isDateTimeInRange);
+
+                    if (isDateTimeInRange) {
+
+                        const locfound = PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations, 1000);
+                        console.log('locfoundlocfound', locfound);
+                        if (locfound) {
+                            // console.log('inside',locfound);
+
+                            const rideFound = PolyUtil.isLocationOnEdge(endPoint, cursor[index].offerRides[0].end_loactions, 1000);
+                            console.log(rideFound);
+                            if (rideFound) {
+
+                                const driverId = cursor[index].userId;
+                                const carId = cursor[index].carId;
+                                const driverDetails = await getDriverDetail(driverId);
+                                let carDetail = driverDetails.existUser.cars.find(car => (car._id.toString() === carId));
+                                carDetail = carDetail ?? {};
+
+                                availabeRides.push({
+                                    id: cursor[index]._id,
+                                    from: cursor[index].offerRides[0].from,
+                                    to: cursor[index].offerRides[0].to,
+                                    time: cursor[index].offerRides[0].time,
+                                    Date: cursor[index].offerRides[0].date,
+                                    carDetail,
+                                    noOfSeats: cursor[index].offerRides[0].noOfSeats,
+                                    currency: cursor[index].offerRides[0].currency,
+                                    pricePerSeat: cursor[index].offerRides[0].pricePerSeat,
+                                    pricePerBag: cursor[index].offerRides[0].pricePerBag,
+                                    noBigBags: cursor[index].offerRides[0].bigBagNo,
+                                    recurringRideStartDate: cursor[index].offerRides[0].recurringRideStartDate,
+                                    recurringRideEndDate: cursor[index].offerRides[0].recurringRideEndDate,
+                                    recurringRideTime: cursor[index].offerRides[0].recurringRideTime,
+                                    noOfPauses: cursor[index].offerRides[0].noOfPauses,
+                                    smoking: cursor[index].offerRides[0].smoking,
+                                    petAllow: cursor[index].offerRides[0].petAllow,
+                                    foodAllow: cursor[index].offerRides[0].foodAllow,
+                                    driverDetails
+                                });
+
+                            }
+
+                            else {
+                                console.log("No Ride Found");
+                            }
+                        }
                     }
                 }
-                else {
-                    console.log("No Ride Found");
-                }
-
             }
+            else {
+                console.log("No Ride Found");
+            }
+
         }
         return res.status(200).send({ availabeRides });
     }
@@ -238,10 +249,10 @@ export const bookRide = async (req, res, next) => {
         const currentNoOfBags = TotalBigBag - noBigBags;
         const currentNoOfSeats = NoOfSeats - noOfSeats;
 
-        if(saved == false){
-            await updateBigBag(_id,currentNoOfBags,currentNoOfSeats);
+        if (saved == false) {
+            await updateBigBag(_id, currentNoOfBags, currentNoOfSeats);
         }
-        
+
         return saved ? res.status(200).send({ "Status": "Already booked this ride" }) :
             res.status(200).send({ "Success": "Saved" });
 
