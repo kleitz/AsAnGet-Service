@@ -2,6 +2,7 @@ import { myCars, edituserbyId, updateuserprofile, getprofilebyId,
     getuserjoineddays, getbyId, getAllUsers,updateUserFireBaseTopic} from './dbHelper';
 import {getuserratingOutOf5} from '../ratings/dbHelper';
 import {tokenForUser} from './helper';
+import {sendFireBaseMessage} from '../firebase/firebase';
 
 /*editprofile() is used to edit profile  of the user by id*/
 export const editprofile = async (req, res, next) => {
