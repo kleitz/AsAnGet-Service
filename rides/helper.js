@@ -84,20 +84,19 @@ export const filterRideByDateTime = async (element, rideDate, rideTime, recurrin
         console.log('3');
         const passrecurringRideStartDateObj = convertStringToDate(recurringRideStartDate);
         const passrecurringRideEndDateObj = convertStringToDate(recurringRideEndDate);
-        const passrecurringRideTimeArr = recurringRideTime.split(':');
-        const passrecurringRideTimeHr = parseInt(passrecurringRideTimeArr[0]);
+        // const passrecurringRideTimeArr = recurringRideTime.split(':');
+        // const passrecurringRideTimeHr = parseInt(passrecurringRideTimeArr[0]);
 
         if (element.recurringRideStartDate !== '' &&
             element.recurringRideEndDate !== '' &&
             element.recurringRideTime !== '') {
             const riderecurringRideStartDateObj = convertStringToDate(element.recurringRideStartDate);
             const rideecurringRideEndDateDateObj = convertStringToDate(element.recurringRideEndDate);
-            const recurringRideTimeArr = element.recurringRideTime.split(':');
-            const recurringRideTimeHr = parseInt(recurringRideTimeArr[0]);
+            // const recurringRideTimeArr = element.recurringRideTime.split(':');
+            // const recurringRideTimeHr = parseInt(recurringRideTimeArr[0]);
 
             if ((riderecurringRideStartDateObj <= passrecurringRideStartDateObj) &&
-                (rideecurringRideEndDateDateObj >= passrecurringRideEndDateObj) &&
-                (passrecurringRideTimeHr < recurringRideTimeHr)) {
+                (rideecurringRideEndDateDateObj >= passrecurringRideEndDateObj)) {
                 return true;
             }
 
@@ -105,8 +104,8 @@ export const filterRideByDateTime = async (element, rideDate, rideTime, recurrin
 
     } else {
         const passengerFindDateObj = convertStringToDate(rideDate);
-        const passengerFindTimeArr = rideTime.split(':');
-        const passengerFindTimeHr = parseInt(passengerFindTimeArr[0]);
+        // const passengerFindTimeArr = rideTime.split(':');
+        // const passengerFindTimeHr = parseInt(passengerFindTimeArr[0]);
 
         if (element.recurringRideStartDate !== '' &&
             element.recurringRideEndDate !== '' &&
@@ -115,12 +114,11 @@ export const filterRideByDateTime = async (element, rideDate, rideTime, recurrin
 
             const riderecurringRideStartDateObj = convertStringToDate(element.recurringRideStartDate);
             const rideecurringRideEndDateDateObj = convertStringToDate(element.recurringRideEndDate);
-            const recurringRideTimeArr = element.recurringRideTime.split(':');
-            const recurringRideTimeHr = parseInt(recurringRideTimeArr[0]);
+            // const recurringRideTimeArr = element.recurringRideTime.split(':');
+            // const recurringRideTimeHr = parseInt(recurringRideTimeArr[0]);
 
             if ((riderecurringRideStartDateObj <= passengerFindDateObj) &&
-                (rideecurringRideEndDateDateObj >= passengerFindDateObj) &&
-                (passengerFindTimeHr < recurringRideTimeHr)) {
+                (rideecurringRideEndDateDateObj >= passengerFindDateObj)) {
                 return true;
             }
 
@@ -128,11 +126,10 @@ export const filterRideByDateTime = async (element, rideDate, rideTime, recurrin
         } else {
             console.log('1');
             const rideDateObj = convertStringToDate(element.date);
-            const rideDateTimeArr = element.time.split(':');
-            const rideDateTimeHr = parseInt(rideDateTimeArr[0]);
+            // const rideDateTimeArr = element.time.split(':');
+            // const rideDateTimeHr = parseInt(rideDateTimeArr[0]);
 
-            if ((rideDateObj <= passengerFindDateObj) &&
-                (rideDateTimeHr > passengerFindTimeHr) ) {
+            if ((rideDateObj <= passengerFindDateObj)) {
                 return true;
             }
         }
