@@ -119,6 +119,7 @@ export const findRide = async (req, res, next) => {
         const { userId, startPoint, endPoint, rideDate, rideTime, noOfPassenger,
             recurringRideStartDate, recurringRideEndDate, recurringRideTime } = req.body;
 
+            console.log('startPoint',req.body);
         var availabeRides = [];
 
         const cursor = await getAllRides();
