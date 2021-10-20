@@ -119,7 +119,7 @@ export const findRide = async (req, res, next) => {
         const { userId, startPoint, endPoint, rideDate, rideTime, noOfPassenger,
             recurringRideStartDate, recurringRideEndDate, recurringRideTime } = req.body;
 
-            console.log('startPoint',req.body);
+        console.log('startPoint', req.body);
         var availabeRides = [];
 
         const cursor = await getAllRides();
@@ -130,10 +130,12 @@ export const findRide = async (req, res, next) => {
                 userId != cursor[index].userId) {
 
                 const { startLatLong, endLatLong, to, from } = element;
-                const startPointSplit = startLatLong.split(',');
+                if (startLatLong) {
+                    const startPointSplit = startLatLong.split(',');
 
-                // check condition for oppsite same source and destination
-                const distance = SphericalUtil.computeDistanceBetween({ lat: startPointSplit[0], lng: startPointSplit[1] }, endPoint);
+                    // check condition for oppsite same source and destination
+                    const distance = SphericalUtil.computeDistanceBetween({ lat: startPointSplit[0], lng: startPointSplit[1] }, endPoint);
+                }
                 // console.log('distance',distance,from, to);
 
                 if (distance !== 0) {
