@@ -3,6 +3,7 @@ import model from './model';
 import {INSTAGRAM} from './constant';
 import {instagram} from 'instagram-node';
 import {tokenForUser} from './helper';
+import {getuserratingOutOf5} from '../ratings/dbHelper';
 
 const api = instagram();
 
@@ -38,10 +39,14 @@ export const instagramAuth = async (req, res, next) => {
               //sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
 
 
-              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email, loginFrom: "Instagram"});
+              return res.status(200).json({token: tokenForUser(newUser),
+                name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email, 
+                loginFrom: "Instagram",rating:{rating5Star:1, userRatedByCount:0}});
         }
-        
-        return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email,cars:existUser.cars.length, loginFrom: "Instagram"});
+        const rating = await getuserratingOutOf5(existUser._id, 'driver');
+        return res.status(200).json({token: tokenForUser(existUser),
+            name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email,
+            cars:existUser.cars.length, loginFrom: "Instagram",rating});
     } catch (error) {
         next(error);
     }

@@ -3,6 +3,7 @@ import {GOOGLE} from './constant';
 import {tokenForUser} from './helper';
 
 import {OAuth2Client} from 'google-auth-library';
+import {getuserratingOutOf5} from '../ratings/dbHelper';
 
 const CLIENT_ID = process.env.clientIDgoogle;
 const client = new OAuth2Client(CLIENT_ID);
@@ -45,11 +46,24 @@ try {
 
               console.log("new user saved");  
               
-              return res.status(200).json({token: tokenForUser(newUser),name:newUser.name,id:newUser._id,url:newUser.imageUrl,email:newUser.email, cars:"0", loginFrom: "Google"});
+              return res.status(200).json({token: tokenForUser(newUser),
+                name:newUser.name,id:newUser._id,
+                url:newUser.imageUrl,email:newUser.email, 
+                cars:"0", 
+                loginFrom: "Google",
+                rating:{rating5Star:1, userRatedByCount:0}
+              });
             }
             console.log("user exist");
-            
-            return res.status(200).json({token: tokenForUser(existUser),name:existUser.name,id:existUser._id,url:existUser.imageUrl,email:existUser.email, cars:existUser.cars.length, loginFrom: "Google"});
+            const rating = await getuserratingOutOf5(existUser._id, 'driver');
+            return res.status(200).json({token: tokenForUser(existUser),
+              name:existUser.name,
+              id:existUser._id,
+              url:existUser.imageUrl,
+              email:existUser.email, 
+              cars:existUser.cars.length, 
+              loginFrom: "Google",
+              rating});
         }catch(error){
         next(error)
     }

@@ -63,7 +63,7 @@ export const getNoOfjoindays = async (req, res, next) => {
         const {user_id} = req.body;     
         const days = await getuserjoineddays(user_id);
         const freeNoOfDaysOfferForDriver = process.env.freeNoOfDaysOfferForDriver;
-        const percenatgeChargeOnTotalAmount = process.env.freeNoOfDaysOfferForDriver;
+        const percenatgeChargeOnTotalAmount = process.env.percenatgeChargeOnTotalAmount;
         return res.status(200).send({"days":days,freeNoOfDaysOfferForDriver,percenatgeChargeOnTotalAmount});
         
     } catch (error) {
