@@ -135,60 +135,60 @@ export const findRide = async (req, res, next) => {
 
                     // check condition for oppsite same source and destination
                     const distance = SphericalUtil.computeDistanceBetween({ lat: startPointSplit[0], lng: startPointSplit[1] }, endPoint);
-                }
-                // console.log('distance',distance,from, to);
+                    // console.log('distance',distance,from, to);
 
-                if (distance !== 0) {
+                    if (distance !== 0) {
 
-                    // console.log('-----------element', element);
-                    //..date time condition
-                    const isDateTimeInRange = await filterRideByDateTime(element, rideDate, rideTime, recurringRideStartDate, recurringRideEndDate, recurringRideTime)
+                        // console.log('-----------element', element);
+                        //..date time condition
+                        const isDateTimeInRange = await filterRideByDateTime(element, rideDate, rideTime, recurringRideStartDate, recurringRideEndDate, recurringRideTime)
 
-                    console.log('isDateTimeInRange----------------', isDateTimeInRange);
+                        console.log('isDateTimeInRange----------------', isDateTimeInRange);
 
-                    if (isDateTimeInRange) {
+                        if (isDateTimeInRange) {
 
-                        const locfound = PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations, 1000);
-                        console.log('locfoundlocfound', locfound);
-                        if (locfound) {
-                            // console.log('inside',locfound);
+                            const locfound = PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations, 1000);
+                            console.log('locfoundlocfound', locfound);
+                            if (locfound) {
+                                // console.log('inside',locfound);
 
-                            const rideFound = PolyUtil.isLocationOnEdge(endPoint, cursor[index].offerRides[0].end_loactions, 1000);
-                            console.log(rideFound);
-                            if (rideFound) {
+                                const rideFound = PolyUtil.isLocationOnEdge(endPoint, cursor[index].offerRides[0].end_loactions, 1000);
+                                console.log(rideFound);
+                                if (rideFound) {
 
-                                const driverId = cursor[index].userId;
-                                const carId = cursor[index].carId;
-                                const driverDetails = await getDriverDetail(driverId);
-                                let carDetail = driverDetails.existUser.cars.find(car => (car._id.toString() === carId));
-                                carDetail = carDetail ?? {};
+                                    const driverId = cursor[index].userId;
+                                    const carId = cursor[index].carId;
+                                    const driverDetails = await getDriverDetail(driverId);
+                                    let carDetail = driverDetails.existUser.cars.find(car => (car._id.toString() === carId));
+                                    carDetail = carDetail ?? {};
 
-                                availabeRides.push({
-                                    id: cursor[index]._id,
-                                    from: cursor[index].offerRides[0].from,
-                                    to: cursor[index].offerRides[0].to,
-                                    time: cursor[index].offerRides[0].time,
-                                    Date: cursor[index].offerRides[0].date,
-                                    carDetail,
-                                    noOfSeats: cursor[index].offerRides[0].noOfSeats,
-                                    currency: cursor[index].offerRides[0].currency,
-                                    pricePerSeat: cursor[index].offerRides[0].pricePerSeat,
-                                    pricePerBag: cursor[index].offerRides[0].pricePerBag,
-                                    noBigBags: cursor[index].offerRides[0].bigBagNo,
-                                    recurringRideStartDate: cursor[index].offerRides[0].recurringRideStartDate,
-                                    recurringRideEndDate: cursor[index].offerRides[0].recurringRideEndDate,
-                                    recurringRideTime: cursor[index].offerRides[0].recurringRideTime,
-                                    noOfPauses: cursor[index].offerRides[0].noOfPauses,
-                                    smoking: cursor[index].offerRides[0].smoking,
-                                    petAllow: cursor[index].offerRides[0].petAllow,
-                                    foodAllow: cursor[index].offerRides[0].foodAllow,
-                                    driverDetails
-                                });
+                                    availabeRides.push({
+                                        id: cursor[index]._id,
+                                        from: cursor[index].offerRides[0].from,
+                                        to: cursor[index].offerRides[0].to,
+                                        time: cursor[index].offerRides[0].time,
+                                        Date: cursor[index].offerRides[0].date,
+                                        carDetail,
+                                        noOfSeats: cursor[index].offerRides[0].noOfSeats,
+                                        currency: cursor[index].offerRides[0].currency,
+                                        pricePerSeat: cursor[index].offerRides[0].pricePerSeat,
+                                        pricePerBag: cursor[index].offerRides[0].pricePerBag,
+                                        noBigBags: cursor[index].offerRides[0].bigBagNo,
+                                        recurringRideStartDate: cursor[index].offerRides[0].recurringRideStartDate,
+                                        recurringRideEndDate: cursor[index].offerRides[0].recurringRideEndDate,
+                                        recurringRideTime: cursor[index].offerRides[0].recurringRideTime,
+                                        noOfPauses: cursor[index].offerRides[0].noOfPauses,
+                                        smoking: cursor[index].offerRides[0].smoking,
+                                        petAllow: cursor[index].offerRides[0].petAllow,
+                                        foodAllow: cursor[index].offerRides[0].foodAllow,
+                                        driverDetails
+                                    });
 
-                            }
+                                }
 
-                            else {
-                                console.log("No Ride Found");
+                                else {
+                                    console.log("No Ride Found");
+                                }
                             }
                         }
                     }
