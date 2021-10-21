@@ -4,7 +4,8 @@ import {
     getUserOfferRides, getUserBookRides, getBookRideDetails,
     getRideotp, getCurrentRideDetails, driverridestatus,
     passengerridestatus, driverCompletedHisRide, updatePassengerStatusByUserId,
-    perRidePassengerCost, rideCancelByDriver,getRideWithDriverDetailsById
+    perRidePassengerCost, rideCancelByDriver,getRideWithDriverDetailsById,
+    rideStartedByDriver
 } from './dbHelper';
 const fs = require('fs');
 import * as openpgp from 'openpgp'
@@ -116,7 +117,7 @@ export const driverstartride = async (req, res, next) => {
     try {
 
         const { ride_id } = req.body;
-        // await rideStartedByDriver(ride_id);
+        await rideStartedByDriver(ride_id);
 
         //... will add firebase
         // sendFireBaseMessage();
