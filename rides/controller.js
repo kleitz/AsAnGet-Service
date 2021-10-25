@@ -122,16 +122,28 @@ export const findRide = async (req, res, next) => {
         console.log('startPoint', req.body);
         var availabeRides = [];
 
+        const stratUpdatedLatLong = await getUpdateLatLongAfterConvertToPlace(`${startPoint.lat},${startPoint.lng}`);
+        const enadUpdatedLatLong = await getUpdateLatLongAfterConvertToPlace(`${endPoint.lat},${endPoint.lng}`);
+
+
         const cursor = await getAllRides();
         for (let index = 0; index < cursor.length; index++) {
             const element = cursor[index].offerRides[0];
-
+            const isDateTimeInRange = await filterRideByDateTime(element, rideDate, rideTime, recurringRideStartDate, recurringRideEndDate, recurringRideTime);
             if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats &&
-                userId != cursor[index].userId) {
+                userId != cursor[index].userId && isDateTimeInRange) {
 
                 const { startLatLong, endLatLong, to, from } = element;
+
+                //...if start lat long is same as end lat long in db rides 
+                //...if start and end lat long is between db rides start and end lat long
                 if (startLatLong) {
                     const startPointSplit = startLatLong.split(',');
+
+                    //...if start and end lat long is same as db rides
+                    // const startPointLatLongFound = PolyUtil.isLocationOnEdge(startPoint, [{ lat: startPointSplit[0], lng: startPointSplit[1] }], 1000);
+                    // const endPointLatLongFound = PolyUtil.isLocationOnEdge(endPoint, [{ lat: startPointSplit[0], lng: startPointSplit[1] }], 1000);
+
 
                     // check condition for oppsite same source and destination
                     const distance = SphericalUtil.computeDistanceBetween({ lat: startPointSplit[0], lng: startPointSplit[1] }, endPoint);
@@ -141,56 +153,56 @@ export const findRide = async (req, res, next) => {
 
                         // console.log('-----------element', element);
                         //..date time condition
-                        const isDateTimeInRange = await filterRideByDateTime(element, rideDate, rideTime, recurringRideStartDate, recurringRideEndDate, recurringRideTime)
+
 
                         console.log('isDateTimeInRange----------------', isDateTimeInRange);
 
-                        if (isDateTimeInRange) {
+                        // if (isDateTimeInRange) {
 
-                            const locfound = PolyUtil.isLocationOnEdge(startPoint, cursor[index].offerRides[0].start_locations, 1000);
-                            console.log('locfoundlocfound', locfound);
-                            if (locfound) {
-                                // console.log('inside',locfound);
+                        const locfound = PolyUtil.isLocationOnEdge(stratUpdatedLatLong, cursor[index].offerRides[0].start_locations, 1000);
+                        console.log('locfoundlocfound', locfound);
+                        if (locfound) {
+                            // console.log('inside',locfound);
 
-                                const rideFound = PolyUtil.isLocationOnEdge(endPoint, cursor[index].offerRides[0].end_loactions, 1000);
-                                console.log(rideFound);
-                                if (rideFound) {
+                            const rideFound = PolyUtil.isLocationOnEdge(enadUpdatedLatLong, cursor[index].offerRides[0].end_loactions, 1000);
+                            console.log(rideFound);
+                            if (rideFound) {
 
-                                    const driverId = cursor[index].userId;
-                                    const carId = cursor[index].carId;
-                                    const driverDetails = await getDriverDetail(driverId);
-                                    let carDetail = driverDetails.existUser.cars.find(car => (car._id.toString() === carId));
-                                    carDetail = carDetail ?? {};
+                                const driverId = cursor[index].userId;
+                                const carId = cursor[index].carId;
+                                const driverDetails = await getDriverDetail(driverId);
+                                let carDetail = driverDetails.existUser.cars.find(car => (car._id.toString() === carId));
+                                carDetail = carDetail ?? {};
 
-                                    availabeRides.push({
-                                        id: cursor[index]._id,
-                                        from: cursor[index].offerRides[0].from,
-                                        to: cursor[index].offerRides[0].to,
-                                        time: cursor[index].offerRides[0].time,
-                                        Date: cursor[index].offerRides[0].date,
-                                        carDetail,
-                                        noOfSeats: cursor[index].offerRides[0].noOfSeats,
-                                        currency: cursor[index].offerRides[0].currency,
-                                        pricePerSeat: cursor[index].offerRides[0].pricePerSeat,
-                                        pricePerBag: cursor[index].offerRides[0].pricePerBag,
-                                        noBigBags: cursor[index].offerRides[0].bigBagNo,
-                                        recurringRideStartDate: cursor[index].offerRides[0].recurringRideStartDate,
-                                        recurringRideEndDate: cursor[index].offerRides[0].recurringRideEndDate,
-                                        recurringRideTime: cursor[index].offerRides[0].recurringRideTime,
-                                        noOfPauses: cursor[index].offerRides[0].noOfPauses,
-                                        smoking: cursor[index].offerRides[0].smoking,
-                                        petAllow: cursor[index].offerRides[0].petAllow,
-                                        foodAllow: cursor[index].offerRides[0].foodAllow,
-                                        driverDetails
-                                    });
+                                availabeRides.push({
+                                    id: cursor[index]._id,
+                                    from: cursor[index].offerRides[0].from,
+                                    to: cursor[index].offerRides[0].to,
+                                    time: cursor[index].offerRides[0].time,
+                                    Date: cursor[index].offerRides[0].date,
+                                    carDetail,
+                                    noOfSeats: cursor[index].offerRides[0].noOfSeats,
+                                    currency: cursor[index].offerRides[0].currency,
+                                    pricePerSeat: cursor[index].offerRides[0].pricePerSeat,
+                                    pricePerBag: cursor[index].offerRides[0].pricePerBag,
+                                    noBigBags: cursor[index].offerRides[0].bigBagNo,
+                                    recurringRideStartDate: cursor[index].offerRides[0].recurringRideStartDate,
+                                    recurringRideEndDate: cursor[index].offerRides[0].recurringRideEndDate,
+                                    recurringRideTime: cursor[index].offerRides[0].recurringRideTime,
+                                    noOfPauses: cursor[index].offerRides[0].noOfPauses,
+                                    smoking: cursor[index].offerRides[0].smoking,
+                                    petAllow: cursor[index].offerRides[0].petAllow,
+                                    foodAllow: cursor[index].offerRides[0].foodAllow,
+                                    driverDetails
+                                });
 
-                                }
+                            }
 
-                                else {
-                                    console.log("No Ride Found");
-                                }
+                            else {
+                                console.log("No Ride Found");
                             }
                         }
+                        // }
                     }
                 }
             }
@@ -201,13 +213,19 @@ export const findRide = async (req, res, next) => {
         }
         return res.status(200).send({ availabeRides });
     }
-
-
-
-
     catch (error) {
         next(error);
     }
+}
+
+const getUpdateLatLongAfterConvertToPlace = async (latlong) => {
+    let placeUrl = process.env.getPlaceName.replace('replace_lat_lng', latlong);
+    //Api call to get start place from Lat/Log
+    const getStartPlace = await axios.get(placeUrl);
+    const startPlaceName = getStartPlace.data.results[0].formatted_address;
+    var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${startPlaceName}&key=AIzaSyDlgMX9IRJTeqBi4SoASHyppHJUq2cA4Pg`;
+    var resp = await axios.get(url);
+    return resp.data.results[0].geometry.location;
 }
 
 export const rideDetails = async (req, res, next) => {
