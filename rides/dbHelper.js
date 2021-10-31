@@ -98,27 +98,27 @@ export const perRidePassengerCost = async (ride_id, userId) => {
     const passangerbags = passenger.bigBagNo;
     const amount = ((perseatcost * passangerseats) + (perbagcost * passangerbags));
     const currency = ride.offerRides[0].currency;
-    return {amount, currency};
+    return { amount, currency };
 }
 
 const perRideDriverIncome = async (ride_id) => {
     const ride = await model.findOne({ "_id": new ObjectID(ride_id) });
-    const currency =  ride.offerRides[0].currency;
+    const currency = ride.offerRides[0].currency;
     const passengers = ride.requestRides;
     let income = 0;
     for (let index = 0; index < passengers.length; index++) {
         const passenger = passengers[index];
-        if(passenger.status !== CANCELLED){
+        if (passenger.status !== CANCELLED) {
             const perseatcost = ride.offerRides[0].pricePerSeat;
             const perbagcost = ride.offerRides[0].pricePerBag;
-    
+
             const passangerseats = passenger.noOfSeats;
             const passangerbags = passenger.bigBagNo;
             income += ((perseatcost * passangerseats) + (perbagcost * passangerbags));
         }
-        
+
     }
-    return {income, currency};
+    return { income, currency };
 }
 
 export const updatePassengerStatusByUserId = async (ride_id, userId, status) => {
@@ -139,7 +139,7 @@ export const saveRideInDB = async (newRide) => {
     }
 }
 
-export const getAllRides = async (user_id) => {
+export const getAllRides = async () => {
     try {
         const rides = await model.find();
         return rides;
@@ -238,7 +238,7 @@ export const getBookRideDetails = async (ride_id) => {
         const { ridesDetails, driverDetails, passengers } = await getRideWithDriverDetailsById(ride_id);
         const spaceAailable = ridesDetails.offerRides[0].noOfSeats - passengers.length;
         const carId = ridesDetails.carId;
-        let carDetail = driverDetails.existUser.cars.find(car=>(car._id.toString() === carId));
+        let carDetail = driverDetails.existUser.cars.find(car => (car._id.toString() === carId));
         carDetail = carDetail ?? {};
         return {
             rideId: ridesDetails._id,
@@ -407,7 +407,7 @@ export const driverCompletedHisRide = async (ride_id) => {
     }
 }
 
-const updateCompleteRideInUser = async(ride_id)=>{
+const updateCompleteRideInUser = async (ride_id) => {
     const ridesDetails = await model.findOne({ _id: ride_id });
     const driverId = ridesDetails.userId;
     const carId = ridesDetails.carId;
@@ -428,7 +428,7 @@ export const passengerridestatus = async (ride_id, user_id) => {
     try {
 
         const data = await model.findOne({ "_id": ride_id, "requestRides.userId": user_id });
-        if(!(data && data.requestRides)) return 'No Requeste Ride';
+        if (!(data && data.requestRides)) return 'No Requeste Ride';
         const requestRides = data.requestRides;
         var newdata = requestRides.filter(task => {
             if (task.userId == user_id) {
@@ -441,13 +441,13 @@ export const passengerridestatus = async (ride_id, user_id) => {
     }
 }
 
-export const updateBigBag = async (_id, currentNoOfBags,currentNoOfSeats) => {
-        try {
-            const ride = await model.findOne({ _id: new ObjectID(_id) });
-            await model.updateOne(
-                { _id: new ObjectID(_id), 'offerRides._id': new ObjectID(ride.offerRides[0]._id) },
-                { $set: { "offerRides.$.bigBagNo": currentNoOfBags ,"offerRides.$.noOfSeats": currentNoOfSeats} });
-        } catch (error) {
-            throw new Error(error);
-        }
+export const updateBigBag = async (_id, currentNoOfBags, currentNoOfSeats) => {
+    try {
+        const ride = await model.findOne({ _id: new ObjectID(_id) });
+        await model.updateOne(
+            { _id: new ObjectID(_id), 'offerRides._id': new ObjectID(ride.offerRides[0]._id) },
+            { $set: { "offerRides.$.bigBagNo": currentNoOfBags, "offerRides.$.noOfSeats": currentNoOfSeats } });
+    } catch (error) {
+        throw new Error(error);
     }
+}

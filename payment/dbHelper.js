@@ -1,6 +1,6 @@
 
 import payment from './model';
-import {UnSUCCESS,SUCCESS} from './const';
+import { UnSUCCESS, SUCCESS } from './const';
 const paymentDbHelper = {};
 
 paymentDbHelper.getOrderId = async () => {
@@ -31,26 +31,32 @@ paymentDbHelper.save = async (paymentInput) => {
 
 paymentDbHelper.update = async (body) => {
     try {
-        const {ORDER,ACTION,RC} = body;
+        const { ORDER, ACTION, RC } = body;
         let status = UnSUCCESS;
-        if(ACTION === '0' && RC === '00') {status = SUCCESS;}
-        else {status = UnSUCCESS;}
-        return await payment.updateMany({ "orderId": ORDER },{$set:{
-            "transcation":JSON.stringify(body),
-            "status":status
-        }});
+        if (ACTION === '0' && RC === '00') { status = SUCCESS; }
+        else { status = UnSUCCESS; }
+        return await payment.updateMany({ "orderId": ORDER }, {
+            $set: {
+                "transcation": JSON.stringify(body),
+                "status": status
+            }
+        });
     } catch (error) {
         return Promise.reject(error);
     }
 }
 
-paymentDbHelper.getAll = async()=>{
+paymentDbHelper.getAll = async () => {
     return await payment.find({});
 }
 
-paymentDbHelper.getByOrderId =async(orderId)=>{
-    return await payment.findOne({"orderId":orderId});
-} 
+paymentDbHelper.getByOrderId = async (orderId) => {
+    return await payment.findOne({ "orderId": orderId });
+}
+
+paymentDbHelper.getByRideId = async (RideId) => {
+    return await payment.findOne({ "rideId": RideId });
+}
 
 
 export default paymentDbHelper;

@@ -15,6 +15,8 @@ import { PolyUtil, SphericalUtil } from "node-geometry-library";
 import { getDriverDetail, filterRideByDateTime } from './helper';
 
 import { sendFireBaseMessage, sendPushNotification } from '../firebase/firebase';
+import { getByRideId } from '../payment/controller';
+import { SUCCESS } from '../payment/const';
 
 
 // sendPushNotification();
@@ -125,13 +127,18 @@ export const findRide = async (req, res, next) => {
         const stratUpdatedLatLong = await getUpdateLatLongAfterConvertToPlace(`${startPoint.lat},${startPoint.lng}`);
         const enadUpdatedLatLong = await getUpdateLatLongAfterConvertToPlace(`${endPoint.lat},${endPoint.lng}`);
 
-
         const cursor = await getAllRides();
         for (let index = 0; index < cursor.length; index++) {
             const element = cursor[index].offerRides[0];
             const isDateTimeInRange = await filterRideByDateTime(element, rideDate, rideTime, recurringRideStartDate, recurringRideEndDate, recurringRideTime);
+
+            const RideID = cursor[index]._id;
+            const orderDetails = await getByRideId(RideID);
+            const isRideFindByPayment = !orderDetails || (orderDetails.status === SUCCESS);
+
             if (noOfPassenger <= cursor[index].offerRides[0].noOfSeats &&
-                userId != cursor[index].userId && isDateTimeInRange) {
+                userId != cursor[index].userId && isDateTimeInRange &&
+                isRideFindByPayment) {
 
                 const { startLatLong, endLatLong, to, from } = element;
 

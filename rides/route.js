@@ -1,7 +1,7 @@
 import express from 'express';
 
 
-import { createRide, findRide, bookRide, rideDetails, rideDistance,checkfirebase } from './controller';
+import { createRide, findRide, bookRide, rideDetails, rideDistance, checkfirebase } from './controller';
 import {
   currentRide, completedRides, getRideOTP, verifyRideOTP, driverCancelRide,
   passengerRideCompleted
