@@ -13,7 +13,7 @@ export const addCar = async (req, res, next) => {
             carNo : car_no    
         };
         await addUserCar(modelView);
-        return res.status(200).send({"Success":"Car added succesfully"});
+        return res.status(200).send({"Success":"Car is added successfully."});
     } catch (error) {
         next(error);
     }
