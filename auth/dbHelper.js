@@ -79,13 +79,14 @@ export const updateuserprofile = async (body, files) => {
 
 export const updateUserFireBaseTopic = async (body) => {
     try {
+        const userDetail = await model.findOne({"_id": body.userId});
         await model.updateOne({ "_id": body.userId },
             {
                 $set: {
                     "firebaseTopic": body.fcmToken
                 }
             })
-        return;
+        return userDetail;
     } catch (error) {
         return Promise.reject(error);
     }

@@ -96,7 +96,9 @@ export const getAll = async (req, res, next) => {
 
 export const updateFireBaseTopic = async(req, res, next)=>{
     console.log('hello', req.body);
-    await updateUserFireBaseTopic(req.body);
-    sendFireBaseMessage({ text: 'Data saved' }, req.body.fcmToken, 'Data saved');    
+    const userDetail = await updateUserFireBaseTopic(req.body);
+    if(!userDetail.firebaseTopic || userDetail.firebaseTopic === ""){
+        sendFireBaseMessage({ text: 'Data saved' }, req.body.fcmToken, 'Data saved');
+    }
     return res.status(200).send({"FireBaseTopicUpdated":"Success"});
 }
