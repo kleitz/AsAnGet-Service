@@ -88,9 +88,7 @@ export const verifyRideOTP = async (req, res, next) => {
         if (rideotp.OTP.toString() !== otp) return res.status(500).send({ "Failed": "Otp not correct" });
 
         await updatePassengerStatusByUserId(ride_id, userId, ONGOING);
-        //...use sendfirebase
-        //sendfirebase();
-        sendFireBaseMessage({ text: 'Ride Started.' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Ride Started.');
+
         return res.status(200).send({ "Success": "Ride Started" });
 
     } catch (error) {
@@ -119,16 +117,15 @@ export const driverstartride = async (req, res, next) => {
 
         const { ride_id } = req.body;
         await rideStartedByDriver(ride_id);
-
-        //... will add firebase
-        sendFireBaseMessage({ text: 'Ride Started by Driver.' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Ride Started by Driver.');
+        
         const {passengers} = await getRideWithDriverDetailsById(ride_id);
         const allPassengerHasTopic = passengers.filter(p=>(p.firebaseTopic !== ''));
         const allTopics = allPassengerHasTopic.map(pass=>(pass.firebaseTopic));
 
         for (let index = 0; index < allTopics.length; index++) {
             const element = allTopics[index];
-            sendFireBaseMessage({ text: 'Ride Started.' }, element, 'Ride Started.');  
+            sendFireBaseMessage({ text: 'Your ride is going to start please share the OTP to the driver.' }, element, 'Share OTP to the driver.');  
+            sendFireBaseMessage({ text: 'Your ride is started Relax back and the enjoy riding.' }, element, 'Your ride is started.');
         }
 
         return res.status(200).send({ "Ride": "Started" });
@@ -154,9 +151,7 @@ export const driverCancelRide = async (req, res, next) => {
         const { ride_id } = req.body;
         await rideCancelByDriver(ride_id);
         
-        sendFireBaseMessage({ text: 'Your ride has been cancelled' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Driver Cancelled the Ride.');
-
-        sendMessageToAllPassenger(ride_id,'Your ride has been cancelled','Driver Cancelled the Ride.')
+        sendMessageToAllPassenger(ride_id,'Your ride has been cancelled by the Driver.','Ride Cancelled.')
         return res.status(200).send({ desc:'success'});
 
 
@@ -171,7 +166,7 @@ export const passengerCancelRide = async (req, res, next) => {
         await updatePassengerStatusByUserId(ride_id, userId, CANCELLED);
         
         const driverDetail = await getRideWithDriverDetailsById(ride_id);
-        sendFireBaseMessage({ text: 'Ride Cancelled by the Passanger.' }, driverDetail.existUser.firebaseTopic, 'Ride Cancelled by the Passanger.');
+        sendFireBaseMessage({ text: 'Ride Cancelled by the Passanger.' }, driverDetail.existUser.firebaseTopic, 'Ride Cancelled.');
 
         return res.status(200).send({ desc:'success' });
 

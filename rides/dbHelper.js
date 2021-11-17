@@ -215,7 +215,7 @@ export const bookRideSaveinDb = async (newRide) => {
 
 export const getUserOfferRides = async (userId) => {
     try {
-        const Rides = await model.find({ userId: userId })
+        const Rides = await model.find({ userId: userId }).sort({'createdDate':-1});
         return Rides;
 
     } catch (error) {
@@ -225,7 +225,7 @@ export const getUserOfferRides = async (userId) => {
 
 export const getUserBookRides = async (userId) => {
     try {
-        const Rides = await model.find({ "requestRides.userId": userId })
+        const Rides = await model.find({ "requestRides.userId": userId }).sort({'createdDate':-1});
         return Rides;
     } catch (error) {
         return Promise.reject(error);
