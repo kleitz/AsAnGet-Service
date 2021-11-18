@@ -1,6 +1,6 @@
 import { ObjectID } from 'mongodb';
 import model from './model';
-import { getbyId, updateCarCompleteCount } from '../auth/dbHelper';
+import { getbyId, getprofilebyId, updateCarCompleteCount } from '../auth/dbHelper';
 import { sendFireBaseMessage } from '../firebase/firebase';
 import {
     getRideDate, getRideTime,
@@ -194,17 +194,16 @@ export const bookRideSaveinDb = async (newRide) => {
         ride.requestRides.push(updatedNewRide);
         await ride.save();
 
-        //sendFireBaseMessage({ text: 'Find ride Test' }, 'eB_r1arXSl6DRpN02_xPjv:APA91bFoJa_ipVAYyvJ0M2VrY9DVDLCOWS1n5wDeapO3eenSIMgk7ZUQeU4ZlwMBZD3K_Qd94xPP63if07YUcRjeoNyvt_XEU0chrdfsKgtGTMaW57aPy4k5mlxAznAyvGMAljfH-ufR', 'Find Ride');
-
-
         //...will refactor once we implemnt firebase
         const offerRide = ride.offerRides[0];
-        const text = `${newRide.userName} booked ride from ${offerRide.from} to ${offerRide.to}`;
-        const objForDb = { text }
-        const topic = ride.userId.toString();
-        const title = 'Booked Ride';
-
-        sendFireBaseMessage(objForDb, topic, title);
+        const DriverId = ride.userId;
+        const PassengerId = newRide.userId;
+        const PassengerProfile = await getprofilebyId(PassengerId); 
+        const DriverInfo = await getbyId(DriverId);
+        const element = DriverInfo.existUser.firebaseTopic;
+        const RideInfo = `${PassengerProfile.name} booked ride for ${offerRide.date} at ${offerRide.time} from ${offerRide.from} to ${offerRide.to}`;
+        
+        sendFireBaseMessage({ text: RideInfo }, element, 'Ride Booked.');
 
         return false;
 
