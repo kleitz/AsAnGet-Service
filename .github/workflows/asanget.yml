@@ -23,11 +23,13 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install --only=dev
+    - run: npm i
     - run: gulp build 
     - name: Install Dependencies in build
       working-directory: ./dist 
       run: | 
         npm i
-    - run: cp -r /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist/* /root/asanget-service/   
+    - run: cp -r /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist/* /root/asanget-service/
+    - run: rm -rf /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist
+    - run: rm -rf /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/node_modules
       
