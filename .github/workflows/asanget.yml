@@ -30,6 +30,4 @@ jobs:
       run: | 
         npm i
     - run: cp -r /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist/* /root/asanget-service/
-    - run: rm -rf /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist
-    - run: rm -rf /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/node_modules
       
