@@ -106,6 +106,11 @@ export const createRide = async (req, res, next) => {
             }],
         }
         const RideId = await saveRideInDB(viewModel);
+
+        const DriverData = await getbyId(userId);
+        const element = DriverData.existUser.firebaseTopic;
+        const RideInfo = `Your ride has been created for ${rideDate} at ${Time} from ${startPlaceName} to ${endPlaceName}`;
+        sendFireBaseMessage({ text: RideInfo }, element, 'Ride Created.');
         return res.status(200).json(RideId);
     }
     catch (error) {
