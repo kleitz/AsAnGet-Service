@@ -24,7 +24,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm i
-    - run: gulp build 
+    - run: gulp build
+    - run: rm -rf /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/node_modules
     - name: Install Dependencies in build
       working-directory: ./dist 
       run: | 
