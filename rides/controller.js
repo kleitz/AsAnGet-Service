@@ -109,8 +109,18 @@ export const createRide = async (req, res, next) => {
 
         const DriverData = await getbyId(userId);
         const element = DriverData.existUser.firebaseTopic;
-        const RideInfo = `Your ride has been created for ${rideDate} at ${Time} from ${startPlaceName} to ${endPlaceName}`;
-        sendFireBaseMessage({ text: RideInfo }, element, 'Ride Created.');
+        if (!rideDate && !Time) {
+            let RecRideStartDate = req.body.recurringRideStartDate;
+            let RecRideEndDate = req.body.recurringRideEndDate;
+            let RecRideTime = req.body.recurringRideTime;
+            const RideInfo = `Your ride has been created for ${RecRideStartDate} to ${RecRideEndDate} at ${RecRideTime} from ${startPlaceName} to ${endPlaceName}`;
+            console.log(RideInfo);
+            sendFireBaseMessage({ text: RideInfo }, element, 'Ride Created.');
+        } else {
+            const RideInfo = `Your ride has been created for ${rideDate} at ${Time} from ${startPlaceName} to ${endPlaceName}`;
+            console.log(RideInfo);
+            sendFireBaseMessage({ text: RideInfo }, element, 'Ride Created.');
+        }
         return res.status(200).json(RideId);
     }
     catch (error) {

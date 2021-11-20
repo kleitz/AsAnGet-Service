@@ -72,7 +72,6 @@ export const sendMessageToAllPassenger = async (rideId, text, message) => {
 
     for (let index = 0; index < allTopics.length; index++) {
         const element = allTopics[index];
-        console.log('topic passenger', element);
         sendFireBaseMessage({ text }, element, message);
     }
 }

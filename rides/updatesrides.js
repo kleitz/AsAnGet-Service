@@ -166,11 +166,11 @@ export const passengerCancelRide = async (req, res, next) => {
         await updatePassengerStatusByUserId(ride_id, userId, CANCELLED);
         
         const driverDetail = await getRideWithDriverDetailsById(ride_id);
-        sendFireBaseMessage({ text: 'Ride Cancelled by the Passanger.' }, driverDetail.existUser.firebaseTopic, 'Ride Cancelled.');
+        const element = driverDetail.driverDetails.existUser.firebaseTopic;
+        sendFireBaseMessage({ text: 'Ride Cancelled by the Passanger.' }, element , 'Ride Cancelled.');
 
         return res.status(200).send({ desc:'success' });
-
-
+        
     } catch (error) {
         next(error);
     }

@@ -198,12 +198,20 @@ export const bookRideSaveinDb = async (newRide) => {
         const offerRide = ride.offerRides[0];
         const DriverId = ride.userId;
         const PassengerId = newRide.userId;
-        const PassengerProfile = await getprofilebyId(PassengerId); 
+        const PassengerProfile = await getprofilebyId(PassengerId);
         const DriverInfo = await getbyId(DriverId);
         const element = DriverInfo.existUser.firebaseTopic;
-        const RideInfo = `${PassengerProfile.name} booked ride for ${offerRide.date} at ${offerRide.time} from ${offerRide.from} to ${offerRide.to}`;
-        
-        sendFireBaseMessage({ text: RideInfo }, element, 'Ride Booked.');
+
+        if (!offerRide.date && !offerRide.time) {
+            const RideInfo = `${PassengerProfile.name} booked ride for ${offerRide.recurringRideStartDate
+                } to ${offerRide.recurringRideEndDate} at ${offerRide.recurringRideTime} from ${offerRide.from} to ${offerRide.to}`;
+            console.log(RideInfo);
+            sendFireBaseMessage({ text: RideInfo }, element, 'Ride Booked.');
+        } else {
+            const RideInfo = `${PassengerProfile.name} booked ride for ${offerRide.date} at ${offerRide.time} from ${offerRide.from} to ${offerRide.to}`;
+            console.log(RideInfo);
+            sendFireBaseMessage({ text: RideInfo }, element, 'Ride Booked.');
+        }
 
         return false;
 
@@ -214,7 +222,7 @@ export const bookRideSaveinDb = async (newRide) => {
 
 export const getUserOfferRides = async (userId) => {
     try {
-        const Rides = await model.find({ userId: userId }).sort({'createdDate':-1});
+        const Rides = await model.find({ userId: userId }).sort({ 'createdDate': -1 });
         return Rides;
 
     } catch (error) {
@@ -224,7 +232,7 @@ export const getUserOfferRides = async (userId) => {
 
 export const getUserBookRides = async (userId) => {
     try {
-        const Rides = await model.find({ "requestRides.userId": userId }).sort({'createdDate':-1});
+        const Rides = await model.find({ "requestRides.userId": userId }).sort({ 'createdDate': -1 });
         return Rides;
     } catch (error) {
         return Promise.reject(error);
