@@ -22,12 +22,10 @@ export const getuserjoineddays = async (user_id) => {
     try {
         const existUser = await model.findOne({ _id: user_id });
         const createDate = existUser.createdDate;
+        const oneDay = 24 * 60 * 60 * 1000;
         const tdate = new Date();
-        const diff = (tdate - createDate) / (86400000);
-        const str = String(diff);
-        const days = str.slice(0, 2);
-
-        return days;
+        const diffDays = Math.round(Math.abs((tdate - createDate) / oneDay));
+        return diffDays;
     } catch (error) {
         return Promise.reject(error);
     }
