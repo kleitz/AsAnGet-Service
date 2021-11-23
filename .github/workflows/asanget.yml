@@ -29,5 +29,6 @@ jobs:
       working-directory: ./dist 
       run: | 
         npm i
+    - run:  rm -rf /root/asanget-service/*    
     - run: cp -r /root/actions-runner/ls/AsAnGet-Service/AsAnGet-Service/dist/* /root/asanget-service/
       
